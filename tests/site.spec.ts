@@ -328,3 +328,19 @@ test('links to a section still jump to that section', async ({ page }) => {
   await page.goto('stories/opportunity.html#final');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
 });
+
+test('journey overlays stay hidden before the page script runs (no text pile-up on load)', async ({ page }) => {
+  await page.route(/index\.astro.*\.js$/, (r) => r.abort());
+  await page.goto('index.html');
+  for (const sel of ['[data-descent-line="1"]', '[data-descent-line="2"]', '[data-descent-line="3"]', '[data-descent-line="crater"]', '[data-pano-cap]', '[data-j-credit]', '[data-descent-hud]']) {
+    await expect(page.locator(sel)).toBeHidden();
+  }
+  await expect(page.locator('h1')).toBeVisible();
+});
+
+test('status list shows counts as machine totals, not as numbering', async ({ page }) => {
+  await page.goto('index.html');
+  const counts = await page.locator('.spectrum .sp-n').allTextContents();
+  expect(counts.length).toBe(6);
+  for (const c of counts) expect(c).toMatch(/^(\d+ machines?|none yet)$/);
+});

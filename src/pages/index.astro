@@ -147,17 +147,17 @@ const halls = [
         <h2 id="status-h">Not every silent machine is abandoned.</h2>
         <p class="muted">A rover that loses contact in a dust storm and a rover parked on purpose by astronauts are different stories. AIRXON labels each machine as precisely as the evidence allows.</p>
       </div>
-      <ol class="spectrum" data-reveal style="--d:120ms">
+      <ul class="spectrum" data-reveal style="--d:120ms">
         {statuses.map((s) => (
           <li class="sp-row">
             <a href={`/archive/#${s}`} class="sp-link">
-              <span class="status" data-s={s}><span class="sp-n">{counts[s].length}</span>{STATUS_LABEL[s]}</span>
+              <span class="sp-top"><span class="status" data-s={s}>{STATUS_LABEL[s]}</span><span class="sp-n mono">{counts[s].length === 0 ? 'none yet' : `${counts[s].length} ${counts[s].length === 1 ? 'machine' : 'machines'}`}</span></span>
               <span class="sp-ex">{STATUS_EXPLAIN[s]}</span>
               <span class="sp-ex sp-names">{counts[s].length ? counts[s].map((h) => h.short).join(' · ') : 'No entries in the collection yet'}</span>
             </a>
           </li>
         ))}
-      </ol>
+      </ul>
     </div>
   </section>
 
@@ -252,7 +252,7 @@ const halls = [
   .d-line.l3 { top: 50%; transform: translate(-50%, -50%); }
   .d-big { font-family: var(--font-display); font-size: var(--step-4); font-weight: 700; line-height: 1.04; text-wrap: balance; max-width: 22ch; text-shadow: 0 2px 30px rgb(8 13 28 / 0.95), 0 0 4px rgb(8 13 28 / 0.8); }
   .d-big em { font-style: normal; color: var(--cyan); }
-  .js .d-line, .js .d-hud, .js .pano-cap, .js .d-credit { opacity: 0; visibility: hidden; }
+  :global(.js) .d-line, :global(.js) .d-hud, :global(.js) .pano-cap, :global(.js) .d-credit { opacity: 0; visibility: hidden; }
   .d-hud, .pano-cap, .d-credit { pointer-events: none; }
   .d-credit a, .pano-cap a { pointer-events: auto; }
   .rm-only { display: none; }
@@ -272,7 +272,7 @@ const halls = [
     .j-stage { height: 100svh; bottom: auto; }
     .j-video { display: none; }
     .hero-copy { min-height: calc(100svh - 120px); display: flex; flex-direction: column; justify-content: center; }
-    .js .d-line, .js .pano-cap, .js .d-credit { opacity: 1; visibility: visible; }
+    :global(.js) .d-line, :global(.js) .pano-cap, :global(.js) .d-credit { opacity: 1; visibility: visible; }
     .d-hud, .d-marker, .j-scrim, .scroll-cue { display: none; }
     .d-line, .pano-cap, .d-credit { position: static; transform: none !important; left: auto; width: auto; text-align: left; justify-items: start; margin: var(--s-7) auto; padding-inline: var(--gutter); max-width: var(--maxw); }
     .rm-only { display: grid; gap: var(--s-6); padding-bottom: var(--section); }
@@ -322,8 +322,9 @@ const halls = [
   .sp-link { display: grid; gap: 4px; padding: 18px 4px; text-decoration: none; transition: background-color var(--t-fast); }
   .sp-link:hover { background: var(--surface); }
   .sp-link .status { font-size: 1.05rem; }
-  .sp-n { font-family: var(--font-mono); min-width: 1.6em; }
-  .sp-ex { font-size: 0.9rem; color: var(--muted); padding-left: calc(1.6em + 8px); }
+  .sp-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+  .sp-n { font-size: 0.78rem; color: var(--faint); white-space: nowrap; }
+  .sp-ex { font-size: 0.9rem; color: var(--muted); }
   .sp-names { color: var(--faint); font-size: 0.82rem; }
   @media (max-width: 899px) { .st-head, .spectrum { grid-column: 1 / -1; } }
 
