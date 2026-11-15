@@ -21,6 +21,28 @@
   ],
   "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACQAwCdASoYAAUAPu1mq04ppaQiMAgBMB2JYwCdABtddAv3wiGAAPJtusuJ7wyoQi2FzG5YVzuF97Ve+0V0SCczi8iNnwEEHh17FFAAAAA="
  },
+ "opp-west-rim": {
+  "slug": "opp-west-rim",
+  "nasaId": "PIA14508",
+  "kind": "photo",
+  "mission": "opportunity",
+  "alt": "Opportunity's colour view across flat, rock-strewn plains toward the hills of Endeavour Crater's western rim, August 2011.",
+  "title": "West Rim of Endeavour Crater on Mars",
+  "credit": "NASA/JPL-Caltech/Cornell/ASU",
+  "date": "2011-08-10",
+  "center": "JPL",
+  "source": "https://images.nasa.gov/details/PIA14508",
+  "library": "https://images.nasa.gov/details/PIA14508",
+  "usage": "NASA content is generally not subject to copyright in the United States. Used for educational purposes under NASA Images and Media Usage Guidelines; no endorsement implied.",
+  "width": 1848,
+  "height": 1009,
+  "widths": [
+   480,
+   960,
+   1600
+  ],
+  "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAABwAwCdASoYAA0APu1iqk2ppaQiMAgBMB2JQBYdhDv3WPZtgQAA8lDZYB1VTzV+q0liw7Zp2efpjZ/fk+flcwAA"
+ },
  "opp-shadow": {
   "slug": "opp-shadow",
   "nasaId": "PIA06739",

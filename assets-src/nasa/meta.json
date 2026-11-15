@@ -702,5 +702,18 @@
   ],
   "source": "https://images.nasa.gov/details/PIA16442",
   "file": "https://images-assets.nasa.gov/image/PIA16442/PIA16442~large.jpg"
+ },
+ "PIA14508": {
+  "title": "West Rim of Endeavour Crater on Mars",
+  "date": "2011-08-10",
+  "center": "JPL",
+  "credit": "NASA/JPL-Caltech/Cornell/ASU",
+  "description": "A portion of the west rim of Endeavour crater sweeps southward in this color view from NASA Mars Exploration Rover Opportunity. The rover first destination on the rim, called Spirit Point in tribute to Opportunity now-inactive twin, Spirit.",
+  "keywords": [
+   "Mars",
+   "Mars Exploration Rover MER"
+  ],
+  "source": "https://images.nasa.gov/details/PIA14508",
+  "file": "https://images-assets.nasa.gov/image/PIA14508/PIA14508~orig.jpg"
  }
 }

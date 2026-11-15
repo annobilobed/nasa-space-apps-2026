@@ -33,7 +33,7 @@ An interactive educational space museum about the hardware humanity left on the 
 
 ## The homepage journey film
 
-The top of the homepage is one continuous, scroll-scrubbed film (hero planet → centred globe → descent to Endeavour Crater → dissolve to Opportunity's last panorama → pan), 276 frames rendered from NASA data:
+The top of the homepage is one continuous, scroll-scrubbed film (hero planet → centred globe → descent to Endeavour Crater → landing → a forward drive over Opportunity's own photo of the plain toward Endeavour's west rim), 300 frames rendered from NASA data:
 
 ```bash
 python3 scripts/fetch-descent-tiles.py          # unpacks the NASA tiles from assets-src/descent-src-tiles.tar (downloads anything missing)

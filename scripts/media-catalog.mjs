@@ -6,6 +6,8 @@ export const catalog = [
   { slug: 'opp-legacy-pan', id: 'PIA22909', kind: 'photo', mission: 'opportunity', pano: true,
     alt: "Opportunity's final 360-degree panorama of Perseverance Valley, a dusty slope of reddish-brown rock under a hazy sky, taken from May 13 to June 10, 2018.",
     source: 'https://science.nasa.gov/photojournal/opportunity-legacy-pan-true-color/' },
+  { slug: 'opp-west-rim', id: 'PIA14508', kind: 'photo', mission: 'opportunity',
+    alt: "Opportunity's colour view across flat, rock-strewn plains toward the hills of Endeavour Crater's western rim, August 2011." },
   { slug: 'opp-shadow', id: 'PIA06739', kind: 'photo', mission: 'opportunity',
     alt: "Opportunity's own shadow stretched across the rippled floor of Endurance Crater, photographed by its hazard-avoidance camera on sol 180." },
   { slug: 'opp-last-message', id: 'PIA22929', kind: 'photo', mission: 'opportunity',

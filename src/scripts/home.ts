@@ -5,7 +5,7 @@ import { getLenis, reducedMotion } from './site';
 gsap.registerPlugin(ScrollTrigger);
 
 // Frame layout of the journey film (scripts/render-journey.py).
-const NA = 48, NB = 120, NC = 36, ND = 72, FRAMES = NA + NB + NC + ND, FPS = 30;
+const NA = 48, NB = 120, NC = 36, ND = 96, FRAMES = NA + NB + NC + ND, FPS = 30;
 
 export function initHome() {
   const root = document.documentElement;
@@ -96,7 +96,7 @@ export function initHome() {
   const HOLD = 30; // a short hold on the final message
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
-    scrollTrigger: { trigger: scene, start: 'top top', end: () => `+=${window.innerHeight * 9}`, scrub: 0.5, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
+    scrollTrigger: { trigger: scene, start: 'top top', end: () => `+=${window.innerHeight * 10}`, scrub: 0.5, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
   });
   const film = { f: 0 };
   tl.to(film, { f: FRAMES - 1, duration: FRAMES - 1, onUpdate: () => {

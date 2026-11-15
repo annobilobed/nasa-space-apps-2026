@@ -10,7 +10,7 @@ const words = headline.split(' ');
 const featured = hardware.filter((h) => h.featured);
 const statuses: Status[] = ['operational', 'completed', 'silent', 'inactive', 'left-in-place', 'lost'];
 const counts = Object.fromEntries(statuses.map((s) => [s, hardware.filter((h) => h.status === s)]));
-const pano = getMedia('opp-legacy-pan');
+const ground = getMedia('opp-west-rim');
 
 const stats = [
   { n: 5111, label: 'Martian days Opportunity worked, though it was designed for 90', src: 'NASA/JPL, PIA22929', url: 'https://images.nasa.gov/details/PIA22929' },
@@ -77,19 +77,19 @@ const halls = [
       <p class="d-big">Endeavour Crater, 22 km wide. Opportunity drove for seven years to reach it.</p>
     </div>
     <div class="d-line l2" data-descent-line="2">
-      <p class="d-big">On the ground: the last panorama it ever made. 354 images, stitched into one view of its final valley.</p>
+      <p class="d-big">On the ground, August 2011. Ahead: the western rim of Endeavour Crater, where Opportunity would spend its last seven years.</p>
     </div>
-    <p class="pano-cap telemetry" data-pano-cap><span><b>Rover</b>Opportunity</span><span><b>Place</b>Perseverance Valley</span><span><b>Sols</b>5,084 to 5,111</span><span><b>Dates</b>13 May to 10 Jun 2018</span><span><b>Image</b>{pano.credit} · {pano.nasaId}</span></p>
+    <p class="pano-cap telemetry" data-pano-cap><span><b>Rover</b>Opportunity</span><span><b>View</b>West rim of Endeavour Crater</span><span><b>Date</b>August 2011</span><span><b>Image</b>{ground.credit} · {ground.nasaId}</span></p>
     <div class="d-line l3" data-descent-line="3">
       <p class="d-big">Even when a machine stops working, <em>its story does not have to end.</em></p>
       <a class="btn btn-primary" href="/stories/opportunity/">Read Opportunity’s story <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a>
     </div>
-    <p class="d-credit placard" data-j-credit><span>A visualisation rendered by AIRXON from NASA data (Viking MDIM 2.1 colour mosaic and MRO CTX Meridiani Planum mosaic, via NASA Mars Trek), ending on Opportunity’s real panorama. The orbital views are not photographs.</span></p>
+    <p class="d-credit placard" data-j-credit><span>A visualisation rendered by AIRXON from NASA data: Viking MDIM 2.1 and MRO CTX mosaics (via NASA Mars Trek) for the orbital views, then Opportunity’s own photo of the plain, with forward motion simulated from that single image. Not a recording of a real drive.</span></p>
 
     <!-- Reduced motion: the same story as still images, no scroll-driven film -->
     <div class="rm-only wrap">
       <figure class="figure"><img src="/media/journey/journey-landscape-crater.jpg" alt="Endeavour Crater on Meridiani Planum seen from orbit, rendered from NASA CTX and Viking mosaic data." width="1280" height="720" loading="lazy" /><figcaption class="placard"><span class="cap">Endeavour Crater from orbit (visualisation from NASA data).</span></figcaption></figure>
-      <div class="rm-pano" tabindex="0" aria-label="Opportunity's final panorama. Scroll sideways to explore"><Img slug="opp-legacy-pan" sizes="1800px" /></div>
+      <figure class="figure"><Img slug="opp-west-rim" sizes="(min-width: 900px) 80vw, 100vw" /><figcaption class="placard"><span class="cap">Opportunity’s view toward the west rim of Endeavour Crater, August 2011.</span><span>{ground.credit} · {ground.nasaId}</span></figcaption></figure>
     </div>
   </section>
 
@@ -243,8 +243,8 @@ const halls = [
   .d-marker .lbl { font-family: var(--font-mono); font-size: 0.8rem; color: var(--fg); background: rgb(8 13 28 / 0.75); padding: 6px 10px; border-radius: var(--r-1); line-height: 1.35; white-space: nowrap; }
   .d-marker small { color: var(--warning); }
   .d-hud { position: absolute; left: var(--gutter); bottom: 28px; z-index: 4; background: rgb(8 13 28 / 0.6); padding: 8px 12px; border-radius: var(--r-1); }
-  .pano-cap { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 80px; z-index: 4; justify-content: center; }
-  .d-credit { position: absolute; right: var(--gutter); bottom: 22px; z-index: 4; max-width: 50ch; text-align: right; }
+  .pano-cap { position: absolute; left: var(--gutter); bottom: 28px; z-index: 4; max-width: min(54vw, calc(100vw - 2 * var(--gutter) - 440px)); background: rgb(8 13 28 / 0.72); padding: 8px 12px; border-radius: var(--r-1); }
+  .d-credit { position: absolute; right: var(--gutter); bottom: 28px; z-index: 4; max-width: 46ch; text-align: right; background: rgb(8 13 28 / 0.72); padding: 8px 12px; border-radius: var(--r-1); color: var(--muted); }
   .d-line { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); width: min(92vw, 980px); text-align: center; display: grid; justify-items: center; gap: 22px; }
   .d-line.l1 { top: 14vh; }
   .d-line.l1b { top: 12vh; }
@@ -263,8 +263,8 @@ const halls = [
     .d-line.l1, .d-line.l1b, .d-line.l2 { top: 10svh; }
     .d-big { font-size: var(--step-3); }
     .d-hud { bottom: 76px; font-size: 0.72rem; }
-    .pano-cap { bottom: 96px; justify-content: flex-start; font-size: 0.72rem; }
-    .d-credit { left: var(--gutter); right: var(--gutter); text-align: left; bottom: 12px; font-size: 0.7rem; }
+    .pano-cap { bottom: 132px; font-size: 0.72rem; max-width: calc(100vw - 2 * var(--gutter)); }
+    .d-credit { left: var(--gutter); right: var(--gutter); text-align: left; bottom: 12px; font-size: 0.7rem; max-width: none; }
     .d-marker .lbl { font-size: 0.72rem; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -276,8 +276,6 @@ const halls = [
     .d-hud, .d-marker, .j-scrim, .scroll-cue { display: none; }
     .d-line, .pano-cap, .d-credit { position: static; transform: none !important; left: auto; width: auto; text-align: left; justify-items: start; margin: var(--s-7) auto; padding-inline: var(--gutter); max-width: var(--maxw); }
     .rm-only { display: grid; gap: var(--s-6); padding-bottom: var(--section); }
-    .rm-pano { overflow-x: auto; height: 46vh; max-height: 420px; }
-    .rm-pano :global(img) { height: 100%; width: auto; max-width: none; }
   }
 
   /* ── Why ── */

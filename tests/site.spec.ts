@@ -242,7 +242,7 @@ test('journey film scrubs with scroll from the hero', async ({ page }) => {
   const w1 = await page.locator('[data-vw]').textContent();
   await page.evaluate((y) => window.scrollTo(0, y), H * 4);
   await expect.poll(() => page.locator('[data-vw]').textContent()).not.toBe(w1);
-  await page.evaluate((y) => window.scrollTo(0, y), H * 8.5);
+  await page.evaluate((y) => window.scrollTo(0, y), H * 9.5);
   await expect.poll(() => page.locator('[data-journey-video]').evaluate((v: HTMLVideoElement) => v.currentTime / v.duration)).toBeGreaterThan(0.9);
 });
 

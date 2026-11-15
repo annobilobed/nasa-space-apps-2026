@@ -4,8 +4,9 @@ Phases (one unbroken camera move, scrubbed by scroll on the homepage):
   A  hero      : Mars large in the lower right (the hero composition), stars behind,
                  drifting to the centre of the frame while turning towards Meridiani
   B  descent   : zoom from orbit to Endeavour Crater
-  C  landing   : the orbital view dissolves into Opportunity's final ground panorama
-  D  panorama  : a gentle pan across the panorama (PIA22909)
+  C  landing   : the orbital view dissolves into Opportunity's own colour view of the plain
+  D  drive     : forward motion across that ground towards Endeavour's west rim (PIA14508),
+                 simulated from the single photo with a flat ground-plane projection
 
 Every pixel is a projection of NASA imagery:
   colour  : Viking MDIM 2.1 global colour mosaic (Mars Trek, zoom 4)
@@ -113,7 +114,7 @@ PORTRAIT = H > W
 S = min(W, H)
 
 # ── Frame budget ─────────────────────────────────────────────
-NA, NB, NC, ND = 48, 120, 36, 72
+NA, NB, NC, ND = 48, 120, 36, 96
 N = NA + NB + NC + ND
 
 # ── Planet keyframes (screen centre and radius in px) ───────
@@ -140,25 +141,30 @@ for _ in range(int(W * H / 1500)):
     stars[y0:y1, x0:x1] += b * np.exp(-((gx - sx) ** 2 + (gy - sy) ** 2) / (2 * r * r))
 STARS = np.clip(stars, 0, 255)[..., None] * np.array([0.93, 0.95, 1.0], np.float32)
 
-# ── Ground panorama ─────────────────────────────────────────
-PANO = Image.open('assets-src/nasa/PIA22909.jpg').convert('RGB')
-pa = np.asarray(PANO, np.float32)
-pmask = np.clip((pa.max(axis=2) - 6) / 14, 0, 1)                 # the mosaic's black gaps become navy
-pmask = np.asarray(Image.fromarray((pmask * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.5)), np.float32) / 255
-PANO_RGBA = Image.fromarray(np.dstack([pa, pmask * 255]).astype(np.uint8), 'RGBA')
-PH = (0.40 if PORTRAIT else 0.56) * H                             # displayed panorama height (gentle zoom)
-PW = PH * PANO.width / PANO.height
-PY = (0.47 if PORTRAIT else 0.46) * H                             # vertical centre
+# ── Ground drive: Opportunity's real colour view toward Endeavour's west rim (PIA14508, Aug 2011).
+# Forward motion is simulated over the photo's flat ground plane: near ground streams towards the
+# viewer and grows, the distant rim hills approach only slightly (they are kilometres away).
+GROUND = np.asarray(Image.open('assets-src/nasa/PIA14508.jpg').convert('RGB')).astype(np.float32)
+GSH, GSW, _ = GROUND.shape
+G_YH = 0.302 * GSH                                   # horizon row of the flat plain in the photo
+G_SCALE = max(W / GSW, H / GSH)                      # cover-fit
+DRIVE_MAX = 1.25 / (GSH - G_YH)                      # at the end the bottom row samples ~2.25x farther away
 
-def pano_frame(pan, scale):
-    """Panorama composited on navy. pan 0 = left end, 1 = right end; scale >= 1 zooms around the frame centre."""
-    h = PH * scale; w = PW * scale
-    x_left = lerp(0, W - PW, pan) - (w - PW) * 0.5
-    y_top = PY - h / 2
-    img = PANO_RGBA.resize((max(1, int(round(w))), max(1, int(round(h)))), Image.LANCZOS)
-    canvas = Image.new('RGBA', (W, H), (8, 13, 28, 255))
-    canvas.alpha_composite(img, (int(round(x_left)), int(round(y_top))))
-    return np.asarray(canvas.convert('RGB'), np.float32)
+def drive_frame(D, zoom=1.0):
+    """D 0..1 = distance driven; zoom >= 1 enlarges around the frame centre (used while landing)."""
+    bob = math.sin(D * 22) * 1.6 + math.sin(D * 61) * 0.5           # gentle vehicle bob
+    sway = math.sin(D * 9) * 2.0                                     # and a little steering sway
+    sc = G_SCALE * zoom
+    sx = (xs0 - W / 2 + sway) / sc + GSW / 2
+    sy = (ys0 - H / 2 + bob) / sc + GSH / 2
+    dy = sy - G_YH
+    ground = dy > 0.5
+    d = D * DRIVE_MAX
+    Zp = 1.0 / np.maximum(dy, 0.5); Z = Zp + d
+    far = 1 + 0.05 * D
+    sy2 = np.where(ground, G_YH + 1.0 / Z, G_YH + (sy - G_YH) / far)
+    sx2 = np.where(ground, GSW / 2 + (sx - GSW / 2) * (Zp / Z), GSW / 2 + (sx - GSW / 2) / far)
+    return bilinear(GROUND, sx2 - 0.5, sy2 - 0.5)
 
 def planet_frame(cx, cy, Rpx, lat_deg, lon_deg, star_amt):
     lat_c, lon_c = math.radians(lat_deg), math.radians(lon_deg)
@@ -222,12 +228,13 @@ for i in range(N):
         t = (i - NA - NB) / (NC - 1)
         Rpx = R1 * (1 + 0.25 * (1 - (1 - t) ** 2))     # keep easing in a little
         orb, mpp = planet_frame(A1[0], A1[1], Rpx, TARGET[0], TARGET[1], 0)
-        gnd = pano_frame(0.0, lerp(1.12, 1.0, ease(t)))
+        gnd = drive_frame(0.0, lerp(1.15, 1.0, ease(t)))
         a = ease(t)
         img = orb * (1 - a) + gnd * a
-    else:                                              # D: pan across the panorama
-        t = ease((i - NA - NB - NC) / (ND - 1))
-        img = pano_frame(t, 1.0); mpp = 0
+    else:                                              # D: drive forward across the plain
+        t = (i - NA - NB - NC) / (ND - 1)
+        t = t * t * (3 - 2 * t) * 0.35 + t * 0.65      # roll away gently, cruise, ease to a stop
+        img = drive_frame(t); mpp = 0
     Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).save(f'{out}/f{i:03d}.jpg', quality=92)
     if i % 24 == 0: print(f'frame {i}/{N}', flush=True)
 print('done', out, N, 'frames')
