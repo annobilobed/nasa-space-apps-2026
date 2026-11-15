@@ -27,17 +27,13 @@ const halls = [
 ];
 ---
 <Base title="AIRXON" description="An immersive digital museum of the machines humanity sent to the Moon, Mars and beyond: what they were, what they found, and where they are now." current="home">
-  <script is:inline slot="head">
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.documentElement.classList.add('intro-pending');
-      setTimeout(function () { document.documentElement.classList.remove('intro-pending'); }, 4200);
-    }
-  </script>
   <link slot="head" rel="preload" as="image" href="/media/journey/journey-landscape-poster.jpg" media="(min-aspect-ratio: 10/11)" />
   <link slot="head" rel="preload" as="image" href="/media/journey/journey-portrait-poster.jpg" media="(max-aspect-ratio: 10/11)" />
 
   <!-- ════ THE JOURNEY: one continuous, scroll-scrubbed film rendered from NASA data.
        Hero planet → centred globe → descent to Endeavour Crater → landing → Opportunity's last panorama. ════ -->
+  <!-- The pin spacer is in the HTML so GSAP never moves the section in the page (moving it would restart the opening animation). -->
+  <div class="journey-spacer" data-journey-spacer>
   <section class="journey" id="journey" data-journey aria-labelledby="hero-title">
     <div class="j-stage" data-intro="planet">
       <video class="j-video" data-journey-video muted playsinline preload="auto" poster="/media/journey/journey-landscape-poster.jpg" aria-hidden="true" tabindex="-1">
@@ -55,7 +51,7 @@ const halls = [
     <div class="hero-copy wrap" data-hero-copy>
       <p class="brandline" data-intro="brand"><span class="bl-name">AIRXON</span><span>Echoes Beyond Earth</span></p>
       <h1 id="hero-title" data-intro="headline">
-        {words.map((w, i) => <>{i > 0 && ' '}<span class="w"><span>{w}</span></span></>)}
+        {words.map((w, i) => <>{i > 0 && ' '}<span class="w"><span style={`--i:${i}`}>{w}</span></span></>)}
       </h1>
       <p class="sub" data-intro="sub">Across distant worlds, machines went where humanity could not. They explored, discovered, endured and left behind stories worth remembering.</p>
       <div class="cta" data-intro="cta">
@@ -92,6 +88,7 @@ const halls = [
       <figure class="figure"><Img slug="opp-west-rim" sizes="(min-width: 900px) 80vw, 100vw" /><figcaption class="placard"><span class="cap">Opportunity’s view toward the west rim of Endeavour Crater, August 2011.</span><span>{ground.credit} · {ground.nasaId}</span></figcaption></figure>
     </div>
   </section>
+  </div>
 
   <!-- ════ WHY IT MATTERS ════ -->
   <section class="section why" aria-labelledby="why-h">
@@ -234,9 +231,22 @@ const halls = [
   .scroll-cue svg { width: 16px; height: 24px; }
   .scroll-cue .dot { animation: cue 1.8s var(--ease-in-out) infinite; }
   @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(8px); opacity: 0; } 100% { opacity: 0; } }
-  :global(.intro-pending) [data-intro] { opacity: 0; }
-  :global(.intro-pending) [data-intro='headline'] { opacity: 1; }
-  :global(.intro-pending) [data-intro='headline'] .w > span { visibility: hidden; }
+  /* Opening sequence: pure CSS, so it starts on the very first frame the page is drawn
+     (in step with the page transition) instead of waiting for JavaScript to download.
+     "backwards" fill: nothing lingers afterwards to fight the scroll animation. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-intro='planet'] { animation: i-planet 1.6s cubic-bezier(.33, 1, .68, 1) backwards; }
+    [data-intro='brand'] { animation: i-up 700ms var(--ease-out) 60ms backwards; }
+    [data-intro='headline'] .w > span { animation: i-word 820ms cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(120ms + var(--i) * 55ms); }
+    [data-intro='sub'] { animation: i-up 700ms var(--ease-out) 520ms backwards; }
+    [data-intro='cta'] > * { animation: i-up 600ms var(--ease-out) 640ms backwards; }
+    [data-intro='cta'] > * + * { animation-delay: 700ms; }
+    [data-intro='meta'] { animation: i-fade 800ms ease-out 850ms backwards; }
+  }
+  @keyframes i-planet { from { opacity: 0; transform: scale(1.04); } }
+  @keyframes i-word { from { transform: translateY(115%); } }
+  @keyframes i-up { from { opacity: 0; transform: translateY(14px); } }
+  @keyframes i-fade { from { opacity: 0; } }
 
   .d-marker { position: absolute; left: 0; top: 0; z-index: 3; opacity: 0; margin: -17px 0 0 -17px; height: 34px; pointer-events: none; display: flex; align-items: center; gap: 12px; }
   .d-marker .ring { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--warning); flex: none; }

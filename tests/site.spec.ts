@@ -430,3 +430,22 @@ test('phone: menu tabs transition smoothly and "Home" shows beside the logo', as
     await page.evaluate(() => sessionStorage.removeItem('vt'));
   }
 });
+
+test('hero headline animates straight away, once, without waiting for scripts', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as any).__starts = 0;
+    document.addEventListener('animationstart', (e) => { if ((e as AnimationEvent).animationName === 'i-word') (window as any).__starts++; }, true);
+  });
+  const words = await (async () => { await page.goto('index.html'); return page.locator('#hero-title .w > span').count(); })();
+  await page.waitForLoadState('load');
+  await page.waitForTimeout(2500);
+  expect(await page.evaluate(() => (window as any).__starts)).toBe(words); // each word once, no replay when the film pins
+  // and it does not depend on JavaScript at all
+  const p2 = await page.context().newPage();
+  await p2.route(/\.js$/, (r) => r.abort());
+  await p2.goto('index.html');
+  await p2.waitForTimeout(1500);
+  const last = p2.locator('#hero-title .w > span').last();
+  const [a, b] = await Promise.all([last.evaluate((e) => e.getBoundingClientRect().top), last.evaluate((e) => e.parentElement!.getBoundingClientRect().top)]);
+  expect(Math.abs(a - b)).toBeLessThan(2);
+});

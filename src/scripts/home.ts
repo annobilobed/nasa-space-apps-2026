@@ -17,23 +17,7 @@ export function initHome() {
   hook(getLenis());
   window.addEventListener('airxon:lenis', (e) => hook((e as CustomEvent).detail));
 
-  // ── Opening sequence (≈2.6 s). Links are focusable from the first frame and
-  //    the sequence never blocks input; any interaction finishes it instantly.
-  const intro = gsap.timeline({ defaults: { ease: 'power3.out' }, onComplete: () => root.classList.remove('intro-pending') });
-  if (reduce) {
-    root.classList.remove('intro-pending');
-  } else {
-    intro
-      .fromTo('[data-intro="planet"]', { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 2.2, ease: 'power2.out' }, 0.1)
-      .fromTo('[data-intro="brand"]', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.9 }, 0.5)
-      .fromTo('[data-intro="headline"] .w > span', { yPercent: 115, y: 0 }, { yPercent: 0, y: 0, duration: 1.0, stagger: 0.055 }, 0.75)
-      .fromTo('[data-intro="sub"]', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.9 }, 1.45)
-      .fromTo('[data-intro="cta"] > *', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.08 }, 1.65)
-      .fromTo('[data-intro="meta"]', { opacity: 0 }, { opacity: 1, duration: 1 }, 2.0);
-    root.classList.remove('intro-pending'); // fromTo() has rendered its start state
-    const finish = () => { if (intro.progress() < 1) intro.progress(1); };
-    ['wheel', 'keydown', 'touchstart', 'pointerdown'].forEach((ev) => window.addEventListener(ev, finish, { once: true, passive: true }));
-  }
+  // The opening sequence is pure CSS (index.astro), so it starts with the first frame.
 
   // ── Featured hardware rail buttons.
   const rail = document.querySelector<HTMLElement>('[data-rail]');
@@ -97,7 +81,7 @@ export function initHome() {
   const HOLD = 30; // a short hold on the final message
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
-    scrollTrigger: { trigger: scene, start: 'top top', end: () => `+=${window.innerHeight * 10}`, scrub: 0.5, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
+    scrollTrigger: { trigger: scene, start: 'top top', end: () => `+=${window.innerHeight * 10}`, scrub: 0.5, pin: true, pinSpacer: document.querySelector<HTMLElement>('[data-journey-spacer]') ?? undefined, anticipatePin: 1, invalidateOnRefresh: true },
   });
   const film = { f: 0 };
   tl.to(film, { f: FRAMES - 1, duration: FRAMES - 1, onUpdate: () => {
