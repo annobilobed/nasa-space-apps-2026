@@ -1,7 +1,7 @@
 {
   "name": "airxon",
   "version": "1.0.0",
-  "description": "",
+  "description": "AIRXON: Echoes Beyond Earth, an interactive museum of NASA hardware left on the Moon, Mars and in deep space (NASA Space Apps 2026). Code written with AI assistance (Claude); see AI-DISCLOSURE.md.",
   "scripts": {
     "dev": "astro dev",
     "media": "node scripts/build-media.mjs",
@@ -26,5 +26,15 @@
     "sharp": "^0.35.5"
   },
   "type": "module",
-  "private": true
+  "private": true,
+  "ai": {
+    "disclosure": "AI-DISCLOSURE.md",
+    "tools": [
+      "Claude (Anthropic) via Claude Code: code and text",
+      "Google Flow: documentary video",
+      "ElevenLabs: documentary voice-over",
+      "Whisper: subtitles",
+      "CapCut: editing"
+    ]
+  }
 }

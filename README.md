@@ -86,6 +86,10 @@ Each file stays under 20 MB. Subtitles (`opportunity-the-last-signal.en.vtt`) we
 
 **Team members:** edit `src/data/team.ts`.
 
+## AI disclosure
+
+This project was built with AI assistance. **Claude (Anthropic), in Claude Code, wrote most of the code and drafted the text**, under the team's direction and review. The documentary was generated with Google Flow (video) and ElevenLabs (voice), and edited in CapCut. Full details, and where each use is indicated, are in [AI-DISCLOSURE.md](AI-DISCLOSURE.md).
+
 ## Content rules
 
 1. NASA and official agency pages are the primary sources; peer-reviewed papers are next. Cite everything.
