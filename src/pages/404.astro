@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+---
+<Base title="Signal lost" description="This page could not be found." current="">
+  <section class="nf">
+    <div class="nf-img" aria-hidden="true"><Img slug="opp-last-images" sizes="400px" decorative /></div>
+    <div class="wrap nf-copy">
+      <p class="kicker">Error 404</p>
+      <h1>Signal lost.</h1>
+      <p class="lede">We couldn’t find that page. Like a rover in a dust storm, it may have gone quiet, or it never existed.</p>
+      <div class="cta"><a class="btn btn-primary" href="/">Return home</a><a class="btn btn-secondary" href="/archive/">Search the archive</a></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { min-height: 90svh; display: grid; align-items: center; position: relative; overflow: hidden; }
+  .nf-img { position: absolute; inset: 0; opacity: 0.18; }
+  .nf-img :global(img) { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; filter: blur(1px); }
+  .nf-copy { position: relative; display: grid; gap: 18px; padding-top: var(--nav-h); }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+</style>

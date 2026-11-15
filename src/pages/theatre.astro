@@ -1,0 +1,205 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Figure from '../components/Figure.astro';
+import { documentaries, archiveFilms } from '../data/documentaries';
+import { bySlug, fmtDate } from '../data/hardware';
+import { getMedia, src } from '../lib/media';
+import { readFileSync } from 'node:fs';
+const vttText = (p: string) => { try { return readFileSync(`public${p}`, 'utf8'); } catch { return ''; } };
+
+const doc = documentaries[0];                       // AIRXON's own film (in production until a video is supplied)
+const playable = [...(doc.video ? [doc] : []), ...archiveFilms];
+const poster = getMedia(doc.poster);
+const opp = bySlug('opportunity')!;
+const facts: [string, string][] = [
+  ['Launched', fmtDate('2003-07-07') + ' (Eastern time)'], ['Landed', fmtDate('2004-01-25') + ' UTC'], ['Designed to last', '90 sols'],
+  ['Last communication', fmtDate('2018-06-10') + ', sol 5,111'], ['Mission declared complete', fmtDate('2019-02-13')],
+  ['Distance driven', '45.16 km (28.06 miles)'], ['Images returned', 'More than 217,000'],
+];
+---
+<Base title="Beyond the Silence: Documentary theatre" description="Watch NASA's own archive films about Opportunity, and preview AIRXON's documentary Opportunity: The Last Signal." current="theatre" image={src(poster, poster.widths[1])}>
+  <section class="theatre" aria-labelledby="th-title">
+    <div class="wrap th-head">
+      <p class="kicker">Beyond the Silence</p>
+      <h1 id="th-title">Documentary theatre</h1>
+      <p class="lede">Films about the machines that went where we could not. Now showing: NASA’s own reports from Opportunity’s first months on Mars.</p>
+    </div>
+
+    <div class="wrap">
+      <div class="player" data-player>
+        <div class="screen">
+          {playable.map((f, i) => (
+            <video data-video data-film={f.slug} preload={i === 0 ? 'metadata' : 'none'} playsinline poster={f.videoPoster ?? src(getMedia(f.poster), getMedia(f.poster).widths[1])}
+              width={f.video!.width} height={f.video!.height} hidden={i !== 0} aria-label={f.title}>
+              <source src={f.video!.src} type={f.video!.type} />
+              <source src={f.video!.src.replace(/\.mp4$/, '.webm')} type="video/webm" />
+              {f.captions && <track kind="captions" srclang={f.captions.srclang} label={f.captions.label} default data-vtt={f.slug} />}
+              <p>Your browser cannot play this video. <a href={f.video!.src}>Open the video file</a>.</p>
+            </video>
+          ))}
+          {playable.filter((f) => f.captions).map((f) => <script type="text/plain" data-vtt-text={f.slug} set:html={vttText(f.captions!.src)} />)}
+          <button type="button" class="big-play" data-big-play aria-label="Play">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4l10 6-10 6z" fill="currentColor"/></svg>
+          </button>
+          <p class="loading mono" data-loading hidden>Loading…</p>
+          <p class="error" data-error hidden>This video could not be loaded. <a data-error-link href={playable[0].video!.src}>Open the file directly</a>.</p>
+        </div>
+        <div class="controls" role="group" aria-label="Video controls">
+          <button type="button" class="ctl play" data-play aria-label="Play">
+            <svg class="i-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4l10 6-10 6z" fill="currentColor"/></svg>
+            <svg class="i-pause" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 4h3.5v12H5zM11.5 4H15v12h-3.5z" fill="currentColor"/></svg>
+          </button>
+          <span class="time mono" data-time>0:00 / 0:00</span>
+          <input class="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" data-seek />
+          <button type="button" class="ctl" data-mute aria-label="Mute" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8h3l4-3v10l-4-3H3z" fill="currentColor"/><path class="wave" d="M13 7.5a3.5 3.5 0 010 5M15 5.5a6 6 0 010 9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+          <button type="button" class="ctl cc" data-cc aria-label="CC (subtitles)" aria-pressed="true">CC</button>
+          <button type="button" class="ctl" data-fs aria-label="Full screen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="now" aria-live="polite">
+        {playable.map((f, i) => (
+          <div class="now-item" data-now={f.slug} hidden={i !== 0}>
+            <p class="mono now-meta">{f.subtitle} · {f.runtime}{f.kind === 'nasa-archive' && ' · archive footage at its original resolution'}</p>
+            <h2>{f.title}</h2>
+            <p class="muted">{f.description}</p>
+            <p class="placard"><span>Credit: {f.credit ?? 'AIRXON'}{f.sourceUrl && <> · <a href={f.sourceUrl} rel="noopener">Original at NASA</a></>}</span><span>Subtitles: {f.captions ? f.captions.label : 'none'}</span></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section--tight" aria-labelledby="prog-h">
+    <h2 id="prog-h" class="ph-h">Programme</h2>
+    <ul class="programme">
+      {playable.map((f, i) => (
+        <li>
+          <button type="button" class="film" data-select-film={f.slug} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <span class="film-img"><Img slug={f.poster} sizes="(min-width: 900px) 30vw, 92vw" decorative /></span>
+            <span class="film-body"><span class="mono film-meta">{f.subtitle} · {f.runtime}</span><strong>{f.title}</strong><span class="film-go">Play this film</span></span>
+          </button>
+        </li>
+      ))}
+      {!doc.video && (
+        <li class="film soon">
+          <span class="film-img"><Img slug={doc.poster} sizes="(min-width: 900px) 30vw, 92vw" decorative position="50% 60%" /></span>
+          <span class="film-body"><span class="mono film-meta soon-tag">In production · {doc.runtime}</span><strong>{doc.title}</strong><span class="muted">{doc.description}</span></span>
+        </li>
+      )}
+    </ul>
+  </section>
+
+  {!doc.video && (
+    <section class="wrap section--tight th-grid" aria-labelledby="ls-h">
+      <div class="stack-lg">
+        <section>
+          <h2 id="ls-h">Coming soon: {doc.title}</h2>
+          <p class="muted">AIRXON’s own five-minute documentary is still being made. When it is released it will appear first in the programme above, with subtitles and full-screen viewing.</p>
+          <ol class="outline">{doc.outline.map((o) => <li><span class="mono">{o.t}</span><span>{o.title}</span></li>)}</ol>
+          <p class="muted small">Planned structure. It may change in the final cut. Full credits and a list of every NASA image and clip used will be published with the film.</p>
+        </section>
+      </div>
+      <aside class="facts-card" aria-labelledby="mf-h">
+        <h2 id="mf-h">Mission facts</h2>
+        <dl class="facts">{facts.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl>
+        <p class="muted small">Source: NASA Release 19-004 and NASA Science.</p>
+      </aside>
+    </section>
+  )}
+
+  <section class="wrap section--tight" aria-labelledby="photos-h">
+    <h2 id="photos-h" class="ph-h">Related photographs</h2>
+    <div class="photos">{doc.relatedImages.map((s) => <Figure slug={s} sizes="(min-width: 900px) 30vw, 92vw" ratio="4/3" />)}</div>
+  </section>
+
+  <section class="wrap section--tight" aria-labelledby="src-h">
+    <h2 id="src-h" class="ph-h">Source references</h2>
+    <ul class="sources">
+      {archiveFilms.map((f) => <li><span><a href={f.sourceUrl} rel="noopener">{f.title}</a><small>{f.credit}</small></span></li>)}
+      {opp.sources.map((s) => <li><span><a href={s.url} rel="noopener">{s.title}</a><small>{s.publisher}</small></span></li>)}
+    </ul>
+  </section>
+
+  <section class="wrap section--tight" aria-labelledby="sugg-h">
+    <h2 id="sugg-h" class="ph-h">Suggested stories</h2>
+    <ul class="sugg">
+      <li><a href="/stories/opportunity/"><strong>Opportunity: from landing to legacy</strong><span>The full six-chapter story, with an interactive timeline.</span></a></li>
+      <li><a href="/archive/spirit/"><strong>Spirit</strong><span>Opportunity’s twin on the other side of Mars.</span></a></li>
+      <li><a href="/discoveries/"><strong>What the machines discovered</strong><span>Water, marsquakes, and a Moon drifting away from Earth.</span></a></li>
+      <li><a href="/where/#opportunity"><strong>Where is Opportunity now?</strong><span>Find Perseverance Valley on the Mars map.</span></a></li>
+    </ul>
+  </section>
+</Base>
+
+<script>
+  import { initPlayer } from '../scripts/player';
+  initPlayer();
+</script>
+
+<style>
+  .theatre { padding-top: calc(var(--nav-h) + 56px); background: #04070f; padding-bottom: var(--s-7); }
+  .th-head { display: grid; gap: 16px; margin-bottom: var(--s-6); }
+  .player { border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; background: #000; }
+  .screen { position: relative; aspect-ratio: 16 / 9; background: #000; }
+  .screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .screen video[hidden] { display: none; }
+  .big-play { position: absolute; left: 50%; top: 50%; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; border: 0; background: var(--violet); color: var(--navy); display: grid; place-items: center; cursor: pointer; transition: transform var(--t-fast) var(--ease-out), opacity var(--t-base); }
+  .big-play svg { width: 34px; height: 34px; margin-left: 4px; }
+  .big-play:hover { transform: scale(1.05); }
+  .player.is-playing .big-play, .player.has-started .big-play { opacity: 0; pointer-events: none; }
+  .loading { position: absolute; left: 16px; bottom: 12px; font-size: 0.8rem; color: var(--muted); }
+  .error { position: absolute; inset: auto 16px 16px 16px; background: rgb(8 13 28 / 0.9); padding: 12px 16px; border-radius: var(--r-1); border: 1px solid var(--error); }
+  .controls { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface); border-top: 1px solid var(--border); }
+  .ctl { width: 44px; height: 44px; display: inline-grid; place-items: center; border: 1px solid var(--border); background: transparent; border-radius: var(--r-1); cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+  .ctl svg { width: 18px; height: 18px; }
+  .ctl:hover:not(:disabled) { border-color: var(--star); }
+  .ctl:disabled, .seek:disabled { opacity: 0.4; cursor: not-allowed; }
+  .play { background: var(--violet); color: var(--navy); border-color: var(--violet); }
+  .play .i-pause { display: none; }
+  .player.is-playing .play .i-play { display: none; }
+  .player.is-playing .play .i-pause { display: block; }
+  .ctl[aria-pressed='true'].cc { background: var(--star); color: var(--navy); }
+  .ctl[data-mute][aria-pressed='true'] .wave { display: none; }
+  .seek { flex: 1; accent-color: var(--violet); min-height: 44px; }
+  .time { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+  @media (max-width: 520px) { .time { display: none; } }
+  .now { padding-top: var(--s-5); }
+  .now-item { display: grid; gap: 10px; }
+  .now-item[hidden] { display: none; }
+  .now-item h2 { font-size: var(--step-3); }
+  .now-meta { font-size: 0.8rem; color: var(--cyan); }
+  .ph-h, .th-grid h2 { font-size: var(--step-3); margin-bottom: var(--s-4); }
+  .programme { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 18px; }
+  .programme > li { display: flex; max-width: none; }
+  .film { display: flex; flex-direction: column; width: 100%; text-align: left; padding: 0; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); overflow: hidden; cursor: pointer; transition: border-color var(--t-fast); }
+  .film:hover { border-color: var(--border-strong); }
+  .film[aria-pressed='true'] { border-color: var(--violet); }
+  .film-img { display: block; aspect-ratio: 16 / 9; overflow: hidden; }
+  .film-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .film-body { display: grid; gap: 8px; padding: 16px 18px 20px; }
+  .film-body strong { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.1; }
+  .film-meta { font-size: 0.75rem; color: var(--faint); }
+  .film-go { color: var(--cyan); font-weight: 700; font-size: 0.9rem; }
+  .film[aria-pressed='true'] .film-go::after { content: ' · now showing'; color: var(--muted); font-weight: 400; }
+  .soon { cursor: default; }
+  .soon-tag { color: var(--warning); }
+  .soon .film-img :global(img) { filter: grayscale(0.4); opacity: 0.8; }
+  .th-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--s-8); }
+  .outline { list-style: none; padding: 0; border-top: 1px solid var(--border); margin-top: var(--s-4); }
+  .outline li { display: grid; grid-template-columns: 90px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); max-width: none; }
+  .outline .mono { color: var(--cyan); font-size: 0.82rem; padding-top: 3px; }
+  .small { font-size: 0.85rem; margin-top: 10px; }
+  .facts-card { align-self: start; padding: 24px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); display: grid; gap: 14px; }
+  @media (max-width: 900px) { .th-grid { grid-template-columns: 1fr; } }
+  .photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  @media (max-width: 900px) { .photos { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .photos { grid-template-columns: 1fr; } }
+  .sugg { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .sugg li { max-width: none; }
+  .sugg a { display: grid; gap: 4px; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--r-2); text-decoration: none; transition: border-color var(--t-fast); min-height: 44px; }
+  .sugg a:hover { border-color: var(--star); }
+  .sugg span { color: var(--muted); font-size: 0.92rem; }
+  @media (max-width: 700px) { .sugg { grid-template-columns: 1fr; } }
+</style>

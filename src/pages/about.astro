@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import { team } from '../data/team';
+import { hardware } from '../data/hardware';
+---
+<Base title="About AIRXON" description="Why AIRXON exists: an independent educational project preserving the stories of the machines humanity left on the Moon, Mars and beyond." current="about">
+  <header class="ab-hero">
+    <div class="ab-img" aria-hidden="true"><Img slug="moon-globe" sizes="60vw" decorative /></div>
+    <div class="wrap ab-copy">
+      <h1>Every machine has a story. Every discovery leaves a legacy.</h1>
+      <p class="lede">AIRXON: Echoes Beyond Earth is an interactive digital museum for the robots, rovers and instruments humanity sent to other worlds.</p>
+    </div>
+  </header>
+
+  <div class="wrap ab-body">
+    <section class="ab-sec" aria-labelledby="v-h">
+      <h2 id="v-h">The vision</h2>
+      <p>Machines went where humans could not. Some finished their work, some stopped answering, and some are still working today. Even when a machine stops working, its story does not have to end. AIRXON keeps those stories in one place and makes them easy to explore, especially for school-age learners and young space enthusiasts.</p>
+    </section>
+    <section class="ab-sec" aria-labelledby="c-h">
+      <h2 id="c-h">The challenge</h2>
+      <p>AIRXON was created for the <strong>2026 NASA International Space Apps Challenge</strong>, in response to the challenge <em>“Abandoned but Not Forgotten: Storytelling about NASA’s Discarded Equipment on the Moon and Mars.”</em> The museum focuses first on NASA hardware on the Moon and Mars, then extends into deep space.</p>
+    </section>
+    <section class="ab-sec" aria-labelledby="e-h">
+      <h2 id="e-h">Why we built it</h2>
+      <p>Missions usually make the news twice: when they launch and when they end. Everything in between, and everything after, fades. Yet the hardware is still out there, and what it taught us still shapes how we explore. We wanted a place where a student can start with one photograph and end up understanding why that machine mattered.</p>
+    </section>
+    <section class="ab-sec" aria-labelledby="p-h">
+      <h2 id="p-h">Our commitments</h2>
+      <ul class="commit">
+        <li><strong>Accuracy first.</strong> Facts come from NASA and other primary sources, and every page lists them. When something is uncertain, we say so.</li>
+        <li><strong>Honest labels.</strong> We use precise status words instead of calling everything “abandoned”, and we mark approximate locations clearly.</li>
+        <li><strong>Real imagery.</strong> Photographs are authentic and credited. Artist’s concepts, simulations, diagrams and rendered globes are labelled.</li>
+        <li><strong>Open to everyone.</strong> Readable text, keyboard access, reduced-motion support and pages that still work on slow connections.</li>
+        <li><strong>Built to grow.</strong> The collection lives in one structured data file, so new machines can be added without rebuilding the site. It currently holds {hardware.length} entries.</li>
+      </ul>
+    </section>
+    <section class="ab-sec" aria-labelledby="t-h">
+      <h2 id="t-h">The team</h2>
+      {team.length ? (
+        <ul class="team">{team.map((m) => <li><strong>{m.name}</strong><span>{m.role}</span>{m.location && <small>{m.location}</small>}</li>)}</ul>
+      ) : (
+        <p class="muted">AIRXON is being built by a Space Apps team. Team member profiles will be listed here.</p>
+      )}
+    </section>
+    <section class="ab-sec disclaimer-box" aria-labelledby="d-h">
+      <h2 id="d-h">Independent and unofficial</h2>
+      <p>AIRXON is an independent educational project. It is not an official NASA product, and NASA has not endorsed it. NASA imagery is used under the <a href="https://www.nasa.gov/nasa-brand-center/images-and-media/" rel="noopener">NASA Images and Media Usage Guidelines</a>. We do not use the NASA insignia or the Space Apps logo. For every image source and the AI tools used, see <a href="/credits/">sources &amp; credits</a>.</p>
+    </section>
+  </div>
+</Base>
+<style>
+  .ab-hero { position: relative; overflow: hidden; min-height: 80svh; display: grid; align-items: end; isolation: isolate; }
+  .ab-img { position: absolute; right: -12vw; top: 8vh; width: min(62vw, 760px); z-index: -1; opacity: 0.75; }
+  .ab-img :global(img) { width: 100%; background: none !important; }
+  .ab-copy { padding-block: calc(var(--nav-h) + 80px) var(--s-8); display: grid; gap: 20px; }
+  .ab-copy h1 { max-width: 15ch; font-size: var(--step-5); }
+  .ab-body { display: grid; gap: var(--s-8); padding-bottom: var(--s-9); max-width: 900px; margin-left: max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))); }
+  .ab-sec { display: grid; gap: 14px; }
+  .ab-sec h2 { font-size: var(--step-3); }
+  .ab-sec > p { color: var(--muted); font-size: 1.08rem; }
+  .commit { padding-left: 20px; display: grid; gap: 12px; color: var(--muted); }
+  .team { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .team li { padding: 16px; border: 1px solid var(--border); border-radius: var(--r-2); display: grid; gap: 2px; }
+  .team span, .team small { color: var(--muted); }
+  .disclaimer-box { padding: 24px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); }
+  @media (max-width: 760px) { .ab-img { width: 110vw; right: -40vw; top: 4vh; opacity: 0.4; } }
+</style>

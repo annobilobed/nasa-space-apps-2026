@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import { allMedia, KIND_LABEL } from '../lib/media';
+import { hardware, type Source } from '../data/hardware';
+
+const media = [...allMedia].sort((a, b) => a.mission.localeCompare(b.mission) || a.title.localeCompare(b.title));
+const seen = new Map<string, Source & { used: string[] }>();
+for (const h of hardware) for (const s of [...h.sources, ...(h.location.source ? [h.location.source] : [])]) {
+  const e = seen.get(s.url) ?? { ...s, used: [] };
+  if (!e.used.includes(h.short)) e.used.push(h.short);
+  seen.set(s.url, e);
+}
+const refs = [...seen.values()].sort((a, b) => a.publisher.localeCompare(b.publisher) || a.title.localeCompare(b.title));
+const missionName = (m: string) => hardware.find((h) => h.slug === m)?.short ?? m.replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+---
+<Base title="Sources & credits" description="Every source, image credit and licensing note used by AIRXON, plus a disclosure of AI tools used in making it." current="">
+  <header class="c-hero wrap">
+    <h1>Where everything comes from.</h1>
+    <p class="lede">Every fact on AIRXON is traced to a source, and every image is credited. This page lists them all.</p>
+    <nav class="c-toc" aria-label="On this page"><a href="#method">How we check facts</a><a href="#data">NASA data sources</a><a href="#media">Media credits ({media.length})</a><a href="#video">Video &amp; brand</a><a href="#refs">References ({refs.length})</a><a href="#ai">AI disclosure</a><a href="#brand">Branding</a></nav>
+  </header>
+
+  <div class="wrap c-body">
+    <section id="method" class="c-sec" aria-labelledby="m-h">
+      <h2 id="m-h">How we check facts</h2>
+      <ul class="plain">
+        <li>Dates, coordinates, status and mission details come from NASA primary sources: NASA news releases, NASA Science mission pages, and the NSSDCA Master Catalog. Where NASA pages did not give a figure, we used peer-reviewed work and named it.</li>
+        <li>A coordinate is labelled <strong>confirmed</strong> only when a published coordinate for that exact object or site is cited. Otherwise it is labelled <strong>approximate</strong>, with an explanation.</li>
+        <li>When sources disagree slightly (for example on rounding, or a date that differs by time zone), we say so on the page.</li>
+        <li>Quotations are copied word for word from NASA releases and attributed. AIRXON never invents dialogue.</li>
+        <li>Research for this version was carried out in November 2026. Missions that are still active may have moved on since then.</li>
+      </ul>
+    </section>
+
+    <section id="data" class="c-sec" aria-labelledby="d-h">
+      <h2 id="d-h">NASA data sources</h2>
+      <dl class="facts">
+        <dt>NASA Image and Video Library</dt><dd>All photographs, with titles, dates and credits taken from each asset’s official metadata. <a href="https://images.nasa.gov/" rel="noopener">images.nasa.gov</a></dd>
+        <dt>NASA Mars Trek &amp; Moon Trek</dt><dd>Global base maps for the location explorer (Viking MDIM 2.1 colour mosaic; LRO WAC global mosaic), assembled from Trek map tiles at zoom level 3. They also provide the data for the two rendered globes. <a href="https://trek.nasa.gov/" rel="noopener">trek.nasa.gov</a></dd>
+        <dt>NSSDCA Master Catalog</dt><dd>Launch dates, landing coordinates and end-of-mission details. <a href="https://nssdc.gsfc.nasa.gov/nmc/" rel="noopener">nssdc.gsfc.nasa.gov</a></dd>
+        <dt>NASA Science &amp; NASA news releases</dt><dd>Mission facts, achievements and status. <a href="https://science.nasa.gov/" rel="noopener">science.nasa.gov</a></dd>
+      </dl>
+      <p class="muted small">We could not open the official Space Apps challenge page from our build environment. The NASA services above are the data sources used. Team members should confirm that at least one appears in the challenge’s Resources list before submission.</p>
+    </section>
+
+    <section id="media" class="c-sec" aria-labelledby="me-h">
+      <h2 id="me-h">Media credits</h2>
+      <p class="muted">Each image is shown with its credit wherever it appears. Items marked as an artist’s concept, simulation, map or visualisation are not photographs.</p>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Media credits table">
+        <table class="media-table stack">
+          <thead><tr><th scope="col">Asset</th><th scope="col">Type</th><th scope="col">Mission</th><th scope="col">Credit</th><th scope="col">Original</th><th scope="col">Usage</th></tr></thead>
+          <tbody>
+            {media.map((m) => (
+              <tr>
+                <td data-l="Asset"><strong>{m.title}</strong>{m.date && <small>{m.date}</small>}</td>
+                <td data-l="Type">{KIND_LABEL[m.kind] ?? 'Photograph'}</td>
+                <td data-l="Mission">{missionName(m.mission)}</td>
+                <td data-l="Credit">{m.credit}</td>
+                <td data-l="Original"><a href={m.source} rel="noopener">{m.nasaId ?? 'NASA Trek'}</a>{m.library !== m.source && <> · <a href={m.library} rel="noopener">library</a></>}</td>
+                <td data-l="Usage" class="usage">{m.usage}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="video" class="c-sec" aria-labelledby="v-h">
+      <h2 id="v-h">Video, visualisations and brand</h2>
+      <dl class="facts">
+        <dt>Homepage journey film</dt><dd>One continuous visualisation rendered by AIRXON (<code>scripts/render-journey.py</code>): Mars in orbit, the descent to Endeavour Crater, and a dissolve into Opportunity’s real panorama (PIA22909). The orbital views are not photographs. Colour from the NASA Viking MDIM 2.1 global mosaic (NASA/JPL/USGS) and surface detail from the MRO CTX Meridiani Planum mosaic (NASA/JPL/Malin Space Science Systems), both via <a href="https://trek.nasa.gov/mars/" rel="noopener">NASA Mars Trek</a>. 276 frames, encoded as MP4 (H.264) with a WebM (VP9) fallback, scrubbed by scrolling.</dd>
+        <dt>“Opportunity finds rocks formed in water” (2004)</dt><dd>NASA / Kennedy Space Center, KSC-04-S-00074, with NASA’s caption file. <a href="https://images.nasa.gov/details/ksc_032904_wetplanet" rel="noopener">images.nasa.gov</a></dd>
+        <dt>“Spirit and Opportunity complete their primary mission” (2004)</dt><dd>NASA / Kennedy Space Center, KSC-04-S-00163, with NASA’s caption file. <a href="https://images.nasa.gov/details/ksc_050604_complete" rel="noopener">images.nasa.gov</a></dd>
+        <dt>AIRXON logo</dt><dd>Supplied by the AIRXON team. The website converts its black background to transparency so it sits on the page colour; the artwork itself is unchanged.</dd>
+      </dl>
+    </section>
+
+    <section id="refs" class="c-sec" aria-labelledby="r-h">
+      <h2 id="r-h">References</h2>
+      <ol class="sources">{refs.map((s) => <li><span><a href={s.url} rel="noopener">{s.title}</a><small>{s.publisher} · used for: {s.used.join(', ')}</small></span></li>)}</ol>
+      <p class="muted small">Story and discovery pages list more references, including the image records for specific claims.</p>
+    </section>
+
+    <section id="ai" class="c-sec" aria-labelledby="ai-h">
+      <h2 id="ai-h">AI disclosure</h2>
+      <ul class="plain">
+        <li><strong>Tool used:</strong> Claude (Anthropic), working as a coding and writing assistant inside Claude Code.</li>
+        <li><strong>What it did:</strong> it wrote the website’s code, gathered facts from the NASA sources listed above, and drafted the text. Every fact was checked against a cited source.</li>
+        <li><strong>Images:</strong> no AI-generated images are used. The diagrams (blueberry formation, Mars interior, laser ranging) are simple vector drawings written as code and labelled as diagrams. The Moon and Mars globes, and the homepage journey film are projections of NASA mosaic data made by scripts (<code>scripts/render-globe.py</code>, <code>scripts/render-journey.py</code>), labelled as visualisations. The AIRXON logo was supplied by the team.</li>
+        <li><strong>Human review:</strong> the AIRXON team is responsible for reviewing the content before publication.</li>
+      </ul>
+    </section>
+
+    <section id="brand" class="c-sec" aria-labelledby="b-h">
+      <h2 id="b-h">Branding</h2>
+      <p class="muted">AIRXON is independent and is not endorsed by NASA. It does not use the NASA insignia (“meatball”), the NASA logotype (“worm”) or the Space Apps logo. If logos are added later, they must follow the <a href="https://www.nasa.gov/nasa-brand-center/" rel="noopener">NASA Brand Center</a> rules and the Space Apps branding guidelines.</p>
+    </section>
+  </div>
+</Base>
+<style>
+  .c-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-6); display: grid; gap: 18px; }
+  .c-toc { display: flex; flex-wrap: wrap; gap: 8px; }
+  .c-toc a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; font-size: 0.9rem; color: var(--muted); }
+  .c-body { display: grid; gap: 0; padding-bottom: var(--s-9); }
+  .c-sec { padding-block: var(--s-7); border-top: 1px solid var(--border); display: grid; gap: 16px; scroll-margin-top: 80px; }
+  .c-sec h2 { font-size: var(--step-3); }
+  .plain { padding-left: 20px; display: grid; gap: 10px; color: var(--muted); }
+  .small { font-size: 0.88rem; }
+  code { font-family: var(--font-mono); font-size: 0.9em; color: var(--cyan); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-2); }
+  .media-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 900px; }
+  .media-table th { text-align: left; font-weight: 700; color: var(--faint); padding: 12px 14px; border-bottom: 1px solid var(--border-strong); background: var(--surface); position: sticky; top: 0; }
+  .media-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--muted); }
+  .media-table td strong { color: var(--fg); font-weight: 600; display: block; }
+  .media-table td small { color: var(--faint); font-family: var(--font-mono); }
+  .media-table .usage { font-size: 0.8rem; max-width: 34ch; }
+  @media (max-width: 700px) {
+    .media-table { min-width: 0; }
+    .media-table thead { display: none; }
+    .media-table tr { display: grid; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    .media-table td { display: grid; grid-template-columns: 80px 1fr; gap: 10px; padding: 4px 0; border: 0; }
+    .media-table td::before { content: attr(data-l); color: var(--faint); font-size: 0.78rem; }
+  }
+</style>

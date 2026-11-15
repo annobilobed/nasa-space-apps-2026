@@ -1,0 +1,14 @@
+---
+import type { Source } from '../data/hardware';
+interface Props { sources: Source[]; title?: string }
+const { sources, title = 'Sources' } = Astro.props;
+---
+<section class="src-block" aria-labelledby="src-h">
+  <h2 id="src-h" class="src-title">{title}</h2>
+  <ol class="sources">
+    {sources.map((s) => <li><span><a href={s.url} rel="noopener">{s.title}</a><small>{s.publisher}</small></span></li>)}
+  </ol>
+</section>
+<style>
+  .src-title { font-size: var(--step-2); margin-bottom: var(--s-5); }
+</style>

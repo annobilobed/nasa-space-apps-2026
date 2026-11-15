@@ -1,0 +1,178 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Status from '../components/Status.astro';
+import { hardware, STATUS_LABEL, WORLD_LABEL, CATEGORY_LABEL, fmtDate, type World } from '../data/hardware';
+import { getMedia, src } from '../lib/media';
+
+const halls: { key: World; title: string; intro: string; hero: string; credit: string }[] = [
+  { key: 'moon', title: 'Hall of the Moon', hero: 'apollo15-lrv', credit: 'Apollo 15 · NASA · as15-86-11603',
+    intro: 'Between 1967 and 1972, robots and astronauts left landers, rovers and experiments across the lunar near side. Some of it is still working today.' },
+  { key: 'mars', title: 'Hall of Mars', hero: 'opp-legacy-pan', credit: 'Opportunity · NASA/JPL-Caltech/Cornell/ASU · PIA22909',
+    intro: 'Since 1976, landers, rovers and a helicopter have studied the Red Planet’s surface. Some fell silent, some finished their work, and two rovers are still driving.' },
+  { key: 'deep-space', title: 'Hall of Deep Space', hero: 'voyager-artist', credit: 'Artist’s concept · NASA/JPL-Caltech · PIA17049',
+    intro: 'Not everything we sent landed. These probes are still travelling outward, carrying messages from Earth into interstellar space.' },
+];
+const filters = [
+  { key: 'all', label: 'All exhibits' },
+  { key: 'lunar', label: 'Lunar equipment' },
+  { key: 'mars-surface', label: 'Mars rovers & landers' },
+  { key: 'instrument', label: 'Scientific instruments' },
+  { key: 'spacecraft', label: 'Spacecraft & probes' },
+  { key: 'deep', label: 'Deep-space hardware' },
+];
+const tags = (h: (typeof hardware)[number]) => [
+  'all',
+  h.world === 'moon' && 'lunar',
+  h.world === 'mars' && ['rover', 'lander', 'helicopter'].includes(h.category) && 'mars-surface',
+  h.category === 'instrument' && 'instrument',
+  h.category === 'spacecraft' && 'spacecraft',
+  h.world === 'deep-space' && 'deep',
+].filter(Boolean).join(' ');
+const panelData = Object.fromEntries(hardware.map((h) => {
+  const m = getMedia(h.images[0]);
+  return [h.slug, { name: h.name, summary: h.summary, purpose: h.purpose, status: h.status, statusLabel: STATUS_LABEL[h.status], statusNote: h.statusNote,
+    world: WORLD_LABEL[h.world], type: CATEGORY_LABEL[h.category], mission: h.mission, launch: fmtDate(h.launch),
+    img: src(m, m.widths[1] ?? m.widths[0]), alt: m.alt, credit: `${m.credit} · ${m.nasaId ?? ''}`, discovery: h.discoveries[0] ?? '' }];
+}));
+---
+<Base title="Explore the museum" description="Walk through AIRXON's digital museum: halls dedicated to the hardware humanity left on the Moon, on Mars and in deep space." current="museum">
+  <header class="m-hero wrap">
+    <h1>Walk among the machines.</h1>
+    <p class="lede">Three halls, each holding the real hardware of one world. Choose an exhibit to read its placard, or filter the collection by what kind of machine it is.</p>
+    <nav class="hall-nav" aria-label="Museum halls">
+      {halls.map((h) => <a href={`#${h.key}`} class="hn-link"><span class="mono">{hardware.filter((x) => x.world === h.key).length}</span>{h.title}</a>)}
+    </nav>
+  </header>
+
+  <div class="filter-bar" data-mfilter>
+    <div class="wrap fb-inner">
+      <span class="label" id="fb-label">Show</span>
+      <div class="chips" role="group" aria-labelledby="fb-label">
+        {filters.map((f, i) => <button type="button" class="chip" aria-pressed={i === 0 ? 'true' : 'false'} data-mf={f.key}>{f.label}</button>)}
+      </div>
+      <p class="mono fb-count" aria-live="polite" data-mf-count>{hardware.length} exhibits</p>
+    </div>
+  </div>
+
+  {halls.map((hall) => {
+    const items = hardware.filter((h) => h.world === hall.key);
+    return (
+      <section class={`hall hall-${hall.key}`} id={hall.key} aria-labelledby={`${hall.key}-h`} data-hall>
+        <div class="hall-banner">
+          <div class="hb-img" aria-hidden="true"><div data-parallax="6" class="hb-par"><Img slug={hall.hero} sizes="100vw" decorative /></div></div>
+          <div class="wrap hb-copy" data-reveal>
+            <p class="kicker">{WORLD_LABEL[hall.key]} · {items.length} exhibits</p>
+            <h2 id={`${hall.key}-h`}>{hall.title}</h2>
+            <p class="lede">{hall.intro}</p>
+            <p class="placard"><span>Banner: {hall.credit}</span></p>
+          </div>
+        </div>
+        <div class="wrap">
+          <ul class="exhibits">
+            {items.map((h, i) => (
+              <li class={`ex ${i === 0 ? 'ex-lead' : ''}`} data-tags={tags(h)}>
+                <a href={`/archive/${h.slug}/`} class="ex-link" data-exhibit={h.slug} aria-haspopup="dialog">
+                  <span class="ex-img"><Img slug={h.images[0]} sizes={i === 0 ? '(min-width: 900px) 60vw, 92vw' : '(min-width: 900px) 30vw, 92vw'} decorative /></span>
+                  <span class="ex-body">
+                    <span class="ex-type mono">{CATEGORY_LABEL[h.category]} · {h.launch.slice(0, 4)}</span>
+                    <span class="ex-name">{h.short}</span>
+                    <span class="ex-sum">{h.summary}</span>
+                  </span>
+                </a>
+                <div class="ex-status"><Status status={h.status} /></div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="wrap section--tight m-cta">
+    <h2>Looking for something specific?</h2>
+    <p class="muted">Search every record by keyword, mission, agency, status and decade.</p>
+    <div class="cta-row"><a class="btn btn-primary" href="/archive/">Search the archive</a><a class="btn btn-secondary" href="/where/">See where they are</a></div>
+  </section>
+
+  <dialog class="panel" data-panel aria-labelledby="panel-title">
+    <div class="panel-inner">
+      <button type="button" class="panel-close btn btn-secondary btn-sm" data-panel-close aria-label="Close exhibit">Close</button>
+      <img class="panel-img" alt="" data-p="img" />
+      <p class="placard"><span data-p="credit"></span></p>
+      <p class="mono panel-meta" data-p="meta"></p>
+      <h2 id="panel-title" data-p="name"></h2>
+      <p class="panel-status status" data-p="status"></p>
+      <p class="lede" data-p="summary"></p>
+      <dl class="facts"><dt>Purpose</dt><dd data-p="purpose"></dd><dt>Key discovery</dt><dd data-p="discovery"></dd><dt>Status today</dt><dd data-p="statusNote"></dd></dl>
+      <a class="btn btn-primary" data-p="link" href="/archive/">Open full profile</a>
+    </div>
+  </dialog>
+  <script type="application/json" id="museum-data" set:html={JSON.stringify(panelData)} />
+</Base>
+
+<script>
+  import { initMuseum } from '../scripts/museum';
+  initMuseum();
+</script>
+
+<style>
+  .m-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-7); display: grid; gap: 18px; }
+  .m-hero h1 { max-width: 12ch; }
+  .hall-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .hn-link { display: inline-flex; gap: 10px; align-items: center; min-height: 48px; padding: 0 18px; border: 1px solid var(--border); border-radius: var(--r-1); text-decoration: none; font-weight: 700; transition: border-color var(--t-fast); }
+  .hn-link:hover { border-color: var(--star); }
+  .hn-link .mono { color: var(--cyan); font-weight: 400; }
+  .filter-bar { position: sticky; top: 0; z-index: 30; background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-block: 1px solid var(--border); }
+  .fb-inner { display: flex; align-items: center; gap: 14px; padding-block: 10px; flex-wrap: wrap; }
+  .fb-inner .chips { display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; flex: 1; }
+  .fb-inner .chip { white-space: nowrap; flex: none; }
+  .fb-count { font-size: 0.8rem; color: var(--cyan); white-space: nowrap; }
+  @media (max-width: 700px) { .fb-inner .label { display: none; } .fb-count { display: none; } }
+
+  .hall { padding-bottom: var(--s-9); scroll-margin-top: 70px; }
+  .hall-banner { position: relative; min-height: 64svh; display: grid; align-items: end; overflow: hidden; isolation: isolate; margin-bottom: var(--s-7); }
+  .hb-img { position: absolute; inset: 0; z-index: -1; }
+  .hb-par { position: absolute; inset: -8% 0; }
+  .hb-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .hb-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, var(--navy) 4%, rgb(8 13 28 / 0.55) 55%, rgb(8 13 28 / 0.25)); }
+  .hall-mars .hb-img::after { background: linear-gradient(0deg, var(--navy) 4%, rgb(40 20 12 / 0.55) 55%, rgb(8 13 28 / 0.2)); }
+  .hb-copy { display: grid; gap: 14px; padding-block: 64px 32px; }
+  .hall-mars .kicker { color: var(--mars-light); }
+
+  .exhibits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .ex { position: relative; display: flex; flex-direction: column; max-width: none; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); overflow: hidden; transition: border-color var(--t-base); }
+  .ex:hover { border-color: var(--border-strong); }
+  .ex[hidden] { display: none; }
+  .ex-lead { grid-column: span 2; grid-row: span 2; }
+  .ex-link { display: flex; flex-direction: column; flex: 1; text-decoration: none; }
+  .ex-link:focus-visible { outline-offset: -3px; }
+  .ex-img { display: block; aspect-ratio: 4 / 3; overflow: hidden; }
+  .ex-lead .ex-img { aspect-ratio: 16 / 10; flex: 1; }
+  .ex-img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow) var(--ease-out); }
+  .ex-body { display: grid; gap: 8px; padding: 18px 18px 6px; }
+  .ex-type { font-size: 0.75rem; color: var(--faint); }
+  .ex-name { font-family: var(--font-display); font-weight: 700; font-size: 1.8rem; line-height: 1.05; }
+  .ex-lead .ex-name { font-size: var(--step-4); }
+  .ex-sum { color: var(--muted); font-size: 0.95rem; }
+  .ex-status { padding: 8px 18px 18px; }
+  @media (max-width: 980px) { .exhibits { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .exhibits { grid-template-columns: 1fr; } .ex-lead { grid-column: auto; grid-row: auto; } }
+
+  .m-cta { display: grid; gap: 12px; justify-items: start; }
+  .m-cta h2 { font-size: var(--step-3); }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+  .panel { margin: 0 0 0 auto; height: 100dvh; max-height: 100dvh; width: min(560px, 100vw); border: 0; border-left: 1px solid var(--border); padding: 0; background: var(--navy); color: var(--fg); }
+  .panel::backdrop { background: rgb(8 13 28 / 0.78); }
+  .panel[open] { animation: slideIn 380ms var(--ease-out); }
+  @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } }
+  .panel-inner { padding: 20px 28px 40px; display: grid; gap: 14px; }
+  .panel-close { justify-self: end; }
+  .panel-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--r-1); background: var(--surface); }
+  .panel-meta { font-size: 0.8rem; color: var(--faint); }
+  .panel h2 { font-size: var(--step-4); }
+  .panel .facts { grid-template-columns: 1fr; gap: 2px; }
+  .panel .facts dd { margin-bottom: 12px; color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .panel[open] { animation: none; } }
+</style>

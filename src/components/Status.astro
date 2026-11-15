@@ -1,0 +1,15 @@
+---
+import { STATUS_LABEL, type Status } from '../data/hardware';
+interface Props { status: Status; class?: string }
+const { status, class: cls = '' } = Astro.props;
+// Distinct glyph per status so meaning never relies on colour alone.
+const glyph: Record<Status, string> = {
+  operational: '<circle cx="7" cy="7" r="5" fill="currentColor"/>',
+  completed: '<circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.4 7.2l1.8 1.8 3.5-3.6" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  silent: '<path d="M1 7h3l1.5-3 2 6L9 7h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  inactive: '<rect x="2" y="2" width="10" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  'left-in-place': '<path d="M7 1.5v11M3 12.5h8" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M7 2l4 2.2L7 6.4z" fill="currentColor"/>',
+  lost: '<circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/>',
+};
+---
+<span class={`status ${cls}`} data-s={status}><svg viewBox="0 0 14 14" aria-hidden="true" set:html={glyph[status]} />{STATUS_LABEL[status]}</span>

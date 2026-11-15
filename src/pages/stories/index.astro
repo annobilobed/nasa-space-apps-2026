@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Status from '../../components/Status.astro';
+import { hardware, bySlug } from '../../data/hardware';
+const opp = bySlug('opportunity')!;
+const next = ['spirit', 'insight', 'surveyor-3', 'apollo-11-lrrr', 'sojourner', 'voyager-1'].map((s) => bySlug(s)!);
+---
+<Base title="Mission stories" description="Narrative mission stories from AIRXON, beginning with NASA's Opportunity rover." current="stories">
+  <header class="st-hero wrap">
+    <h1>Every machine has a story.</h1>
+    <p class="lede">Long-form, chapter-by-chapter stories told from launch to legacy, with every fact traced to its source.</p>
+  </header>
+
+  <section class="wrap">
+    <a class="lead-story" href="/stories/opportunity/">
+      <span class="ls-img"><Img slug="opp-shadow" sizes="(min-width: 900px) 60vw, 92vw" decorative position="50% 60%" /></span>
+      <span class="ls-body">
+        <span class="ls-meta mono">Six chapters · interactive timeline · dust-storm explorer</span>
+        <span class="ls-title">Opportunity: from landing to legacy</span>
+        <span class="muted">Built for 90 Martian days, it explored for almost fifteen years, found the fingerprints of ancient water, and fell silent in a storm that covered a planet.</span>
+        <Status status={opp.status} />
+        <span class="btn btn-primary ls-btn">Read the story</span>
+      </span>
+    </a>
+    <p class="placard"><span>Image: Opportunity’s shadow in Endurance Crater · NASA/JPL · PIA06739</span></p>
+  </section>
+
+  <section class="wrap section--tight" aria-labelledby="next-h">
+    <h2 id="next-h" class="nx-h">Stories in research</h2>
+    <p class="muted nx-p">These full stories are still being researched and fact-checked. Until they’re ready, each machine’s verified profile is open in the archive.</p>
+    <ul class="nx">
+      {next.map((h) => (
+        <li class="card">
+          <div class="media"><Img slug={h.images[0]} sizes="(min-width: 900px) 30vw, 92vw" decorative /></div>
+          <div class="body">
+            <p class="meta"><span>Story in research</span></p>
+            <h3><a class="stretched" href={`/archive/${h.slug}/`}>{h.short}</a></h3>
+            <p class="muted">{h.summary}</p>
+            <span class="go">Read the verified profile →</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+<style>
+  .st-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-7); display: grid; gap: 18px; }
+  .lead-story { display: grid; grid-template-columns: 1.4fr 1fr; border: 1px solid oklch(0.4 0.06 45); border-radius: var(--r-2); overflow: hidden; text-decoration: none; background: oklch(0.2 0.035 45); transition: border-color var(--t-base); }
+  .lead-story:hover { border-color: var(--copper); }
+  .ls-img { min-height: 420px; overflow: hidden; }
+  .ls-img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease-out); }
+  .ls-body { display: grid; gap: 16px; align-content: center; padding: clamp(24px, 4vw, 48px); }
+  .ls-title { font-family: var(--font-display); font-size: var(--step-4); font-weight: 800; line-height: 1; }
+  .ls-btn { justify-self: start; }
+  .ls-meta { font-size: 0.8rem; color: var(--mars-light); }
+  @media (max-width: 860px) { .lead-story { grid-template-columns: 1fr; } .ls-img { min-height: 260px; } }
+  .nx-h { font-size: var(--step-3); }
+  .nx-p { margin: 10px 0 var(--s-6); }
+  .nx { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 20px; }
+  .nx > li { max-width: none; }
+  .go { color: var(--cyan); font-size: 0.9rem; font-weight: 700; }
+</style>

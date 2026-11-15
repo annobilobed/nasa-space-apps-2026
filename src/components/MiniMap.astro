@@ -1,0 +1,28 @@
+---
+import Img from './Img.astro';
+import type { Hardware } from '../data/hardware';
+import { PRECISION_LABEL } from '../data/hardware';
+interface Props { h: Hardware }
+const { h } = Astro.props;
+const loc = h.location;
+const has = loc.lat !== undefined && loc.lon !== undefined && h.world !== 'deep-space';
+const x = has ? ((loc.lon! + 180) / 360) * 100 : 0;
+const y = has ? ((90 - loc.lat!) / 180) * 100 : 0;
+---
+{has && (
+  <figure class="mini">
+    <div class="mini-map">
+      <Img slug={h.world === 'moon' ? 'map-moon' : 'map-mars'} sizes="(min-width: 900px) 40vw, 92vw" />
+      <span class={`pin ${loc.precision}`} style={`left:${x}%;top:${y}%`} aria-hidden="true"></span>
+    </div>
+    <figcaption class="placard"><span class="cap">{PRECISION_LABEL[loc.precision]}, pin {loc.precision === 'approximate' ? '(dashed ring)' : '(solid ring)'} at {Math.abs(loc.lat!).toFixed(2)}°{loc.lat! >= 0 ? 'N' : 'S'}, {Math.abs(loc.lon!).toFixed(2)}°{loc.lon! >= 0 ? 'E' : 'W'}.</span><span>Base map: {h.world === 'moon' ? 'LRO WAC mosaic · NASA/GSFC/ASU via Moon Trek' : 'Viking MDIM 2.1 mosaic · NASA/JPL/USGS via Mars Trek'}</span></figcaption>
+  </figure>
+)}
+<style>
+  .mini-map { position: relative; border-radius: var(--r-1); overflow: hidden; border: 1px solid var(--border); }
+  .mini-map :global(img) { width: 100%; }
+  .pin { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 2px solid var(--cyan); }
+  .pin::after { content: ''; position: absolute; inset: 7px; border-radius: 50%; background: var(--cyan); }
+  .pin.approximate { border-style: dashed; width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+  .pin.approximate::after { inset: 13px; }
+</style>

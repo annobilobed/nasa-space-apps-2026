@@ -1,0 +1,171 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+
+const articles = [
+  { id: 'sol', title: 'What is a sol?', img: 'opp-legacy-pan', time: '2 min read', body: [
+    'A sol is one day on Mars: the time it takes the planet to spin once relative to the Sun. It lasts about 24 hours and 39 minutes, a little longer than a day on Earth.',
+    'Mission teams count sols from the day of landing. Opportunity’s last message arrived on sol 5,111. Its planned mission was 90 sols, so “sol 5,111” is a way of saying it lasted more than 56 times longer than its primary mission, measured in Martian days. (NASA describes the whole mission, to its official end in 2019, as exceeding its planned lifetime by 60 times.)',
+    'Rover teams on Earth sometimes live on “Mars time” at the start of a mission, shifting their working day about 40 minutes later each day to stay in step with the rover.',
+  ] },
+  { id: 'talk', title: 'How do rovers talk to Earth?', img: 'dust-storm-2018', time: '3 min read', body: [
+    'Rovers can send radio signals straight to Earth, but they often send data up to a spacecraft orbiting Mars, which relays it home. Opportunity’s very last image was sent to NASA’s Mars Reconnaissance Orbiter and relayed to Earth about 20 minutes later.',
+    'On Earth, giant dish antennas of NASA’s Deep Space Network listen for these faint signals. Because radio waves travel at the speed of light, a message from Mars takes several minutes to arrive, depending on where the two planets are in their orbits. That delay is why nobody can drive a Mars rover with a joystick: each day’s commands are planned and sent in advance.',
+  ] },
+  { id: 'words', title: 'Abandoned, inactive or complete? Why words matter', img: 'apollo16-lrv', time: '3 min read', body: [
+    'It’s tempting to call every silent machine “abandoned”. But the Apollo rovers were parked on purpose, as planned. Opportunity lost power in a storm and stopped answering. The Apollo 11 retroreflector needs no power and is still in use.',
+    'AIRXON uses six labels (still operational, mission completed, no longer communicating, inactive, left in place, and lost or unknown status) and explains each one. A mission ending is not the same as hardware disappearing: almost all of these machines are still physically where they stopped.',
+  ] },
+  { id: 'find', title: 'How do we know where they are?', img: 'phoenix-winter', time: '3 min read', body: [
+    'Many landing sites have been photographed from orbit. Cameras on NASA’s Lunar Reconnaissance Orbiter have imaged Apollo landing sites, and NASA uses those images to measure the Lunar Modules’ positions. On Mars, the Mars Reconnaissance Orbiter has photographed landers such as Phoenix, years after they fell silent.',
+    'Some positions are known very precisely. InSight’s, for example, was published in a scientific paper. Others are only approximate: we know which valley or crater a rover stopped in, but not the exact spot. AIRXON always tells you which kind of location it is showing.',
+  ] },
+];
+const facts = [
+  { f: 'Opportunity was designed to drive about 1,000 metres. It drove more than 45 km.', s: 'NASA Release 19-004' },
+  { f: 'Surveyor 3 is the only robotic spacecraft on another world that astronauts have walked up to and touched. Apollo 12 brought parts of it back to Earth.', s: 'NSSDCA / NASA Science' },
+  { f: 'Sojourner, the first Mars rover, weighed 10.6 kg (23 lb), about as much as a small dog.', s: 'NASA Science: Mars Pathfinder' },
+  { f: 'Ingenuity was planned to fly up to five times. It flew 72 times.', s: 'NASA Science: Ingenuity' },
+  { f: 'Viking 1 was renamed the Thomas Mutch Memorial Station in 1982, after a scientist on the imaging team.', s: 'NASA Science: Viking 1' },
+  { f: 'The Pathfinder lander was named the Sagan Memorial Station, after astronomer Carl Sagan.', s: 'NSSDCA: Mars Pathfinder' },
+  { f: 'Voyager 1 has travelled more than 16 billion miles, and in November 2026 it is expected to be one light-day from Earth.', s: 'NASA Science: Voyager' },
+  { f: 'The Apollo 17 rover drove about 35.9 km, the longest traverse of the three lunar rovers.', s: 'NSSDCA: Apollo LRV' },
+];
+const glossary = [
+  ['ALSEP', 'Apollo Lunar Surface Experiments Package: a set of science instruments astronauts left on the Moon, powered by a small nuclear generator.'],
+  ['AU (astronomical unit)', 'The average distance between Earth and the Sun: about 150 million km.'],
+  ['Concretion', 'A hard, rounded lump of minerals that grows inside rock, often where water has flowed through it.'],
+  ['Crater', 'A bowl-shaped hole made when a meteoroid or asteroid hits a surface.'],
+  ['Deep Space Network', 'NASA’s worldwide network of large radio antennas used to communicate with distant spacecraft.'],
+  ['Gypsum', 'A soft mineral made of calcium, sulfur, oxygen and water. On Mars, veins of it suggest water once flowed through cracks.'],
+  ['Hematite', 'An iron-oxide mineral. On Mars, the kind Opportunity found forms in water.'],
+  ['Heliopause', 'The boundary where the Sun’s stream of charged particles meets the material between the stars. Beyond it is interstellar space.'],
+  ['Lander', 'A spacecraft that touches down and stays in one place.'],
+  ['Lunar Module', 'The Apollo spacecraft that carried two astronauts from lunar orbit to the surface and back.'],
+  ['Marsquake', 'A vibration of the ground on Mars, like an earthquake but on Mars.'],
+  ['Optical depth (tau)', 'A measure of how much the dust in the air blocks sunlight. Higher means darker.'],
+  ['Orbiter', 'A spacecraft that circles a planet or moon instead of landing.'],
+  ['Perchlorate', 'A salt-like chemical found in Martian soil by Phoenix.'],
+  ['Retroreflector', 'A mirror built from corner-shaped prisms that sends light straight back to where it came from.'],
+  ['Rover', 'A robot that can drive across a surface.'],
+  ['Seismometer', 'An instrument that measures ground vibrations.'],
+  ['Sol', 'One Martian day, about 24 hours 39 minutes.'],
+  ['Spectrometer', 'An instrument that splits light or other radiation to find out what something is made of.'],
+];
+const faq = [
+  ['Will Opportunity ever wake up?', 'NASA tried for eight months, sending more than a thousand commands, and declared the mission complete on February 13, 2019. There are no plans to contact it again. Its hardware is still on Mars, but after years of dust and cold, scientists do not expect it to respond.'],
+  ['Are these machines “space junk”?', 'Not in the usual sense. Space junk normally means debris orbiting Earth. The machines in AIRXON rest on other worlds or travel through deep space, and many are important historical and scientific sites.'],
+  ['Can anyone visit the Apollo sites?', 'Not yet. No one has returned to the Moon’s surface since 1972. Orbiting cameras such as those on NASA’s Lunar Reconnaissance Orbiter have photographed the landing sites from above.'],
+  ['Why are some locations “approximate”?', 'Because we only publish coordinates we can trace to a reliable source. When the exact final position of a machine isn’t published, we show the area it is in and say so clearly.'],
+  ['Are the photos real?', 'Yes. The photographs come from NASA and its partners and are credited on every page. Artist’s concepts, simulations, diagrams, the rendered globes and the homepage descent (a visualisation built from NASA map data) are labelled as such. AIRXON does not use AI-generated images of space or spacecraft.'],
+  ['Is AIRXON made by NASA?', 'No. AIRXON is an independent educational project made for the NASA International Space Apps Challenge. NASA has not reviewed or endorsed it.'],
+];
+const resources = [
+  ['NASA Science: Mars', 'https://science.nasa.gov/mars/', 'Mission news, images and facts about the Red Planet.'],
+  ['NASA Science: The Moon', 'https://science.nasa.gov/moon/', 'Everything from Apollo to Artemis.'],
+  ['NASA Image and Video Library', 'https://images.nasa.gov/', 'Search NASA’s public photographs and videos.'],
+  ['NASA Mars Trek', 'https://trek.nasa.gov/mars/', 'Explore real maps of Mars in your browser.'],
+  ['NASA Moon Trek', 'https://trek.nasa.gov/moon/', 'Fly over real lunar maps and landing sites.'],
+  ['NSSDCA Master Catalog', 'https://nssdc.gsfc.nasa.gov/nmc/', 'NASA’s detailed technical records for every spacecraft.'],
+  ['NASA Space Place', 'https://spaceplace.nasa.gov/', 'NASA’s site for younger learners.'],
+  ['NASA STEM', 'https://www.nasa.gov/learning-resources/', 'Activities and lesson plans for students and teachers.'],
+];
+---
+<Base title="Knowledge centre" description="Articles, facts, a glossary, FAQs and learning resources about space exploration hardware for students and curious minds." current="knowledge">
+  <header class="k-hero wrap">
+    <h1>Questions worth asking.</h1>
+    <p class="lede">Short articles, surprising facts, a glossary of space words and the best places to keep learning.</p>
+    <nav class="k-toc" aria-label="On this page"><a href="#articles">Articles</a><a href="#facts">Interesting facts</a><a href="#glossary">Glossary</a><a href="#faq">FAQ</a><a href="#resources">Learning resources</a></nav>
+  </header>
+
+  <section id="articles" class="wrap k-sec" aria-labelledby="art-h">
+    <h2 id="art-h">Articles</h2>
+    <div class="articles">
+      {articles.map((a) => (
+        <article class="article" id={a.id}>
+          <div class="a-img"><Img slug={a.img} sizes="(min-width: 900px) 40vw, 92vw" decorative /></div>
+          <div class="a-body">
+            <p class="mono a-time">{a.time}</p>
+            <h3>{a.title}</h3>
+            {a.body.map((p) => <p>{p}</p>)}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="facts" class="wrap k-sec" aria-labelledby="facts-h">
+    <h2 id="facts-h">Interesting facts</h2>
+    <ul class="facts-list">{facts.map((f) => <li><p>{f.f}</p><small>Source: {f.s}</small></li>)}</ul>
+  </section>
+
+  <section id="glossary" class="wrap k-sec" aria-labelledby="glo-h" data-glossary>
+    <h2 id="glo-h">Glossary</h2>
+    <div class="field glo-search"><label for="glo-q">Find a word</label><input id="glo-q" class="input" type="search" placeholder="e.g. tau, hematite" data-glo-q /></div>
+    <dl class="glo">{glossary.map(([t, d]) => <div data-term={`${t} ${d}`.toLowerCase()}><dt>{t}</dt><dd>{d}</dd></div>)}</dl>
+    <p class="muted" hidden data-glo-empty>No matching words. Try a shorter search.</p>
+  </section>
+
+  <section id="faq" class="wrap k-sec" aria-labelledby="faq-h">
+    <h2 id="faq-h">Frequently asked questions</h2>
+    <div class="faq">{faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}</div>
+  </section>
+
+  <section id="resources" class="wrap k-sec" aria-labelledby="res-h">
+    <h2 id="res-h">Learning resources</h2>
+    <ul class="res">{resources.map(([t, u, d]) => <li><a href={u} rel="noopener"><strong>{t}</strong><span>{d}</span><small>{u.replace('https://', '')}</small></a></li>)}</ul>
+  </section>
+</Base>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-glossary]');
+  const q = root?.querySelector<HTMLInputElement>('[data-glo-q]');
+  const empty = root?.querySelector<HTMLElement>('[data-glo-empty]');
+  q?.addEventListener('input', () => {
+    const v = q.value.trim().toLowerCase();
+    let n = 0;
+    root!.querySelectorAll<HTMLElement>('[data-term]').forEach((d) => { const on = !v || d.dataset.term!.includes(v); d.hidden = !on; if (on) n++; });
+    if (empty) empty.hidden = n > 0;
+  });
+</script>
+
+<style>
+  .k-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-6); display: grid; gap: 18px; }
+  .k-toc { display: flex; flex-wrap: wrap; gap: 8px; }
+  .k-toc a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; font-size: 0.9rem; color: var(--muted); }
+  .k-toc a:hover { color: var(--fg); }
+  .k-sec { padding-block: var(--s-8); border-top: 1px solid var(--border); scroll-margin-top: 80px; }
+  .k-sec > h2 { font-size: var(--step-4); margin-bottom: var(--s-6); }
+  .articles { display: grid; gap: var(--s-7); }
+  .article { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--s-6); align-items: start; scroll-margin-top: 80px; }
+  .article:nth-child(even) .a-img { order: 2; }
+  .a-img { aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--r-1); }
+  .a-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .a-body { display: grid; gap: 12px; }
+  .a-body p:not(.a-time) { color: var(--muted); }
+  .a-time { font-size: 0.78rem; color: var(--cyan); }
+  @media (max-width: 860px) { .article { grid-template-columns: 1fr; } .article:nth-child(even) .a-img { order: 0; } }
+  .facts-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
+  .facts-list li { padding: 22px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); display: grid; gap: 12px; align-content: space-between; max-width: none; }
+  .facts-list p { font-size: 1.05rem; }
+  .facts-list small { color: var(--faint); font-size: 0.78rem; }
+  .glo-search { max-width: 420px; margin-bottom: var(--s-5); }
+  .glo { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 0 32px; }
+  .glo > div { padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .glo > div[hidden] { display: none; }
+  .glo dt { font-weight: 700; }
+  .glo dd { color: var(--muted); font-size: 0.95rem; }
+  .faq { display: grid; border-top: 1px solid var(--border); max-width: 900px; }
+  .faq details { border-bottom: 1px solid var(--border); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; align-items: center; min-height: 60px; font-weight: 700; font-size: 1.08rem; padding: 10px 0; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; font-family: var(--font-mono); font-size: 1.3rem; color: var(--cyan); transition: transform var(--t-base) var(--ease-out); }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { color: var(--muted); padding-bottom: 18px; }
+  .res { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+  .res li { max-width: none; }
+  .res a { display: grid; gap: 4px; padding: 18px; border: 1px solid var(--border); border-radius: var(--r-2); text-decoration: none; height: 100%; transition: border-color var(--t-fast); }
+  .res a:hover { border-color: var(--star); }
+  .res span { color: var(--muted); font-size: 0.92rem; }
+  .res small { color: var(--faint); font-family: var(--font-mono); font-size: 0.75rem; }
+</style>
