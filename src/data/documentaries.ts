@@ -67,6 +67,7 @@ export const documentaries: Documentary[] = [
         'The landing shot shows a rover being lowered on cables. Opportunity really landed inside a cocoon of airbags that bounced across Meridiani Planum.',
         'Opportunity and its spacecraft are artistic impressions, not exact models. For real photographs, see the Opportunity profile and story.',
         'The “blueberries” (hematite spherules) are shown much larger than life. The real ones are only a few millimetres across.',
+        'In the launch shot, the AI drew NASA logos and mission markings on the rocket and launch tower. We blurred them out, because AI-generated content must not show NASA branding.',
       ],
     },
     chapters: [

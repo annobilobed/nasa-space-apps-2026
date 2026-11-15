@@ -13,4 +13,4 @@ AIRXON was made with the help of generative AI ("Super Intelligence") tools, as 
 
 **Not SI-generated:** the photographs (NASA Image and Video Library), the maps, globes and homepage scroll film (rendered by our own scripts from NASA Trek mosaic data), the vector diagrams, and the AIRXON logo (supplied by the team).
 
-No SI-generated content in this project is intended to use or imitate NASA branding. AIRXON is an independent educational project and is not endorsed by NASA.
+SI-generated content in this project does not show NASA branding: the AI drew NASA logos and mission markings on the rocket and launch tower in the documentary's launch shot (35.9 s to 43.6 s), and we blurred them out in every frame of that shot. AIRXON is an independent educational project and is not endorsed by NASA.

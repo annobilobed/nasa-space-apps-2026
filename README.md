@@ -74,15 +74,7 @@ captions: { src: '/media/docs/opportunity-the-last-signal.en.vtt', srclang: 'en'
 
 The player turns on automatically, with play/pause, seek, mute, captions toggle, full screen and keyboard shortcuts (space/k, ←/→, f). Until then the page shows an honest “in production” state.
 
-**The documentary video.** *Opportunity: The Last Signal* (Google Flow video, ElevenLabs voice, edited in CapCut) is stored at full quality (4K, 584 MB) as a GitHub Release asset (`video-v1`). The site uses versions with a burned-in “AI-generated video” watermark and AI disclosure metadata, made with:
-
-```bash
-ffmpeg -i 1114.mp4 -vf "scale=1920:1080,drawtext=...AI-GENERATED VIDEO..." -c:v libx264 -crf 15 -c:a copy mezz-1080.mp4   # watermarked master
-# then 720p H.264 (2-pass, 830 kb/s) -> public/media/docs/opportunity-the-last-signal.mp4
-# and 1080p VP9 (2-pass, 870 kb/s) -> public/media/docs/opportunity-the-last-signal.webm
-```
-
-Each file stays under 20 MB. Subtitles (`opportunity-the-last-signal.en.vtt`) were transcribed from the voice-over with Whisper and checked by hand.
+**The documentary video.** *Opportunity: The Last Signal* (Google Flow video, ElevenLabs voice, edited in CapCut). The site uses a 1080p master with a burned-in "AI-GENERATED VIDEO" watermark and AI disclosure metadata, encoded to 720p H.264 (`public/media/docs/opportunity-the-last-signal.mp4`) and 1080p VP9 (`.webm`), each under 20 MB. NASA logos and mission markings that the AI drew in the launch shot (35.9 s to 43.6 s) are blurred out, because SI-generated content must not contain NASA branding. Subtitles (`opportunity-the-last-signal.en.vtt`) were transcribed from the voice-over with Whisper and checked by hand.
 
 **Team members:** edit `src/data/team.ts`.
 
