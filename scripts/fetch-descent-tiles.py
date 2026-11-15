@@ -1,4 +1,5 @@
-"""Download NASA Mars Trek tiles used by the descent sequence (cached in assets-src/descent-src).
+"""Prepare the NASA Mars Trek tiles used by the journey film (in assets-src/descent-src).
+Tiles come from assets-src/descent-src-tiles.tar when present; anything missing is downloaded.
   global : Viking MDIM 2.1 colour mosaic, zoom 4 (8192 x 4096)
   r9     : MRO CTX Meridiani Planum mosaic, zoom 9 (~81 m/px)
   r11    : MRO CTX Meridiani Planum mosaic, zoom 11 (~20 m/px) around Endeavour Crater
@@ -8,6 +9,15 @@ from PIL import Image
 
 OUT = 'assets-src/descent-src'
 os.makedirs(OUT, exist_ok=True)
+# The original tiles ship in the repo as one archive: unpack it first, so no download is needed.
+ARCHIVE = 'assets-src/descent-src-tiles.tar'
+if os.path.exists(ARCHIVE):
+    import tarfile
+    with tarfile.open(ARCHIVE) as t:
+        missing = [m for m in t.getmembers() if not os.path.exists(os.path.join(OUT, m.name))]
+        if missing:
+            t.extractall(OUT, members=missing, filter='data')
+            print('unpacked', len(missing), 'tiles from', ARCHIVE)
 T = 'https://trek.nasa.gov/tiles/Mars/EQ/{layer}/1.0.0/default/default028mm/{z}/{r}/{c}.{ext}'
 MDIM, CTX = 'Mars_Viking_MDIM21_ClrMosaic_global_232m', 'S_Meridiani_Sinus_Planium_CTX_BlockAdj_dd'
 
