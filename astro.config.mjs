@@ -8,7 +8,7 @@ const portable = process.env.PORTABLE === '1';
 const clean = (/** @type {string} */ n) => n.replace(/[^A-Za-z0-9.-]+/g, '-').replace(/^[-.]+|[-.]+$/g, '') || 'chunk';
 
 export default defineConfig({
-  site: 'https://airxon.example',
+  site: process.env.SITE_URL || 'https://airxon.example',
   trailingSlash: portable ? 'ignore' : 'always',
   build: { format: portable ? 'file' : 'directory', inlineStylesheets: 'auto', assets: 'assets' },
   compressHTML: true,

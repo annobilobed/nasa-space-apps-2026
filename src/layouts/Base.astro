@@ -6,6 +6,9 @@ import '../styles/global.css';
 import displayFont from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url';
 interface Props { title: string; description: string; current?: string; image?: string; bodyClass?: string }
 const { title, description, current = '', image = '/media/opp-legacy-pan-1920.webp', bodyClass = '' } = Astro.props;
+// SITE_URL (set by the GitHub Pages build) turns share images into full web addresses.
+const SITE = (process.env.SITE_URL || '').replace(/\/$/, '');
+const ogImage = SITE && image.startsWith('/') ? `${SITE}${image}` : image;
 const full = title === 'AIRXON' ? 'AIRXON: Echoes Beyond Earth' : `${title} · AIRXON`;
 const nav = [
   { href: '/', label: 'Home', key: 'home' },
@@ -29,7 +32,7 @@ const nav = [
     <meta name="theme-color" content="#080d1c" />
     <meta property="og:title" content={full} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={ogImage} />
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
