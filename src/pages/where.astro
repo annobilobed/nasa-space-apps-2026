@@ -1,0 +1,219 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import { hardware, STATUS_LABEL, PRECISION_LABEL, WORLD_LABEL, fmtCoord, fmtDate } from '../data/hardware';
+
+const worlds = ['moon', 'mars'] as const;
+const pins = hardware.filter((h) => h.world !== 'deep-space' && h.location.lat !== undefined);
+// Cluster objects that sit at (almost) the same site so pins never overlap.
+type Pin = (typeof pins)[number];
+const clusters: Record<string, { world: string; lat: number; lon: number; items: Pin[] }> = {};
+for (const p of pins) {
+  const key = `${p.world}:${Math.round(p.location.lat! * 2) / 2}:${Math.round(p.location.lon! * 2) / 2}`;
+  (clusters[key] ??= { world: p.world, lat: p.location.lat!, lon: p.location.lon!, items: [] }).items.push(p);
+}
+const details = Object.fromEntries(hardware.map((h) => [h.slug, {
+  name: h.name, short: h.short, world: h.world, mission: h.mission, purpose: h.purpose, history: h.statusNote,
+  status: h.status, statusLabel: STATUS_LABEL[h.status], coord: fmtCoord(h.location.lat, h.location.lon),
+  precision: h.location.precision, precisionLabel: PRECISION_LABEL[h.location.precision], place: h.location.label,
+  note: h.location.note ?? '', launch: fmtDate(h.launch), srcTitle: h.location.source?.title ?? '', srcUrl: h.location.source?.url ?? '',
+}]));
+const AU = 149_597_870.7; // km
+const deep = [
+  { label: 'Earth', au: 1, kind: 'planet' }, { label: 'Mars', au: 1.52, kind: 'planet' }, { label: 'Jupiter', au: 5.2, kind: 'planet' },
+  { label: 'Saturn', au: 9.5, kind: 'planet' }, { label: 'Neptune', au: 30.1, kind: 'planet' },
+  { label: 'Heliopause (Voyager 1 crossed in 2012)', au: 121, kind: 'edge' },
+];
+const lightDayAU = (299_792.458 * 86_400) / AU; // ≈ 173.1 AU
+const pioneerAU = (7.6e9 * 1.609344) / AU;      // 7.6 billion miles
+const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(220) - Math.log10(0.8)) * 100;
+---
+<Base title="Where are they now?" description="Interactive maps of the Moon and Mars showing where NASA hardware rests, with confirmed and approximate locations clearly marked." current="where">
+  <header class="w-hero wrap">
+    <h1>Where are they now?</h1>
+    <p class="lede">Every pin is a real place where human-made hardware rests today. Solid rings are published coordinates. Dashed rings are approximate. We never invent locations.</p>
+  </header>
+
+  <section class="wrap explorer" data-explorer aria-label="Location explorer">
+    <div class="tabs" role="tablist" aria-label="Choose a world">
+      <button role="tab" type="button" id="tab-moon" aria-controls="panel-moon" aria-selected="true" data-tab="moon">The Moon <span class="mono">{pins.filter((p) => p.world === 'moon').length}</span></button>
+      <button role="tab" type="button" id="tab-mars" aria-controls="panel-mars" aria-selected="false" tabindex="-1" data-tab="mars">Mars <span class="mono">{pins.filter((p) => p.world === 'mars').length}</span></button>
+      <button role="tab" type="button" id="tab-deep" aria-controls="panel-deep" aria-selected="false" tabindex="-1" data-tab="deep">Deep space <span class="mono">{hardware.filter((h) => h.world === 'deep-space').length}</span></button>
+    </div>
+
+    {worlds.map((w, wi) => (
+      <div class="panel" role="tabpanel" id={`panel-${w}`} aria-labelledby={`tab-${w}`} hidden={wi !== 0} data-panel={w}>
+        <div class="map-col">
+          <div class="map-frame" data-map data-lenis-prevent>
+            <div class="map-stage" data-stage>
+              <Img slug={w === 'moon' ? 'map-moon' : 'map-mars'} sizes="(min-width: 1100px) 900px, 100vw" eager={wi === 0} />
+              <svg class="grat" viewBox="0 0 360 180" preserveAspectRatio="none" aria-hidden="true">
+                {[-60, -30, 0, 30, 60].map((lat) => <line x1="0" x2="360" y1={90 - lat} y2={90 - lat} class={lat === 0 ? 'eq' : ''} />)}
+                {[-120, -60, 0, 60, 120].map((lon) => <line y1="0" y2="180" x1={lon + 180} x2={lon + 180} class={lon === 0 ? 'eq' : ''} />)}
+              </svg>
+              {Object.values(clusters).filter((c) => c.world === w).map((c) => (
+                <button type="button" class={`pin ${c.items.some((i) => i.location.precision === 'confirmed') ? 'confirmed' : 'approximate'}`}
+                  style={`left:${((c.lon + 180) / 360) * 100}%;top:${((90 - c.lat) / 180) * 100}%`}
+                  data-pin={c.items.map((i) => i.slug).join(' ')}>
+                  <span class="sr-only">{c.items.map((i) => i.short).join(', ')}, {fmtCoord(c.lat, c.lon)}</span>
+                  <span class="ring" aria-hidden="true"></span>
+                  {c.items.length > 1 && <span class="n" aria-hidden="true">{c.items.length}</span>}
+                  <span class="tip" aria-hidden="true">{c.items.map((i) => i.short).join(' · ')}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div class="map-tools">
+            <div class="zoom" role="group" aria-label="Map zoom">
+              <button type="button" class="btn btn-secondary btn-sm" data-zoom="in" aria-label="Zoom in">+</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-zoom="out" aria-label="Zoom out">−</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-zoom="reset">Reset view</button>
+            </div>
+            <ul class="legend" aria-label="Legend">
+              <li><span class="lg confirmed" aria-hidden="true"></span>Confirmed coordinates</li>
+              <li><span class="lg approximate" aria-hidden="true"></span>Approximate location</li>
+            </ul>
+          </div>
+          <p class="placard"><span>Drag to pan, use the buttons to zoom. Grid lines every 30° of latitude and 60° of longitude. Longitudes are east-positive, −180° to 180°.</span><span>{w === 'moon' ? 'Base map: LRO WAC global mosaic · NASA/GSFC/Arizona State University · via NASA Moon Trek' : 'Base map: Viking MDIM 2.1 colour mosaic · NASA/JPL/USGS · via NASA Mars Trek'}</span></p>
+        </div>
+        <div class="side">
+          <h2 class="side-h">{WORLD_LABEL[w]}</h2>
+          <ul class="obj-list">
+            {pins.filter((p) => p.world === w).map((p) => (
+              <li><button type="button" class="obj" data-select={p.slug} aria-pressed="false">
+                <span class={`dot ${p.location.precision}`} aria-hidden="true"></span>
+                <span><strong>{p.short}</strong><small>{p.location.label.split(/[,(]/)[0]}</small></span>
+              </button></li>
+            ))}
+          </ul>
+          <div class="detail" data-detail={w} aria-live="polite">
+            <p class="muted">Select a pin or a name to see its story and status.</p>
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <div class="panel deep" role="tabpanel" id="panel-deep" aria-labelledby="tab-deep" hidden data-panel="deep">
+      <div class="deep-copy">
+        <h2>Still travelling</h2>
+        <p class="muted">Deep-space probes have no surface location. Instead, this scale shows how far from the Sun they are. Each step along it is ten times farther than the last (a logarithmic scale). 1 AU is the average distance from Earth to the Sun, about 150 million km.</p>
+      </div>
+      <div class="scale" role="img" aria-label={`Logarithmic distance scale from 1 to 200 AU. Voyager 1 is about ${lightDayAU.toFixed(0)} AU from Earth (one light-day) in November 2026. Pioneer 10 was about ${pioneerAU.toFixed(0)} AU away at its last contact in 2003. Voyager 2 is beyond the heliopause.`}>
+        <div class="axis"></div>
+        {deep.map((d) => <span class={`mark ${d.kind}`} style={`left:${logX(d.au)}%`}><i></i><b>{d.label}</b><em>{d.au} AU</em></span>)}
+        <span class="probe" style={`left:${logX(lightDayAU)}%`}><i></i><b>Voyager 1</b><em>≈ 1 light-day · Nov 2026</em></span>
+        <span class="probe silent" style={`left:${logX(pioneerAU)}%`}><i></i><b>Pioneer 10</b><em>last contact 2003</em></span>
+        <span class="probe v2" style={`left:${logX(121)}%`}><i></i><b>Voyager 2, beyond here</b><em>crossed in 2018</em></span>
+      </div>
+      <dl class="deep-list">
+        <div><dt>Voyager 1 <span class="status" data-s="operational">Still operational</span></dt><dd>More than 16 billion miles from Earth. NASA expects it to reach one light-day (about 26 billion km) from Earth in November 2026. <a href="/archive/voyager-1/">Profile</a></dd></div>
+        <div><dt>Voyager 2 <span class="status" data-s="operational">Still operational</span></dt><dd>In interstellar space since 2018, travelling in a different direction from its twin. We show it beyond the heliopause rather than at an unverified distance. <a href="/archive/voyager-2/">Profile</a></dd></div>
+        <div><dt>Pioneer 10 <span class="status" data-s="silent">No longer communicating</span></dt><dd>Last signal on January 23, 2003, from about 7.6 billion miles away (shown at that distance). It is still coasting outward. <a href="/archive/pioneer-10/">Profile</a></dd></div>
+      </dl>
+      <p class="placard"><span>Sources: NASA Science: Voyager mission page (distance and one-light-day milestone); NASA Science: Pioneer 10. Planet distances are average orbital distances.</span></p>
+    </div>
+  </section>
+
+  <script type="application/json" id="where-data" set:html={JSON.stringify(details)} />
+</Base>
+
+<script>
+  import { initWhere } from '../scripts/where';
+  initWhere();
+</script>
+
+<style>
+  .w-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-6); display: grid; gap: 18px; }
+  .w-hero .lede { max-width: 52ch; }
+  .explorer { padding-bottom: var(--s-9); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: var(--s-5); overflow-x: auto; }
+  .tabs [role='tab'] { min-height: 52px; padding: 0 20px; border: 0; background: none; cursor: pointer; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--faint); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+  .tabs [role='tab'] .mono { font-family: var(--font-mono); font-size: 0.8rem; color: var(--cyan); margin-left: 4px; }
+  .tabs [role='tab'][aria-selected='true'] { color: var(--fg); border-bottom-color: var(--cyan); }
+  .tabs [role='tab']:hover { color: var(--fg); }
+  .panel { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s-6); }
+  .panel[hidden] { display: none; }
+  @media (max-width: 1000px) { .panel { grid-template-columns: 1fr; } }
+
+  .map-frame { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-2); background: #000; aspect-ratio: 2 / 1; touch-action: none; cursor: grab; }
+  .map-frame.dragging { cursor: grabbing; }
+  .map-stage { --z: 1; position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
+  .map-stage :global(img) { width: 100%; height: 100%; object-fit: fill; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+  .grat { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .grat line { stroke: rgb(231 234 242 / 0.14); stroke-width: 0.3; vector-effect: non-scaling-stroke; }
+  .grat line.eq { stroke: rgb(101 217 242 / 0.35); }
+  .pin { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border: 0; padding: 0; background: none; cursor: pointer; transform: scale(calc(1 / var(--z))); border-radius: 50%; }
+  .pin .ring { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid var(--cyan); background: rgb(8 13 28 / 0.45); transition: background-color var(--t-fast), box-shadow var(--t-fast); }
+  .pin .ring::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--cyan); }
+  .pin.approximate .ring { width: 30px; height: 30px; border-style: dashed; border-color: var(--warning); }
+  .pin.approximate .ring::after { inset: 10px; background: var(--warning); }
+  .pin .n { position: absolute; left: 22px; top: -10px; font-family: var(--font-mono); font-size: 0.7rem; background: var(--star); color: var(--navy); border-radius: 999px; padding: 0 6px; font-weight: 700; }
+  .pin .tip { position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); white-space: nowrap; background: var(--navy); border: 1px solid var(--border-strong); padding: 4px 10px; border-radius: var(--r-1); font-size: 0.8rem; opacity: 0; pointer-events: none; transition: opacity var(--t-fast); }
+  .pin:hover .tip, .pin:focus-visible .tip { opacity: 1; }
+  .pin.is-active { z-index: 2; }
+  .pin.is-active .ring { box-shadow: 0 0 0 4px rgb(139 124 255 / 0.55); background: var(--violet); }
+  .pin:focus-visible { outline: none; }
+  .pin:focus-visible .ring { outline: 2px solid var(--star); outline-offset: 3px; }
+
+  .map-tools { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 12px 0 0; }
+  .zoom { display: flex; gap: 8px; }
+  .zoom .btn-sm { min-width: 44px; height: 44px; font-size: 1.1rem; }
+  .legend { list-style: none; padding: 0; display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
+  .legend li { display: inline-flex; align-items: center; gap: 8px; }
+  .lg { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--cyan); display: inline-block; }
+  .lg.approximate { border-style: dashed; border-color: var(--warning); }
+
+  .side { display: grid; gap: 14px; align-content: start; }
+  .side-h { font-size: var(--step-3); }
+  .obj-list { list-style: none; padding: 0; display: grid; gap: 2px; max-height: 300px; overflow-y: auto; border-block: 1px solid var(--border); padding-block: 6px; }
+  .obj-list li { max-width: none; }
+  .obj { display: flex; gap: 12px; align-items: center; width: 100%; min-height: 48px; padding: 6px 10px; text-align: left; background: none; border: 0; border-radius: var(--r-1); cursor: pointer; }
+  .obj:hover { background: var(--surface); }
+  .obj[aria-pressed='true'] { background: var(--surface-2); }
+  .obj small { display: block; color: var(--faint); font-size: 0.8rem; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--cyan); flex: none; }
+  .dot.approximate { border-style: dashed; border-color: var(--warning); }
+  .detail { padding: 20px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); display: grid; gap: 10px; min-height: 180px; align-content: start; }
+  .detail :global(h3) { font-size: var(--step-2); }
+  .detail :global(.d-meta) { font-family: var(--font-mono); font-size: 0.78rem; color: var(--faint); }
+  .detail :global(.d-coord) { font-family: var(--font-mono); color: var(--cyan); font-size: 0.9rem; }
+  .detail :global(.d-prec) { font-size: 0.85rem; color: var(--muted); }
+  .detail :global(.d-prec b.approximate) { color: var(--warning); }
+  .detail :global(p) { font-size: 0.95rem; color: var(--muted); }
+  .detail :global(.d-also) { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.85rem; }
+
+  .deep { grid-template-columns: 1fr; gap: var(--s-6); }
+  .deep-copy { display: grid; gap: 12px; max-width: 70ch; }
+  .deep-copy h2 { font-size: var(--step-3); }
+  .scale { position: relative; height: 230px; margin: 10px 30px 0 10px; }
+  .axis { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, var(--border-strong), var(--cyan)); }
+  .mark, .probe { position: absolute; top: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 4px; font-size: 0.78rem; white-space: nowrap; }
+  .mark i, .probe i { width: 10px; height: 10px; border-radius: 50%; background: var(--moon); margin-top: -5px; }
+  .mark { padding-top: 0; }
+  .mark b, .mark em { font-weight: 400; color: var(--muted); font-style: normal; }
+  .mark em { font-family: var(--font-mono); color: var(--faint); font-size: 0.72rem; }
+  .mark.edge i { width: 2px; height: 70px; margin-top: -35px; border-radius: 0; background: var(--cyan); }
+  .mark.edge b { white-space: normal; width: 130px; text-align: center; }
+  .probe { top: auto; bottom: 50%; transform: translate(-50%, 0); flex-direction: column-reverse; display: flex; align-items: center; }
+  .probe i { background: var(--cyan); margin: 0 0 -5px; box-shadow: 0 0 0 4px rgb(101 217 242 / 0.2); }
+  .probe b { font-weight: 700; }
+  .probe em { font-style: normal; font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); }
+  .probe.silent i { background: var(--copper); box-shadow: 0 0 0 4px rgb(196 122 84 / 0.2); }
+  .probe.silent em { color: var(--mars-light); }
+  .probe.v2 { bottom: calc(50% + 70px); }
+  .probe.v2 i { display: none; }
+  .mark:nth-child(odd of .planet) b { margin-top: 0; }
+  @media (max-width: 760px) {
+    .scale { height: auto; margin: 0; display: grid; gap: 10px; }
+    .axis { display: none; }
+    .mark, .probe { position: static; transform: none; display: flex; flex-direction: row; gap: 10px; justify-content: flex-start; align-items: center; }
+    .mark i, .probe i { margin: 0; }
+    .mark.edge i { height: 2px; width: 12px; margin: 0; }
+    .mark.edge b { width: auto; text-align: left; }
+  }
+  .deep-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .deep-list > div { padding: 20px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); }
+  .deep-list dt { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; display: grid; gap: 6px; }
+  .deep-list dd { color: var(--muted); font-size: 0.95rem; margin-top: 10px; }
+  @media (max-width: 900px) { .deep-list { grid-template-columns: 1fr; } }
+</style>

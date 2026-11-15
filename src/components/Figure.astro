@@ -1,0 +1,22 @@
+---
+import Img from './Img.astro';
+import { getMedia, KIND_LABEL } from '../lib/media';
+interface Props { slug: string; sizes?: string; caption?: string; eager?: boolean; class?: string; ratio?: string; position?: string }
+const { slug, sizes, caption, eager, class: cls = '', ratio, position } = Astro.props;
+const m = getMedia(slug);
+const kind = KIND_LABEL[m.kind];
+---
+<figure class={`figure ${cls}`}>
+  <div class="frame" style={ratio ? `aspect-ratio:${ratio}` : undefined}>
+    <Img slug={slug} sizes={sizes} eager={eager} fit={ratio ? 'cover' : undefined} position={position} />
+  </div>
+  <figcaption class="placard">
+    <span class="cap">{kind && <span class="kind-tag">{kind}</span>} {caption ?? m.title}</span>
+    <span>Credit: {m.credit} · <a href={m.source} rel="noopener">{m.nasaId ?? 'Source'}</a></span>
+  </figcaption>
+</figure>
+<style>
+  .frame { overflow: hidden; border-radius: var(--r-1); background: var(--surface); }
+  .frame :global(img) { width: 100%; height: 100%; }
+  .kind-tag { margin-right: 6px; }
+</style>

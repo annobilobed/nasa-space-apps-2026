@@ -1,0 +1,128 @@
+---
+import '@fontsource-variable/big-shoulders-display';
+import '@fontsource-variable/atkinson-hyperlegible-next';
+import '@fontsource-variable/atkinson-hyperlegible-mono';
+import '../styles/global.css';
+import displayFont from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url';
+interface Props { title: string; description: string; current?: string; image?: string; bodyClass?: string }
+const { title, description, current = '', image = '/media/opp-legacy-pan-1920.webp', bodyClass = '' } = Astro.props;
+const full = title === 'AIRXON' ? 'AIRXON: Echoes Beyond Earth' : `${title} · AIRXON`;
+const nav = [
+  { href: '/', label: 'Home', key: 'home' },
+  { href: '/museum/', label: 'Museum', key: 'museum' },
+  { href: '/stories/', label: 'Stories', key: 'stories' },
+  { href: '/theatre/', label: 'Theatre', key: 'theatre' },
+  { href: '/archive/', label: 'Archive', key: 'archive' },
+  { href: '/where/', label: 'Where now?', key: 'where' },
+  { href: '/discoveries/', label: 'Discoveries', key: 'discoveries' },
+  { href: '/knowledge/', label: 'Learn', key: 'knowledge' },
+  { href: '/about/', label: 'About', key: 'about' },
+];
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{full}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#080d1c" />
+    <meta property="og:title" content={full} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header" data-header>
+      <div class="bar">
+        <a class="brand" href="/" aria-label="AIRXON home">
+          <img class="logo" src="/brand/airxon-logo-96.webp" srcset="/brand/airxon-logo-96.webp 96w, /brand/airxon-logo-192.webp 192w" sizes="52px" width="52" height="52" alt="AIRXON" /><span class="brand-home" aria-hidden="true">Home</span>
+        </a>
+        <nav aria-label="Primary" class="primary">
+          <ul>
+            {nav.map((n) => <li><a href={n.href} aria-current={current === n.key ? 'page' : undefined}>{n.label}</a></li>)}
+          </ul>
+        </nav>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-btn>
+          <span class="sr-only">Menu</span><span class="bars" aria-hidden="true"><i></i><i></i></span>
+        </button>
+      </div>
+      <div class="mobile-nav" id="mobile-nav" hidden data-menu>
+        <ul>
+          {nav.map((n) => <li><a href={n.href} aria-current={current === n.key ? 'page' : undefined}>{n.label}</a></li>)}
+          <li><a href="/credits/">Sources &amp; credits</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1"><slot /></main>
+
+    <footer class="site-footer">
+      <div class="wrap fgrid">
+        <div class="fbrand">
+          <a href="/" class="flogo" aria-label="AIRXON home"><img src="/brand/airxon-logo-192.webp" srcset="/brand/airxon-logo-192.webp 192w, /brand/airxon-logo-384.webp 384w" sizes="150px" width="150" height="150" alt="AIRXON" loading="lazy" /></a>
+          <p class="muted">Echoes Beyond Earth. Every machine has a story. Every discovery leaves a legacy.</p>
+        </div>
+        <nav aria-label="Footer" class="fnav">
+          <ul>
+            <li><a href="/">Home</a></li><li><a href="/museum/">Museum</a></li><li><a href="/stories/opportunity/">Opportunity</a></li>
+            <li><a href="/archive/">Hardware archive</a></li><li><a href="/where/">Where are they now?</a></li>
+            <li><a href="/discoveries/">Discoveries</a></li><li><a href="/knowledge/">Knowledge centre</a></li>
+            <li><a href="/theatre/">Documentary theatre</a></li><li><a href="/credits/">Sources &amp; credits</a></li>
+          </ul>
+        </nav>
+        <p class="disclaimer">
+          AIRXON is an independent educational project created for the 2026 NASA International Space Apps Challenge
+          (“Abandoned but Not Forgotten”). It is not an official NASA product and is not endorsed by NASA.
+          Images courtesy of NASA and partner institutions; see <a href="/credits/">sources &amp; credits</a> for every asset.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      import { initSite } from '../scripts/site';
+      initSite();
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-header { position: fixed; inset: 0 0 auto 0; z-index: 50; transition: background-color var(--t-base), border-color var(--t-base), transform var(--t-base) var(--ease-out); border-bottom: 1px solid transparent; }
+  .site-header.is-solid { background: color-mix(in oklab, var(--navy) 92%, transparent); backdrop-filter: blur(10px); border-bottom-color: var(--border); }
+  .site-header.is-hidden { transform: translateY(-100%); }
+  .bar { height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-inline: var(--gutter); max-width: 1600px; margin-inline: auto; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; min-height: 52px; flex: none; }
+  .logo { width: 52px; height: 52px; flex: none; }
+  .brand-home { font-size: 0.8rem; color: var(--faint); opacity: 0; transform: translateX(-4px); transition: opacity var(--t-fast), transform var(--t-fast) var(--ease-out); }
+  .brand:hover .brand-home, .brand:focus-visible .brand-home { opacity: 1; transform: none; }
+  .primary ul { display: flex; gap: 2px; list-style: none; padding: 0; }
+  .primary a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 11px; text-decoration: none; font-size: 0.92rem; color: var(--muted); border-radius: var(--r-1); transition: color var(--t-fast); position: relative; }
+  .primary a:hover { color: var(--fg); }
+  .primary a[aria-current='page'] { color: var(--fg); }
+  .primary a[aria-current='page']::after { content: ''; position: absolute; left: 11px; right: 11px; bottom: 8px; height: 1px; background: var(--cyan); }
+  .menu-btn { display: none; width: 48px; height: 48px; border: 1px solid var(--border); background: color-mix(in oklab, var(--navy) 70%, transparent); border-radius: var(--r-1); cursor: pointer; align-items: center; justify-content: center; }
+  .bars { display: grid; gap: 6px; width: 20px; }
+  .bars i { height: 1.6px; background: currentColor; transition: transform var(--t-base) var(--ease-out); }
+  .menu-btn[aria-expanded='true'] .bars i:first-child { transform: translateY(3.8px) rotate(45deg); }
+  .menu-btn[aria-expanded='true'] .bars i:last-child { transform: translateY(-3.8px) rotate(-45deg); }
+  .mobile-nav { background: var(--navy); border-top: 1px solid var(--border); height: calc(100dvh - var(--nav-h)); overflow-y: auto; }
+  .mobile-nav ul { list-style: none; padding: 16px var(--gutter) 40px; display: grid; }
+  .mobile-nav a { display: flex; align-items: center; min-height: 56px; font-family: var(--font-display); font-size: 2rem; font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--border); }
+  .mobile-nav a[aria-current='page'] { color: var(--cyan); }
+  @media (max-width: 1080px) { .primary { display: none; } .menu-btn { display: inline-flex; } }
+
+  .site-footer { border-top: 1px solid var(--border); padding-block: var(--s-9) var(--s-8); background: var(--navy); }
+  .fgrid { display: grid; grid-template-columns: 1.1fr 1.4fr; gap: var(--s-7) var(--s-8); }
+  .flogo { display: inline-block; margin-bottom: 14px; }
+  .flogo img { width: 150px; height: 150px; }
+  .fnav ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 24px; }
+  .fnav a { display: inline-flex; min-height: 40px; align-items: center; color: var(--muted); text-decoration: none; }
+  .fnav a:hover { color: var(--fg); }
+  .disclaimer { grid-column: 1 / -1; font-size: 0.85rem; color: var(--faint); max-width: 100ch; padding-top: var(--s-5); }
+  @media (max-width: 760px) { .fgrid { grid-template-columns: 1fr; } }
+</style>

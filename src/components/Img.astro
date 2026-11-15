@@ -1,0 +1,15 @@
+---
+import { getMedia, src, srcset, KIND_LABEL } from '../lib/media';
+interface Props { slug: string; sizes?: string; eager?: boolean; class?: string; fit?: 'cover' | 'contain'; position?: string; alt?: string; decorative?: boolean }
+const { slug, sizes = '100vw', eager = false, class: cls = '', fit, position, alt, decorative = false } = Astro.props;
+const m = getMedia(slug);
+const w = m.widths[Math.min(1, m.widths.length - 1)];
+const style = [fit && `object-fit:${fit}`, position && `object-position:${position}`, `background-image:url(${m.lqip})`, 'background-size:cover'].filter(Boolean).join(';');
+---
+<img
+  src={src(m, w)} srcset={srcset(m)} sizes={sizes}
+  width={m.width} height={m.height}
+  alt={decorative ? '' : (alt ?? m.alt)}
+  loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : 'auto'}
+  class={cls} style={style} data-kind={KIND_LABEL[m.kind] ?? undefined}
+/>

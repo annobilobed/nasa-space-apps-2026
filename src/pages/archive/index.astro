@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import HardwareCard from '../../components/HardwareCard.astro';
+import { hardware, STATUS_LABEL, STATUS_EXPLAIN, WORLD_LABEL, CATEGORY_LABEL, type Status } from '../../data/hardware';
+
+const agencies = [...new Set(hardware.map((h) => h.agency.split(' ')[0].replace(/[^\w]/g, '')))].sort();
+const eras = [...new Set(hardware.map((h) => h.era))].sort();
+const categories = [...new Set(hardware.map((h) => h.category))];
+const statuses = Object.keys(STATUS_LABEL) as Status[];
+// Compact search records, embedded once; the cards themselves are server-rendered.
+const records = hardware.map((h) => ({
+  slug: h.slug, name: h.name, short: h.short, world: h.world, category: h.category, status: h.status, era: h.era,
+  agency: h.agency.split(' ')[0].replace(/[^\w]/g, ''), launch: h.launch,
+  text: [h.name, h.mission, h.summary, h.purpose, h.agency, h.location.label, ...h.instruments, ...h.achievements, ...h.discoveries].join(' '),
+}));
+---
+<Base title="Hardware archive" description="Search and filter every machine in the AIRXON collection by world, agency, mission, category, operational status and decade." current="archive">
+  <header class="a-hero wrap">
+    <h1>Everything we left out there.</h1>
+    <p class="lede">{hardware.length} machines on the Moon, on Mars and in deep space. Each one has a verified record of what it did and what is known about it today.</p>
+  </header>
+
+  <section class="wrap archive" aria-label="Search the archive" data-archive>
+    <form class="controls" role="search" data-controls>
+      <div class="field search">
+        <label for="q">Search the archive</label>
+        <div class="search-box">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.6"/></svg>
+          <input id="q" class="input" type="search" placeholder="Try “hematite”, “Apollo 15”, “seismometer”" autocomplete="off" data-q />
+        </div>
+      </div>
+      <div class="field"><label for="f-world">Destination</label>
+        <select id="f-world" class="select" data-f="world"><option value="">All worlds</option>{Object.entries(WORLD_LABEL).map(([k, v]) => <option value={k}>{v}</option>)}</select></div>
+      <div class="field"><label for="f-category">Hardware type</label>
+        <select id="f-category" class="select" data-f="category"><option value="">All types</option>{categories.map((c) => <option value={c}>{CATEGORY_LABEL[c]}</option>)}</select></div>
+      <div class="field"><label for="f-agency">Agency</label>
+        <select id="f-agency" class="select" data-f="agency"><option value="">All agencies</option>{agencies.map((a) => <option value={a}>{a}</option>)}</select></div>
+      <div class="field"><label for="f-era">Decade launched</label>
+        <select id="f-era" class="select" data-f="era"><option value="">Any decade</option>{eras.map((e) => <option value={e}>{e}</option>)}</select></div>
+      <div class="field"><label for="sort">Sort by</label>
+        <select id="sort" class="select" data-sort><option value="relevance">Relevance / featured</option><option value="launch-asc">Launch date (oldest first)</option><option value="launch-desc">Launch date (newest first)</option><option value="name">Name (A-Z)</option></select></div>
+      <div class="suggest" aria-label="Suggested searches">
+        <span class="label">Try</span>
+        {['hematite', 'Apollo', 'dust storm', 'seismometer', 'interstellar', 'ice'].map((t) => <button type="button" class="chip chip-sm" data-suggest={t}>{t}</button>)}
+      </div>
+      <fieldset class="status-chips">
+        <legend class="label">Status</legend>
+        <div class="chips">
+          <button type="button" class="chip" aria-pressed="true" data-status="">All</button>
+          {statuses.map((s) => <button type="button" class="chip" aria-pressed="false" data-status={s} title={STATUS_EXPLAIN[s]}>{STATUS_LABEL[s]}</button>)}
+        </div>
+      </fieldset>
+    </form>
+
+    <div class="results-bar">
+      <p class="count" aria-live="polite" data-count-out>{hardware.length} machines</p>
+      <button type="button" class="btn btn-ghost" data-reset>Clear all filters</button>
+    </div>
+
+    <ul class="results" data-results>
+      {hardware.map((h) => <li data-slug={h.slug}><HardwareCard h={h} headingLevel="h2" /></li>)}
+    </ul>
+    <div class="empty" hidden data-empty>
+      <h2>No machines match those filters.</h2>
+      <p class="muted">Try a different word, or clear the filters to see the whole collection.</p>
+      <button type="button" class="btn btn-secondary" data-reset>Clear all filters</button>
+    </div>
+  </section>
+
+  <section class="wrap section--tight legend" aria-labelledby="legend-h">
+    <h2 id="legend-h">How we describe status</h2>
+    <dl class="legend-grid">{statuses.map((s) => <div><dt>{STATUS_LABEL[s]}</dt><dd>{STATUS_EXPLAIN[s]}</dd></div>)}</dl>
+  </section>
+
+  <script type="application/json" id="archive-data" set:html={JSON.stringify(records)} />
+</Base>
+
+<script>
+  import { initArchive } from '../../scripts/archive';
+  initArchive();
+</script>
+
+<style>
+  .a-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-7); display: grid; gap: 18px; }
+  .a-hero h1 { max-width: 14ch; }
+  .controls { display: grid; grid-template-columns: 2fr repeat(5, minmax(0, 1fr)); gap: 14px; align-items: end; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); }
+  .search { grid-column: span 1; }
+  .search-box { position: relative; }
+  .search-box svg { position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--faint); pointer-events: none; }
+  .search-box .input { padding-left: 42px; }
+  .suggest { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip-sm { min-height: 36px; font-size: 0.85rem; }
+  .status-chips { grid-column: 1 / -1; border: 0; padding: 0; display: grid; gap: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  @media (max-width: 1100px) { .controls { grid-template-columns: repeat(3, minmax(0, 1fr)); } .search { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .controls { grid-template-columns: 1fr 1fr; } }
+  .results-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0 14px; }
+  .count { font-family: var(--font-mono); color: var(--cyan); font-size: 0.9rem; }
+  .results { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 20px; }
+  .results > li { display: flex; max-width: none; }
+  .results > li > :global(*) { width: 100%; }
+  .results :global(.card h2) { font-size: 1.7rem; }
+  .results > li[hidden] { display: none; }
+  .empty { text-align: left; padding: 48px 0; display: grid; gap: 14px; justify-items: start; }
+  .empty h2 { font-size: var(--step-3); }
+  .legend h2 { font-size: var(--step-3); margin-bottom: var(--s-5); }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px 32px; }
+  .legend-grid dt { font-weight: 700; }
+  .legend-grid dd { color: var(--muted); font-size: 0.95rem; }
+</style>

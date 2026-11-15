@@ -1,0 +1,238 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Figure from '../components/Figure.astro';
+import Sources from '../components/Sources.astro';
+const sources = [
+  { title: "NASA's Record-Setting Opportunity Rover Mission on Mars Comes to End", publisher: 'NASA', url: 'https://www.nasa.gov/news-release/nasas-record-setting-opportunity-rover-mission-on-mars-comes-to-end/' },
+  { title: "Close-up View of 'Homestake' Vein (PIA15035)", publisher: 'NASA/JPL-Caltech', url: 'https://images.nasa.gov/details/PIA15035' },
+  { title: 'NASA Retires InSight Mars Lander Mission After Years of Science', publisher: 'NASA', url: 'https://www.nasa.gov/press-release/nasa-retires-insight-mars-lander-mission-after-years-of-science' },
+  { title: "InSight's First Selfie (PIA22876) and InSight's Final Selfie (PIA25287)", publisher: 'NASA/JPL-Caltech', url: 'https://images.nasa.gov/details/PIA25287' },
+  { title: 'NASA’s InSight Finds Marsquakes From Meteoroids Go Deeper Than Expected', publisher: 'NASA JPL', url: 'https://www.jpl.nasa.gov/news/nasas-insight-finds-marsquakes-from-meteoroids-go-deeper-than-expected/' },
+  { title: 'NASA InSight Study Provides Clearest Look Ever at Martian Core', publisher: 'NASA', url: 'https://www.nasa.gov/missions/insight/nasa-insight-study-provides-clearest-look-ever-at-martian-core/' },
+  { title: 'The Apollo Experiment That Keeps on Giving', publisher: 'NASA JPL', url: 'https://www.jpl.nasa.gov/news/the-apollo-experiment-that-keeps-on-giving/' },
+  { title: 'Lunar Laser Ranging: Fundamental Physics in Space', publisher: 'NASA JPL', url: 'https://funphysics.jpl.nasa.gov/technical/grp/lunar-laser.html' },
+  { title: 'Surveyor 3', publisher: 'NASA Science', url: 'https://science.nasa.gov/mission/surveyor-3/' },
+  { title: 'Mars Phoenix', publisher: 'NASA Science', url: 'https://science.nasa.gov/mission/phoenix/' },
+  { title: 'Voyager', publisher: 'NASA Science', url: 'https://science.nasa.gov/mission/voyager/' },
+];
+---
+<Base title="Scientific discoveries" description="What the machines discovered, explained simply: ancient water on Mars, marsquakes, a Moon drifting away from Earth, and more." current="discoveries">
+  <header class="d-hero wrap">
+    <h1>What the machines taught us.</h1>
+    <p class="lede">Big ideas from small robots, explained step by step. Each discovery links back to the hardware that made it.</p>
+    <nav class="d-toc" aria-label="Discoveries on this page">
+      <a href="#water">Water on ancient Mars</a><a href="#dust">Why dust ends missions</a><a href="#quakes">Listening to Mars</a><a href="#ice">Ice under the surface</a><a href="#laser">A Moon drifting away</a><a href="#perspective">The view from far away</a>
+    </nav>
+  </header>
+
+  <!-- 1 WATER -->
+  <section id="water" class="disc wrap" aria-labelledby="water-h">
+    <div class="d-num mono">Opportunity · Mars</div>
+    <h2 id="water-h">Ancient Mars had water</h2>
+    <p class="lede">Opportunity never saw a lake or a river. It found minerals that only make sense if water was once there.</p>
+    <div class="steps" data-reveal>
+      <figure class="diagram" aria-labelledby="dia-cap">
+        <svg viewBox="0 0 600 220" role="img" aria-labelledby="dia-title dia-desc">
+          <title id="dia-title">How “blueberries” can form</title>
+          <desc id="dia-desc">Three panels. One: water seeps through layers of sediment. Two: minerals carried by the water collect into small round grains inside the rock. Three: wind slowly wears the softer rock away, leaving the hard round grains lying on the surface.</desc>
+          <g class="panel1"><rect x="10" y="20" width="180" height="170" rx="4" class="sk"/>
+            {[0,1,2,3,4].map((i) => <rect x="10" y={70 + i * 24} width="180" height="24" class={i % 2 ? 'l1' : 'l2'} />)}
+            {[30,70,110,150].map((x, i) => <path d={`M${x} 60 q 6 30 0 60 q -6 30 0 60`} class="water" style={`animation-delay:${i * 0.3}s`} />)}
+            <text x="100" y="45" class="t">1 · Water seeps in</text></g>
+          <g class="panel2" transform="translate(205 0)"><rect x="10" y="20" width="180" height="170" rx="4" class="sk"/>
+            {[0,1,2,3,4].map((i) => <rect x="10" y={70 + i * 24} width="180" height="24" class={i % 2 ? 'l1' : 'l2'} />)}
+            {[[40,90],[90,120],[140,100],[60,150],[120,165],[165,140]].map(([x, y]) => <circle cx={x} cy={y} r="7" class="berry" />)}
+            <text x="100" y="45" class="t">2 · Minerals form spheres</text></g>
+          <g class="panel3" transform="translate(410 0)"><rect x="10" y="20" width="180" height="170" rx="4" class="sk"/>
+            {[0,1].map((i) => <rect x="10" y={142 + i * 24} width="180" height="24" class={i % 2 ? 'l1' : 'l2'} />)}
+            {[[35,136],[70,136],[100,136],[130,136],[160,136],[52,130]].map(([x, y]) => <circle cx={x} cy={y} r="7" class="berry" />)}
+            <path d="M20 80 h60 M40 95 h70 M15 110 h50" class="wind" />
+            <text x="100" y="45" class="t">3 · Wind leaves them behind</text></g>
+        </svg>
+        <figcaption id="dia-cap" class="placard"><span class="cap"><span class="kind-tag">Diagram</span> Simplified illustration drawn by AIRXON of how mineral spheres (concretions) can grow inside wet rock. It is a teaching sketch, not a photograph.</span></figcaption>
+      </figure>
+      <div class="stack">
+        <p>At its landing site, Opportunity found countless tiny grey balls, nicknamed <strong>blueberries</strong>. They are rich in <strong>hematite</strong>, an iron mineral that forms in water.</p>
+        <p>Later, on the rim of Endeavour Crater, it found bright veins of a mineral that appears to be gypsum, deposited by water flowing through cracks. NASA also reported signs of ancient water similar to the drinkable water of a pond or lake on Earth.</p>
+        <p class="note"><strong>Why it matters:</strong> life as we know it needs liquid water, so these clues tell scientists where on Mars life could once have survived.</p>
+      </div>
+    </div>
+    <div class="pair">
+      <Figure slug="opp-berries" sizes="(min-width: 900px) 45vw, 92vw" caption="Real blueberries on Martian soil, Eagle Crater, 2004." ratio="16/10" />
+      <Figure slug="opp-homestake" sizes="(min-width: 900px) 45vw, 92vw" caption="The Homestake vein, apparently gypsum, Endeavour Crater, 2011." ratio="16/10" />
+    </div>
+    <a class="btn btn-ghost" href="/archive/opportunity/">See Opportunity’s profile</a>
+  </section>
+
+  <!-- 2 DUST: before / after -->
+  <section id="dust" class="disc wrap" aria-labelledby="dust-h">
+    <div class="d-num mono">InSight · Mars</div>
+    <h2 id="dust-h">Why dust ends missions</h2>
+    <p class="lede">Solar panels need sunlight. On Mars, fine dust slowly settles on everything. Drag the slider to compare InSight in 2018 and in 2022.</p>
+    <div class="compare" data-compare style="--pos:50%">
+      <div class="cmp-img after"><Img slug="insight-final-selfie" sizes="(min-width: 1100px) 1000px, 100vw" alt="InSight in April 2022, its solar panels covered with reddish dust." /></div>
+      <div class="cmp-img before"><Img slug="insight-first-selfie" sizes="(min-width: 1100px) 1000px, 100vw" alt="InSight in December 2018, its solar panels clean." /></div>
+      <span class="cmp-label l">December 2018 · sol 10</span><span class="cmp-label r">April 2022 · sol 1,211</span>
+      <span class="cmp-handle" aria-hidden="true"></span>
+      <input type="range" min="0" max="100" value="50" aria-label="Compare InSight's first and final selfies: slide left to see more of 2022, right for 2018" data-compare-input />
+    </div>
+    <p class="placard"><span>InSight’s first selfie (PIA22876) and final selfie (PIA25287) · NASA/JPL-Caltech. The two selfies were framed slightly differently.</span></p>
+    <div class="split2">
+      <p>As dust built up, InSight made less and less power. Its last transmission came on December 15, 2022. Opportunity faced the same enemy in 2018, but all at once: a planet-wide storm blocked the Sun for weeks.</p>
+      <p class="note"><strong>Try it:</strong> on the <a href="/stories/opportunity/#final">Opportunity story</a>, you can thicken a simulated dust storm and watch the sunlight fade.</p>
+    </div>
+  </section>
+
+  <!-- 3 QUAKES -->
+  <section id="quakes" class="disc wrap" aria-labelledby="quakes-h">
+    <div class="d-num mono">InSight · Mars</div>
+    <h2 id="quakes-h">Listening to the inside of Mars</h2>
+    <p class="lede">InSight’s seismometer detected <strong>1,319 marsquakes</strong>. Like ripples in water, quake waves bend and bounce when they hit different layers deep inside a planet.</p>
+    <div class="interior" data-interior>
+      <svg viewBox="0 0 320 320" class="planet-cut" role="img" aria-label="Cutaway diagram of Mars showing crust, mantle and core.">
+        <circle cx="160" cy="160" r="150" class="layer crust" data-layer="crust" />
+        <circle cx="160" cy="160" r="140" class="layer mantle" data-layer="mantle" />
+        <circle cx="160" cy="160" r="82" class="layer core" data-layer="core" />
+        <path d="M160 160 L310 160 A150 150 0 0 0 160 10 Z" class="cut" />
+        <circle cx="244" cy="76" r="6" class="quake" /><path d="M244 76 Q 200 150 120 230" class="ray" /><path d="M244 76 Q 260 180 210 270" class="ray r2" />
+      </svg>
+      <div class="layers">
+        <p class="label">Choose a layer</p>
+        <div class="chips" role="group" aria-label="Mars interior layers">
+          <button type="button" class="chip" aria-pressed="true" data-layer-btn="crust">Crust</button>
+          <button type="button" class="chip" aria-pressed="false" data-layer-btn="mantle">Mantle</button>
+          <button type="button" class="chip" aria-pressed="false" data-layer-btn="core">Core</button>
+        </div>
+        <div class="layer-info" aria-live="polite">
+          <div data-layer-info="crust"><h3>Crust</h3><p>The thin rocky shell we see from orbit. Quake waves change speed as they pass between layers of the crust, so InSight could tell how the crust is built in layers.</p></div>
+          <div data-layer-info="mantle" hidden><h3>Mantle</h3><p>A thick layer of hot rock. Quakes and meteoroid impacts sent waves through the mantle, and some impact waves went deeper than scientists had expected.</p></div>
+          <div data-layer-info="core" hidden><h3>Core</h3><p>Seismic waves reflected off a liquid iron core. Later studies of InSight’s data found the core is smaller and denser than previously thought.</p></div>
+        </div>
+        <p class="placard"><span class="cap"><span class="kind-tag">Diagram</span> Not to scale. Drawn by AIRXON to explain the idea of seismology, not to show measured layer sizes.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 ICE -->
+  <section id="ice" class="disc wrap" aria-labelledby="ice-h">
+    <div class="d-num mono">Phoenix · Mars</div>
+    <h2 id="ice-h">Ice just under the surface</h2>
+    <div class="split2 media-split">
+      <div class="stack">
+        <p class="lede">In 2008, Phoenix landed farther north than any mission before it, at a latitude like northern Alaska, and dug into an ice-rich layer near the surface.</p>
+        <p class="muted">It also found perchlorate in the soil: a chemical that some microbes on Earth can use for energy, and that could be useful to future human explorers.</p>
+        <a class="btn btn-ghost" href="/archive/phoenix/">See Phoenix’s profile</a>
+      </div>
+      <Figure slug="phoenix-composite" sizes="(min-width: 900px) 40vw, 92vw" caption="Trenches dug by Phoenix in the Martian arctic, 2008." ratio="4/3" />
+    </div>
+  </section>
+
+  <!-- 5 LASER -->
+  <section id="laser" class="disc wrap" aria-labelledby="laser-h">
+    <div class="d-num mono">Apollo 11 retroreflector · Moon</div>
+    <h2 id="laser-h">The Moon is drifting away</h2>
+    <p class="lede">In 1969, Buzz Aldrin set up a panel of 100 small mirrors. Observatories on Earth still fire lasers at it and time how long the light takes to come back.</p>
+    <div class="laser" data-laser>
+      <div class="lz-track" aria-hidden="true">
+        <span class="lz-earth">Earth</span>
+        <span class="lz-beam"><i data-beam></i></span>
+        <span class="lz-moon">Moon</span>
+      </div>
+      <div class="lz-ctl">
+        <button type="button" class="btn btn-primary" data-fire>Fire a laser pulse</button>
+        <p class="mono lz-out" aria-live="polite" data-laser-out>Light needs about 2.5 seconds for the round trip.</p>
+      </div>
+    </div>
+    <div class="split2">
+      <p>Because the speed of light is known exactly, the round-trip time gives the distance to the Moon with great precision. These measurements show the Moon moving away from Earth by about <strong>3.8 cm (1.5 in) every year</strong>, and give strong evidence that the Moon has a fluid core.</p>
+      <Figure slug="apollo11-easep" sizes="(min-width: 900px) 40vw, 92vw" caption="Buzz Aldrin carries the seismometer and the Laser Ranging Retroreflector, July 1969." ratio="4/3" />
+    </div>
+    <p class="placard"><span>The pulse moves in real time. The round trip takes about 2.5 seconds at the Moon’s average distance of about 384,400 km.</span></p>
+  </section>
+
+  <!-- 6 PERSPECTIVE -->
+  <section id="perspective" class="disc wrap" aria-labelledby="persp-h">
+    <div class="d-num mono">Voyager 1 · Deep space</div>
+    <h2 id="persp-h">The view from far away</h2>
+    <div class="split2 media-split">
+      <div class="stack">
+        <p class="lede">On February 14, 1990, Voyager 1 turned its camera back towards home. Earth appeared as a tiny point of light: the Pale Blue Dot.</p>
+        <p class="muted">The image was part of a “Family Portrait of the Solar System”. It is not a scientific discovery in the usual sense, but it changed how many people think about our planet. The camera was later switched off to save power, and Voyager 1 is still sending data from interstellar space.</p>
+        <a class="btn btn-ghost" href="/archive/voyager-1/">See Voyager 1’s profile</a>
+      </div>
+      <Figure slug="pale-blue-dot-revisited" sizes="(min-width: 900px) 40vw, 92vw" caption="Pale Blue Dot Revisited (2020 reprocessing). Earth is the faint dot in the light ray." ratio="1/1" />
+    </div>
+  </section>
+
+  <section class="wrap section--tight"><Sources sources={sources} title="Sources for this page" /></section>
+</Base>
+
+<script>
+  import { initDiscoveries } from '../scripts/discoveries';
+  initDiscoveries();
+</script>
+
+<style>
+  .d-hero { padding-top: calc(var(--nav-h) + 72px); padding-bottom: var(--s-6); display: grid; gap: 18px; }
+  .d-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .d-toc a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; font-size: 0.9rem; color: var(--muted); }
+  .d-toc a:hover { color: var(--fg); border-color: var(--border-strong); }
+  .disc { display: grid; gap: var(--s-5); padding-block: var(--s-9); border-top: 1px solid var(--border); scroll-margin-top: 80px; }
+  .disc h2 { font-size: var(--step-5); max-width: 16ch; }
+  .d-num { color: var(--cyan); font-size: 0.82rem; }
+  .steps { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--s-6); align-items: center; }
+  .steps .stack p { color: var(--muted); }
+  @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+  .note { border-left: 2px solid var(--cyan); padding-left: 16px; color: var(--fg) !important; }
+  .diagram svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); }
+  .sk { fill: oklch(0.24 0.03 45); }
+  .l1 { fill: oklch(0.42 0.07 45); } .l2 { fill: oklch(0.36 0.06 45); }
+  .water { fill: none; stroke: var(--cyan); stroke-width: 2.5; stroke-dasharray: 6 8; animation: flow 2.4s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -56; } }
+  .berry { fill: oklch(0.42 0.02 260); stroke: oklch(0.7 0.02 260); stroke-width: 1; }
+  .wind { stroke: var(--star); stroke-width: 2; opacity: 0.6; fill: none; stroke-linecap: round; }
+  .t { fill: var(--star); font: 600 13px var(--font-body); text-anchor: middle; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
+  .split2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); align-items: start; }
+  .split2 > p { color: var(--muted); }
+  .media-split { align-items: center; }
+  @media (max-width: 860px) { .split2 { grid-template-columns: 1fr; } }
+
+  .compare { position: relative; aspect-ratio: 16 / 10; border-radius: var(--r-2); overflow: hidden; border: 1px solid var(--border); background: #000; }
+  .cmp-img { position: absolute; inset: 0; }
+  .cmp-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .cmp-img.before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; background: var(--star); transform: translateX(-1px); pointer-events: none; }
+  .cmp-handle::after { content: '⟷'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; border-radius: 50%; background: var(--star); color: var(--navy); display: grid; place-items: center; font-weight: 700; }
+  .cmp-label { position: absolute; top: 14px; font-family: var(--font-mono); font-size: 0.78rem; background: rgb(8 13 28 / 0.8); padding: 4px 10px; border-radius: var(--r-1); }
+  .cmp-label.l { left: 14px; } .cmp-label.r { right: 14px; }
+  .compare input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .compare:has(input:focus-visible) { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+  .interior { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: var(--s-7); align-items: center; }
+  .planet-cut { width: 100%; max-width: 360px; }
+  .layer { transition: opacity var(--t-base), stroke var(--t-base); stroke: transparent; stroke-width: 3; cursor: pointer; }
+  .crust { fill: oklch(0.58 0.1 45); } .mantle { fill: oklch(0.45 0.12 35); } .core { fill: oklch(0.72 0.12 70); }
+  .cut { fill: var(--navy); }
+  .interior[data-active] .layer { opacity: 0.45; }
+  .interior[data-active='crust'] .crust, .interior[data-active='mantle'] .mantle, .interior[data-active='core'] .core { opacity: 1; stroke: var(--star); }
+  .interior[data-active='crust'] .mantle { opacity: 0.45; }
+  .quake { fill: var(--cyan); }
+  .ray { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-dasharray: 4 5; animation: flow 3s linear infinite; }
+  .layers { display: grid; gap: 14px; }
+  .layer-info h3 { font-size: var(--step-2); margin-bottom: 8px; }
+  .layer-info p { color: var(--muted); }
+  @media (max-width: 760px) { .interior { grid-template-columns: 1fr; } .planet-cut { margin-inline: auto; max-width: 260px; } }
+
+  .laser { display: grid; gap: 18px; padding: clamp(18px, 3vw, 32px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); }
+  .lz-track { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; }
+  .lz-earth::before, .lz-moon::before { content: ''; display: inline-block; width: 28px; height: 28px; border-radius: 50%; vertical-align: middle; margin-right: 10px; background: oklch(0.6 0.12 240); }
+  .lz-moon::before { background: var(--moon); width: 16px; height: 16px; }
+  .lz-beam { position: relative; height: 2px; background: var(--border); }
+  .lz-beam i { position: absolute; top: -3px; left: 0; width: 22px; height: 8px; border-radius: 4px; background: oklch(0.7 0.24 25); opacity: 0; }
+  .lz-ctl { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .lz-out { color: var(--cyan); font-size: 0.9rem; }
+  @media (prefers-reduced-motion: reduce) { .water, .ray { animation: none; } }
+</style>

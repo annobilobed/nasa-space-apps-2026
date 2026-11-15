@@ -1,0 +1,372 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Figure from '../../components/Figure.astro';
+import SignalLine from '../../components/SignalLine.astro';
+import Sources from '../../components/Sources.astro';
+import HardwareCard from '../../components/HardwareCard.astro';
+import { bySlug, fmtDate, PAYDIRT } from '../../data/hardware';
+
+const opp = bySlug('opportunity')!;
+const related = ['spirit', 'curiosity', 'perseverance'].map((s) => bySlug(s)!);
+const chapters = [
+  { id: 'background', n: 'I', title: 'A geologist on wheels', hud: { sol: 'Before launch', date: '2000 to 2003', place: 'Earth' } },
+  { id: 'journey', n: 'II', title: 'The journey', hud: { sol: 'Sol 1', date: '25 Jan 2004 UTC', place: 'Eagle Crater' } },
+  { id: 'discoveries', n: 'III', title: 'What it found', hud: { sol: 'Sols 1 to 3,968', date: '2004 to 2015', place: 'Meridiani Planum' } },
+  { id: 'challenges', n: 'IV', title: 'Against the odds', hud: { sol: 'Sols 400 to 4,800', date: '2005 to 2017', place: 'Endeavour Crater' } },
+  { id: 'final', n: 'V', title: 'The final chapter', hud: { sol: 'Sol 5,111', date: '10 Jun 2018', place: 'Perseverance Valley' } },
+  { id: 'legacy', n: 'VI', title: 'Legacy', hud: { sol: 'Signal lost', date: '13 Feb 2019', place: 'Perseverance Valley' } },
+];
+const timeline = [
+  { date: '2003-07-07', t: 'Launch', d: 'A Delta II Heavy rocket lifts off from Cape Canaveral Air Force Station, late on July 7 Eastern time (July 8 UTC). The cruise to Mars takes about seven months.', img: 'opp-launch' },
+  { date: '2004-01-25', t: 'Landing', d: 'Wrapped in airbags, Opportunity bounces to a stop inside a crater only about 20 m across, later named Eagle Crater, in Meridiani Planum. It is January 24 in US Pacific time.', img: 'opp-berries' },
+  { date: '2004-07-26', t: 'Inside Endurance Crater', d: 'On sol 180 the rover photographs its own shadow while driving deeper into Endurance Crater to read the layered rock in its walls.', img: 'opp-shadow' },
+  { date: '2005-03-20', t: 'A driving record', d: 'Opportunity covers 220 m (721 ft) in a single Martian day, a one-day record for Mars.', img: 'opp-selfie-2007' },
+  { date: '2006', t: 'Victoria Crater', d: 'After a long drive south, the rover reaches the scalloped rim of Victoria Crater and photographs cliffs such as Cape Verde.', img: 'opp-cape-verde' },
+  { date: '2011', t: 'Endeavour Crater', d: 'After about 90 months and 33 km of plains, Opportunity reaches Endeavour Crater, about 22 km wide: a “new landing site” with much older rocks.', img: 'opp-endeavour-view' },
+  { date: '2011-11', t: 'The Homestake vein', d: 'At Cape York on Endeavour’s rim, the rover inspects a bright vein rich in calcium and sulfur, apparently gypsum deposited by water.', img: 'opp-homestake' },
+  { date: '2015-03-24', t: 'A marathon on Mars', d: 'On sol 3,968 the odometer passes 42.195 km, the length of a marathon race, eleven years and two months after landing.', img: 'opp-marathon' },
+  { date: '2018-06-10', t: 'Last message', d: 'As a planet-wide dust storm darkens the sky, Opportunity sends its final data: a partial, noisy image of a dim Sun.', img: 'opp-last-message' },
+  { date: '2019-02-13', t: 'Mission complete', d: 'After more than a thousand commands to restore contact, NASA announces the end of the mission.', img: 'opp-legacy-pan' },
+];
+const sources = [
+  ...opp.sources,
+  { title: 'Last Images Opportunity Took (PIA22930)', publisher: 'NASA/JPL-Caltech/Cornell/ASU', url: 'https://images.nasa.gov/details/PIA22930' },
+  { title: "Opportunity's Last Message (PIA22929)", publisher: 'NASA/JPL-Caltech/Cornell/ASU', url: 'https://images.nasa.gov/details/PIA22929' },
+  { title: '2018 Giant Dust Storm on Mars (PIA22519)', publisher: 'NASA/JPL-Caltech/MSSS', url: 'https://images.nasa.gov/details/PIA22519' },
+  { title: 'Opportunity Marathon Journey (PIA19158)', publisher: 'NASA/JPL-Caltech/Univ. of Arizona', url: 'https://images.nasa.gov/details/PIA19158' },
+  { title: "Close-up View of 'Homestake' Vein (PIA15035)", publisher: 'NASA/JPL-Caltech', url: 'https://images.nasa.gov/details/PIA15035' },
+].filter((s, i, a) => a.findIndex((x) => x.url === s.url) === i);
+---
+<Base title="Opportunity: from landing to legacy" description="The story of NASA's Opportunity rover: built to last 90 Martian days, it explored Mars for almost 15 years, found evidence of ancient water and fell silent in the 2018 dust storm." current="stories" image="/media/opp-shadow-1600.webp">
+  <article class="story" data-story>
+    <!-- HERO -->
+    <header class="s-hero">
+      <div class="s-hero-img" aria-hidden="true"><Img slug="opp-perseverance-tracks" eager sizes="100vw" decorative /></div>
+      <div class="wrap s-hero-copy">
+        <nav aria-label="Breadcrumb" class="crumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/stories/">Mission stories</a><span aria-hidden="true">/</span><span>Opportunity</span></nav>
+        <p class="kicker copper-k">Mars Exploration Rover B · 2003 to 2019</p>
+        <h1>Opportunity</h1>
+        <p class="lede">The rover built for 90 days that explored Mars for almost fifteen years. Its last message was a picture of a fading Sun.</p>
+        <div class="telemetry"><span><b>Launch</b>{fmtDate('2003-07-07')}</span><span><b>Landing</b>{fmtDate('2004-01-25')} UTC</span><span><b>Last contact</b>{fmtDate('2018-06-10')}</span><span><b>Distance</b>45.16 km</span></div>
+        <p class="placard"><span>Background: Opportunity’s wheel tracks in Perseverance Valley, sols 5,000 to 5,030 · NASA/JPL-Caltech · PIA23246</span></p>
+      </div>
+    </header>
+
+    <!-- MISSION CLOCK (sticky HUD) -->
+    <aside class="hud" aria-label="Mission clock" data-hud>
+      <div class="hud-inner wrap">
+        <span class="hud-ch" data-hud-ch>I · A geologist on wheels</span>
+        <span class="hud-data mono"><span data-hud-sol>Before launch</span><span data-hud-date>2000 to 2003</span><span class="hud-place" data-hud-place>Earth</span></span>
+        <span class="hud-sig" data-hud-sig aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+    </aside>
+
+    <div class="wrap s-body">
+      <nav class="toc" aria-label="Chapters">
+        <ol>{chapters.map((c) => <li><a href={`#${c.id}`} data-toc={c.id}><span class="mono">{c.n}</span>{c.title}</a></li>)}</ol>
+      </nav>
+
+      <div class="chapters">
+        <!-- I -->
+        <section id="background" class="chapter" data-chapter={JSON.stringify(chapters[0])}>
+          <p class="ch-n mono">Chapter I</p>
+          <h2>A geologist on wheels</h2>
+          <p class="lede">Opportunity was one of two identical robots sent to Mars in 2003 to answer one question: did water once shape the Red Planet?</p>
+          <p>NASA’s Mars Exploration Rover mission launched twin rovers, Spirit and Opportunity, to opposite sides of Mars. Their primary objective was to seek out historical evidence of the planet’s climate and water at sites where conditions may once have been favourable for life. Because liquid water is required for life as we know it, finding signs of past water would tell scientists where to look next.</p>
+          <p>Opportunity was a six-wheeled, solar-powered field geologist with a mass of 174 kg (384 lb). It carried a panoramic camera on a mast, spectrometers to identify minerals, a microscopic imager, and a rock abrasion tool to grind away weathered surfaces. It was designed to work for 90 Martian days, or <em>sols</em>, and to drive about 1,000 m.</p>
+          <div class="kit" data-reveal>
+            <h3>The science kit</h3>
+            <ul class="kit-list">{opp.instruments.map((i) => <li>{i}</li>)}</ul>
+          </div>
+          <Figure slug="mer-artist" sizes="(min-width: 1000px) 60vw, 92vw" caption="Artist’s concept of a Mars Exploration Rover. This is an illustration, not a photograph." />
+        </section>
+
+        <!-- II -->
+        <section id="journey" class="chapter" data-chapter={JSON.stringify(chapters[1])}>
+          <p class="ch-n mono">Chapter II</p>
+          <h2>The journey</h2>
+          <div class="split">
+            <div class="stack">
+              <p>Opportunity left Florida on a Delta II Heavy rocket on July 7, 2003 (Eastern time). Seven months later, on January 24, 2004 in US Pacific time, it plunged through the thin Martian atmosphere, slowed by a heat shield, a parachute and rockets, and hit the ground cocooned in airbags.</p>
+              <p>It bounced and rolled to rest inside a crater only about 20 metres across. It was a lucky landing that put layered bedrock right in front of its cameras. The team named it Eagle Crater.</p>
+              <p class="callout">Planned mission: <strong>90 sols</strong>. Actual mission: <strong>5,111 sols</strong> of contact, more than 56 times longer.</p>
+            </div>
+            <Figure slug="opp-launch" sizes="(min-width: 1000px) 30vw, 92vw" caption="Opportunity launches on a Delta II Heavy, July 7, 2003." ratio="4/5" />
+          </div>
+        </section>
+
+        <!-- Interactive timeline -->
+        <section class="timeline-sec" aria-labelledby="tl-h" data-timeline>
+          <div class="tl-head">
+            <h2 id="tl-h">Mission timeline</h2>
+            <p class="muted">Select a moment to see what happened. Use the arrow keys to move along the line.</p>
+          </div>
+          <div class="tl-track" role="tablist" aria-label="Opportunity mission milestones" data-tl-track>
+            {timeline.map((m, i) => (
+              <button class="tl-stop" role="tab" type="button" id={`tl-tab-${i}`} aria-controls="tl-panel" aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-i={i} data-late={m.date >= '2018' ? '' : undefined}>
+                <span class="tl-dot" aria-hidden="true"></span>
+                <span class="tl-date mono">{fmtDate(m.date)}</span>
+                <span class="tl-t">{m.t}</span>
+              </button>
+            ))}
+          </div>
+          <div class="tl-panel" id="tl-panel" role="tabpanel" aria-live="polite" data-tl-panel>
+            {timeline.map((m, i) => (
+              <div class="tl-item" data-item={i} hidden={i !== 0}>
+                <div class="tl-img"><Img slug={m.img} sizes="(min-width: 1000px) 40vw, 92vw" /></div>
+                <div class="tl-copy">
+                  <p class="tl-date mono">{fmtDate(m.date)}</p>
+                  <h3>{m.t}</h3>
+                  <p>{m.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div class="tl-nav">
+            <button class="btn btn-secondary btn-sm" type="button" data-tl-prev>Previous</button>
+            <span class="mono tl-count" data-tl-count>1 / {timeline.length}</span>
+            <button class="btn btn-secondary btn-sm" type="button" data-tl-next>Next</button>
+          </div>
+        </section>
+
+        <!-- III -->
+        <section id="discoveries" class="chapter" data-chapter={JSON.stringify(chapters[2])}>
+          <p class="ch-n mono">Chapter III</p>
+          <h2>What it found</h2>
+          <p class="lede">Opportunity didn’t find water on Mars today. It found the fingerprints water left behind billions of years ago.</p>
+          <div class="finds">
+            <article class="find" data-reveal>
+              <Figure slug="opp-berries" sizes="(min-width: 1000px) 32vw, 92vw" caption="“Blueberries”, small hematite-rich spherules, on the soil near Stone Mountain, Eagle Crater, February 2004." ratio="4/3" />
+              <h3>Hematite at the landing site</h3>
+              <p>Scattered across the ground and embedded in the rock were millimetre-sized grey spheres the team nicknamed blueberries. They are rich in hematite, a mineral that forms in water. It was the first strong clue that Meridiani Planum had once been wet.</p>
+            </article>
+            <article class="find" data-reveal style="--d:100ms">
+              <Figure slug="opp-homestake" sizes="(min-width: 1000px) 32vw, 92vw" caption="The Homestake vein at Cape York, Endeavour Crater, seen by the microscopic imager in 2011." ratio="4/3" />
+              <h3>A vein written by water</h3>
+              <p>On the rim of Endeavour Crater, Opportunity examined a bright vein rich in calcium and sulfur, apparently the mineral gypsum. NASA described such veins as deposited by water flowing through cracks in the rock.</p>
+            </article>
+            <article class="find" data-reveal style="--d:200ms">
+              <Figure slug="opp-endeavour-view" sizes="(min-width: 1000px) 32vw, 92vw" caption="View from Cape Tribulation on the rim of Endeavour Crater, January 2015." ratio="4/3" position="30% 50%" />
+              <h3>Water you could have drunk</h3>
+              <p>At Endeavour, NASA reported strong indications of ancient water similar to the drinkable water of a pond or lake on Earth.</p>
+            </article>
+          </div>
+          <blockquote class="quote" data-reveal>
+            <p>“When you combine the discoveries of Opportunity and Spirit, they showed us that ancient Mars was a very different place from Mars today, which is a cold, dry, desolate world.”</p>
+            <footer>Steve Squyres, principal investigator of the rovers’ science payload, Cornell University. <a href={opp.sources[0].url} rel="noopener">NASA Release 19-004</a></footer>
+          </blockquote>
+          <Figure slug="opp-marathon" sizes="(min-width: 1000px) 70vw, 92vw" caption="Map of Opportunity’s drive as it passed the length of a marathon on sol 3,968, March 24, 2015." />
+        </section>
+
+        <!-- IV -->
+        <section id="challenges" class="chapter" data-chapter={JSON.stringify(chapters[3])}>
+          <p class="ch-n mono">Chapter IV</p>
+          <h2>Against the odds</h2>
+          <div class="split">
+            <div class="stack">
+              <p>Mars kept testing the rover. In 2005 alone, Opportunity lost steering in one of its front wheels, a stuck heater threatened to drain its power, and a sand ripple almost trapped it for good. In 2007, a two-month dust storm put it in danger. In 2015 it lost the use of its 256-megabyte flash memory, and in 2017 it lost steering in its other front wheel.</p>
+              <p>Each time, the team on Earth found a workaround and the rover bounced back. Sometimes Mars helped too: gusts of wind cleaned dust off the solar panels.</p>
+              <p>It climbed slopes as steep as 32 degrees, an off-Earth record, and kept going until it had driven more than 45 km.</p>
+            </div>
+            <Figure slug="opp-selfie-2007" sizes="(min-width: 1000px) 34vw, 92vw" caption="Opportunity looks down at its own dusty solar panels after the 2007 dust storm." ratio="1/1" />
+          </div>
+        </section>
+
+        <!-- V -->
+        <section id="final" class="chapter chapter-final" data-chapter={JSON.stringify(chapters[4])}>
+          <p class="ch-n mono">Chapter V</p>
+          <h2>The final chapter</h2>
+          <p class="lede">On May 31, 2018, orbiters spotted a dust storm forming. Within days it had grown into one of the largest ever seen on Mars.</p>
+          <Figure slug="dust-storm-2018" sizes="(min-width: 1000px) 70vw, 92vw" caption="Mars Reconnaissance Orbiter maps from May 31 to June 11, 2018: the storm (salmon overlay) spreads across the planet. Rover locations are marked." />
+          <p>Opportunity ran on sunlight. As the dust thickened, less and less light reached its solar panels. Scientists measure how hazy the sky is with a number called <em>tau</em> (optical depth). On a clear Martian day tau is below 1. On Opportunity’s last day it was about <strong>10.8</strong>.</p>
+
+          <div class="tau" data-tau>
+            <div class="tau-sky" data-tau-sky aria-hidden="true"><span class="tau-sun" data-tau-sun></span></div>
+            <div class="tau-ctl">
+              <label for="tau" class="label">Try it: drag to thicken the dust (tau)</label>
+              <input id="tau" type="range" min="0.3" max="10.8" step="0.1" value="0.6" data-tau-input aria-describedby="tau-out tau-note" />
+              <output id="tau-out" class="tau-out" for="tau" data-tau-out>tau 0.6 · 55% of direct sunlight gets through</output>
+              <p class="tau-note" id="tau-note">Simplified model: direct sunlight falls as e<sup>−tau</sup>. Real solar panels also catch some scattered light, so they receive more than this. But at tau 10.8 it was still far too little to keep Opportunity running.</p>
+            </div>
+          </div>
+
+          <div class="last-msg" data-reveal>
+            <div class="lm-img"><Img slug="opp-last-message" sizes="(min-width: 1000px) 36vw, 92vw" /></div>
+            <div class="stack">
+              <p class="mono cyan">10 June 2018 · Sol 5,111</p>
+              <h3>The last message</h3>
+              <p>Opportunity pointed its camera at the Sun and sent the picture up to the Mars Reconnaissance Orbiter for relay to Earth. The image arrived dark and speckled with noise. The transmission stopped before the whole picture was sent.</p>
+              <p>Its two final thumbnail images, used to measure tau, show the Sun as only a faint, ghostly dot.</p>
+              <figure class="thumbs"><Img slug="opp-last-images" sizes="224px" /><figcaption class="placard"><span>The last images Opportunity took, shown at their true tiny size · NASA/JPL-Caltech/Cornell/ASU · PIA22930</span></figcaption></figure>
+              <p class="placard"><span>Last message: NASA/JPL-Caltech/Cornell/ASU · PIA22929</span></p>
+            </div>
+          </div>
+
+          <SignalLine variant="flatline" label="Signal trace: Opportunity's telemetry stops on June 10, 2018, followed by eight months of listening." class="final-signal" />
+          <div class="listen">
+            <h3>Listening</h3>
+            <p>The rover had most likely put itself into a low-power state to wait out the storm. Engineers at NASA’s Jet Propulsion Laboratory listened for it and sent commands, hoping that when the skies cleared its panels would recharge. Over the following months they sent more than a thousand commands to restore contact.</p>
+            <p>The final attempt was made on Tuesday, February 12, 2019. There was no answer. The next day, February 13, NASA announced that the mission was complete.</p>
+          </div>
+        </section>
+
+        <!-- VI -->
+        <section id="legacy" class="chapter" data-chapter={JSON.stringify(chapters[5])}>
+          <p class="ch-n mono">Chapter VI</p>
+          <h2>Legacy</h2>
+          <figure class="legacy-pan">
+            <div class="lp-scroll" tabindex="0" aria-label="Opportunity's final panorama. Scroll sideways to explore"><Img slug="opp-legacy-pan" sizes="2400px" /></div>
+            <figcaption class="placard"><span class="cap">The final panorama: 354 images taken from May 13 to June 10, 2018 (sols 5,084 to 5,111), shown in approximate true colour. Scroll sideways to explore.</span><span>NASA/JPL-Caltech/Cornell/ASU · PIA22909</span></figcaption>
+          </figure>
+          <div class="split">
+            <div class="stack">
+              <p class="lede">Opportunity is still on Mars, at the western edge of a place its team named Perseverance Valley.</p>
+              <p>Its mission ended, but the machine did not disappear. It sits where it last stopped, probably coated in dust. What changed is that it can no longer answer.</p>
+              <p>Its discoveries helped show that ancient Mars once had water at and below the surface, and that some of that water may have been mild enough to support life. That question, <em>was Mars ever habitable?</em>, became the core goal of the next rovers: Curiosity, which landed in 2012, and Perseverance, which landed in 2021 and is collecting samples in an ancient lake basin.</p>
+              <p>It also shaped people. NASA’s project manager John Callas said what he would cherish most was the generation of young scientists and engineers who became space explorers with this mission.</p>
+            </div>
+            <blockquote class="quote">
+              <p>“I cannot think of a more appropriate place for Opportunity to endure on the surface of Mars than one called Perseverance Valley.”</p>
+              <footer>Michael Watkins, director of NASA’s Jet Propulsion Laboratory, February 2019. <a href={opp.sources[0].url} rel="noopener">NASA Release 19-004</a></footer>
+            </blockquote>
+          </div>
+          <div class="where-box">
+            <div>
+              <h3 class="wb-h">Where is it now?</h3>
+              <p><strong>Perseverance Valley, western rim of Endeavour Crater, Meridiani Planum.</strong> We show this location as approximate. Opportunity’s landing site (1.946°S, 354.473°E) is confirmed.</p>
+            </div>
+            <a class="btn btn-secondary" href="/where/#opportunity">See it on the Mars map</a>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="section--tight wrap" aria-labelledby="more-h">
+      <div class="more-head"><h2 id="more-h">Continue exploring</h2><a class="btn btn-primary" href="/theatre/">Watch: Opportunity, The Last Signal</a></div>
+      <ul class="more">{related.map((h) => <li><HardwareCard h={h} /></li>)}</ul>
+    </section>
+
+    <section class="section--tight wrap"><Sources sources={sources} title="Sources for this story" /></section>
+  </article>
+</Base>
+
+<script>
+  import { initStory } from '../../scripts/story';
+  initStory();
+</script>
+
+<style>
+  .s-hero { position: relative; min-height: 92svh; display: grid; align-items: end; overflow: hidden; isolation: isolate; }
+  .s-hero-img { position: absolute; inset: 0; z-index: -1; }
+  .s-hero-img :global(img) { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.1); }
+  .s-hero-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, var(--navy) 6%, rgb(8 13 28 / 0.55) 45%, rgb(8 13 28 / 0.35) 100%); }
+  .s-hero-copy { padding-block: calc(var(--nav-h) + 60px) 48px; display: grid; gap: 20px; }
+  .s-hero h1 { font-size: clamp(4rem, 1rem + 12vw, 12rem); line-height: 0.85; text-transform: uppercase; font-weight: 800; }
+  .crumbs { display: flex; gap: 10px; font-size: 0.9rem; color: var(--muted); }
+  .crumbs a { color: var(--muted); }
+  .copper-k { color: var(--mars-light); }
+
+  .hud { position: sticky; top: 0; z-index: 40; background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-block: 1px solid var(--border); }
+  .hud-inner { display: flex; align-items: center; gap: 20px; min-height: 52px; justify-content: space-between; }
+  .hud-ch { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hud-data { display: flex; gap: 18px; font-size: 0.8rem; color: var(--cyan); flex-wrap: wrap; justify-content: flex-end; }
+  .hud-place { color: var(--muted); }
+  .hud-sig { display: flex; gap: 3px; align-items: end; height: 16px; }
+  .hud-sig i { width: 3px; background: var(--cyan); border-radius: 1px; transition: height var(--t-slow) var(--ease-out), background-color var(--t-slow); }
+  .hud-sig i:nth-child(1) { height: 30%; } .hud-sig i:nth-child(2) { height: 50%; } .hud-sig i:nth-child(3) { height: 70%; } .hud-sig i:nth-child(4) { height: 85%; } .hud-sig i:nth-child(5) { height: 100%; }
+  .hud[data-state='weak'] .hud-sig i:nth-child(n + 3) { height: 12%; background: var(--faint); }
+  .hud[data-state='lost'] .hud-sig i { height: 12%; background: var(--faint); }
+  .hud[data-state='lost'] .hud-data { color: var(--mars-light); }
+  :global(html:not(.lenis)) .hud { top: 0; }
+  @media (max-width: 700px) { .hud-ch { display: none; } .hud-data { justify-content: flex-start; gap: 12px; } }
+
+  .s-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--s-8); padding-block: var(--s-9); }
+  .toc { position: sticky; top: 90px; align-self: start; }
+  .toc ol { list-style: none; padding: 0; display: grid; gap: 2px; border-left: 1px solid var(--border); }
+  .toc a { display: flex; gap: 12px; align-items: baseline; padding: 9px 0 9px 16px; text-decoration: none; color: var(--faint); font-size: 0.92rem; margin-left: -1px; border-left: 1px solid transparent; transition: color var(--t-fast), border-color var(--t-fast); }
+  .toc a:hover { color: var(--fg); }
+  .toc a.is-active { color: var(--fg); border-left-color: var(--cyan); }
+  .toc .mono { font-size: 0.75rem; width: 1.6em; color: var(--cyan); }
+  @media (max-width: 1000px) { .s-body { grid-template-columns: 1fr; } .toc { display: none; } }
+
+  .chapters { display: grid; gap: var(--s-10); }
+  .chapter { display: grid; gap: var(--s-5); scroll-margin-top: 80px; }
+  .chapter > p:not(.lede):not(.ch-n) { color: var(--muted); }
+  .chapter h2 { font-size: var(--step-5); }
+  .ch-n { color: var(--cyan); font-size: 0.85rem; }
+  .chapter-final .ch-n { color: var(--mars-light); }
+  .split { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-7); align-items: start; }
+  .split .stack > p { color: var(--muted); }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .callout { border-left: 2px solid var(--copper); padding: 6px 0 6px 18px; color: var(--fg) !important; font-size: var(--step-1); line-height: 1.4; }
+  .kit { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: 24px; display: grid; gap: 14px; }
+  .kit-list { columns: 2 240px; gap: 32px; padding-left: 18px; color: var(--muted); }
+  .kit-list li { margin-bottom: 6px; break-inside: avoid; }
+
+  .finds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
+  .find { display: grid; gap: 12px; align-content: start; }
+  .find p { color: var(--muted); font-size: 0.97rem; }
+  @media (max-width: 900px) { .finds { grid-template-columns: 1fr; } }
+  .quote { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 0; display: grid; gap: 14px; }
+  .quote p { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.12; font-weight: 600; max-width: 30ch; }
+  .quote footer { font-size: 0.85rem; color: var(--faint); }
+
+  /* timeline */
+  .timeline-sec { display: grid; gap: var(--s-5); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: clamp(20px, 3vw, 36px); }
+  .tl-head { display: grid; gap: 6px; }
+  .tl-head h2 { font-size: var(--step-3); }
+  .tl-track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 1fr); overflow-x: auto; position: relative; padding: 4px 2px 12px; scrollbar-width: thin; }
+  .tl-track::before { content: ''; position: absolute; left: 0; right: 0; top: 19px; height: 1px; background: var(--border-strong); }
+  .tl-stop { position: relative; display: grid; gap: 6px; justify-items: start; text-align: left; background: none; border: 0; padding: 12px 12px 8px 0; cursor: pointer; color: var(--muted); min-height: 44px; }
+  .tl-dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--cyan); background: var(--surface); transition: transform var(--t-base) var(--ease-out), background-color var(--t-base); }
+  .tl-stop[data-late] .tl-dot { border-color: var(--copper); }
+  .tl-stop:hover { color: var(--fg); }
+  .tl-stop[aria-selected='true'] { color: var(--fg); }
+  .tl-stop[aria-selected='true'] .tl-dot { background: var(--cyan); transform: scale(1.35); }
+  .tl-stop[aria-selected='true'][data-late] .tl-dot { background: var(--copper); }
+  .tl-date { font-size: 0.74rem; color: var(--faint); }
+  .tl-t { font-weight: 700; font-size: 0.92rem; line-height: 1.25; }
+  .tl-item { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--s-6); align-items: center; }
+  .tl-item:not([hidden]) { animation: tlIn var(--t-slow) var(--ease-out); }
+  @keyframes tlIn { from { opacity: 0; transform: translateY(8px); } }
+  .tl-img { aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--r-1); background: var(--surface-2); }
+  .tl-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .tl-copy { display: grid; gap: 10px; }
+  .tl-copy p:not(.tl-date) { color: var(--muted); }
+  .tl-nav { display: flex; align-items: center; gap: 16px; }
+  .tl-count { font-size: 0.8rem; color: var(--faint); }
+  @media (max-width: 760px) { .tl-item { grid-template-columns: 1fr; } }
+
+  /* tau interactive */
+  .tau { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--s-6); align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: clamp(18px, 3vw, 32px); }
+  .tau-sky { --light: 0.55; position: relative; aspect-ratio: 4 / 3; border-radius: var(--r-1); overflow: hidden; background: linear-gradient(180deg, oklch(calc(0.2 + var(--light) * 0.55) calc(0.02 + var(--light) * 0.06) 60) 0%, oklch(calc(0.15 + var(--light) * 0.45) calc(0.03 + var(--light) * 0.07) 50) 100%); transition: background 300ms linear; }
+  .tau-sun { position: absolute; left: 50%; top: 38%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: oklch(0.98 0.03 90); opacity: var(--light); box-shadow: 0 0 calc(var(--light) * 60px) calc(var(--light) * 18px) oklch(0.95 0.05 80 / 0.55); transition: opacity 300ms linear; }
+  .tau-ctl { display: grid; gap: 12px; }
+  .tau-ctl input[type='range'] { width: 100%; accent-color: var(--violet); min-height: 44px; }
+  .tau-out { font-family: var(--font-mono); color: var(--cyan); font-size: 0.95rem; }
+  .tau-note { font-size: 0.85rem; color: var(--faint); }
+  @media (max-width: 760px) { .tau { grid-template-columns: 1fr; } }
+
+  .last-msg { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--s-6); align-items: start; padding-top: var(--s-5); }
+  .last-msg p:not(.mono):not(.placard) { color: var(--muted); }
+  .lm-img { background: #000; border-radius: var(--r-1); overflow: hidden; }
+  .thumbs :global(img) { width: 224px; image-rendering: pixelated; border: 1px solid var(--border); }
+  @media (max-width: 760px) { .last-msg { grid-template-columns: 1fr; } }
+  .final-signal { margin-top: var(--s-6); color: var(--mars-light); }
+  .listen { display: grid; gap: 12px; }
+  .listen p { color: var(--muted); }
+
+  .legacy-pan { margin-inline: calc(-1 * var(--gutter)); }
+  .lp-scroll { overflow-x: auto; height: clamp(240px, 42vw, 520px); scrollbar-width: thin; }
+  .lp-scroll :global(img) { height: 100%; width: auto; max-width: none; }
+  .legacy-pan .placard { padding-inline: var(--gutter); }
+  .where-box { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 24px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); }
+  .where-box p { color: var(--muted); max-width: 60ch; margin-top: 8px; }
+  .wb-h { font-size: var(--step-2); }
+
+  .more-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: var(--s-6); }
+  .more { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .more > li { display: flex; max-width: none; } .more > li > :global(*) { width: 100%; }
+  @media (max-width: 900px) { .more { grid-template-columns: 1fr; } }
+</style>

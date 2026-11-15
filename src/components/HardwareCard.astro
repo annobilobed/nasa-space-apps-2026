@@ -1,0 +1,18 @@
+---
+import Img from './Img.astro';
+import Status from './Status.astro';
+import { type Hardware, WORLD_LABEL, CATEGORY_LABEL } from '../data/hardware';
+interface Props { h: Hardware; sizes?: string; headingLevel?: 'h2' | 'h3' }
+const { h, sizes = '(min-width: 1100px) 30vw, (min-width: 700px) 45vw, 92vw', headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const year = (d?: string) => d?.slice(0, 4);
+---
+<article class="card hw" data-world={h.world}>
+  <div class="media"><Img slug={h.images[0]} sizes={sizes} decorative /></div>
+  <div class="body">
+    <div class="meta"><span class={h.world === 'mars' ? 'world-mars' : ''}>{WORLD_LABEL[h.world]}</span><span>{CATEGORY_LABEL[h.category]}</span><span>{year(h.launch)}</span></div>
+    <H><a class="stretched" href={`/archive/${h.slug}/`}>{h.short}</a></H>
+    <p class="muted">{h.summary}</p>
+    <Status status={h.status} />
+  </div>
+</article>

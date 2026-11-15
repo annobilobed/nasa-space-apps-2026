@@ -1,0 +1,367 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import HardwareCard from '../components/HardwareCard.astro';
+import { hardware, STATUS_LABEL, STATUS_EXPLAIN, type Status } from '../data/hardware';
+import { getMedia } from '../lib/media';
+
+const headline = 'Somewhere beyond Earth, humanity left its footprints.';
+const words = headline.split(' ');
+const featured = hardware.filter((h) => h.featured);
+const statuses: Status[] = ['operational', 'completed', 'silent', 'inactive', 'left-in-place', 'lost'];
+const counts = Object.fromEntries(statuses.map((s) => [s, hardware.filter((h) => h.status === s)]));
+const pano = getMedia('opp-legacy-pan');
+
+const stats = [
+  { n: 5111, label: 'Martian days Opportunity worked, though it was designed for 90', src: 'NASA/JPL, PIA22929', url: 'https://images.nasa.gov/details/PIA22929' },
+  { n: 45.16, dec: 2, unit: 'km', label: 'driven by Opportunity across Meridiani Planum', src: 'NASA Science: MER mission', url: 'https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/' },
+  { n: 1319, label: 'marsquakes recorded by InSight before its mission ended', src: 'NASA: InSight retirement release', url: 'https://www.nasa.gov/press-release/nasa-retires-insight-mars-lander-mission-after-years-of-science' },
+  { n: 72, label: 'flights by Ingenuity, a helicopter planned for up to five', src: 'NASA Science: Ingenuity', url: 'https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/' },
+  { n: 3.8, dec: 1, unit: 'cm', label: 'the Moon drifts from Earth each year, measured with Apollo mirrors', src: 'NASA JPL: Lunar laser ranging', url: 'https://funphysics.jpl.nasa.gov/technical/grp/lunar-laser.html' },
+  { n: 217000, plus: true, label: 'images returned by Opportunity, including 15 full panoramas', src: 'NASA Release 19-004', url: 'https://www.nasa.gov/news-release/nasas-record-setting-opportunity-rover-mission-on-mars-comes-to-end/' },
+];
+const halls = [
+  { key: 'moon', title: 'The Moon', img: 'apollo17-lrv', text: 'Rovers parked by astronauts, a lander visited by astronauts, and mirrors still in use.', count: hardware.filter((h) => h.world === 'moon').length },
+  { key: 'mars', title: 'Mars', img: 'opp-endeavour-view', text: 'Landers, rovers and a helicopter, from Viking in 1976 to machines still driving today.', count: hardware.filter((h) => h.world === 'mars').length },
+  { key: 'deep-space', title: 'Deep space', img: 'voyager-artist', text: 'Probes leaving the Sun behind, still carrying messages from Earth.', count: hardware.filter((h) => h.world === 'deep-space').length },
+];
+---
+<Base title="AIRXON" description="An immersive digital museum of the machines humanity sent to the Moon, Mars and beyond: what they were, what they found, and where they are now." current="home">
+  <script is:inline slot="head">
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('intro-pending');
+      setTimeout(function () { document.documentElement.classList.remove('intro-pending'); }, 4200);
+    }
+  </script>
+  <link slot="head" rel="preload" as="image" href="/media/journey/journey-landscape-poster.jpg" media="(min-aspect-ratio: 10/11)" />
+  <link slot="head" rel="preload" as="image" href="/media/journey/journey-portrait-poster.jpg" media="(max-aspect-ratio: 10/11)" />
+
+  <!-- ════ THE JOURNEY: one continuous, scroll-scrubbed film rendered from NASA data.
+       Hero planet → centred globe → descent to Endeavour Crater → landing → Opportunity's last panorama. ════ -->
+  <section class="journey" id="journey" data-journey aria-labelledby="hero-title">
+    <div class="j-stage" data-intro="planet">
+      <video class="j-video" data-journey-video muted playsinline preload="auto" poster="/media/journey/journey-landscape-poster.jpg" aria-hidden="true" tabindex="-1">
+        <source src="/media/journey/journey-landscape.mp4" type="video/mp4" />
+        <source src="/media/journey/journey-landscape.webm" type="video/webm" />
+      </video>
+      <picture class="j-poster" aria-hidden="true">
+        <source media="(max-aspect-ratio: 10/11)" srcset="/media/journey/journey-portrait-poster.jpg" />
+        <img src="/media/journey/journey-landscape-poster.jpg" alt="" width="1280" height="720" />
+      </picture>
+      <div class="j-scrim" data-j-scrim aria-hidden="true"></div>
+      <div class="d-marker" data-crater-marker aria-hidden="true"><span class="ring"></span><span class="lbl">Opportunity, western rim<br /><small>approximate position</small></span></div>
+    </div>
+
+    <div class="hero-copy wrap" data-hero-copy>
+      <p class="brandline" data-intro="brand"><span class="bl-name">AIRXON</span><span>Echoes Beyond Earth</span></p>
+      <h1 id="hero-title" data-intro="headline">
+        {words.map((w, i) => <>{i > 0 && ' '}<span class="w"><span>{w}</span></span></>)}
+      </h1>
+      <p class="sub" data-intro="sub">Across distant worlds, machines went where humanity could not. They explored, discovered, endured and left behind stories worth remembering.</p>
+      <div class="cta" data-intro="cta">
+        <a class="btn btn-primary" href="/museum/">Explore the legacy <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a>
+        <a class="btn btn-secondary" href="/stories/">Discover the stories</a>
+      </div>
+    </div>
+    <div class="hero-meta wrap" data-intro="meta" data-hero-meta>
+      <p class="telemetry"><span><b>Target</b>Mars</span><span><b>Centre</b>8°S 62°W · Valles Marineris</span><span><b>Data</b>Viking MDIM 2.1 and MRO CTX mosaics · NASA · rendered by AIRXON</span></p>
+      <button type="button" class="scroll-cue" data-scroll-cue><span>Begin the descent</span><svg viewBox="0 0 16 24" aria-hidden="true"><rect x="1" y="1" width="14" height="22" rx="7" fill="none" stroke="currentColor"/><circle class="dot" cx="8" cy="7" r="1.8" fill="currentColor"/></svg></button>
+    </div>
+
+    <p class="d-hud telemetry" data-descent-hud><span><b>Viewing width</b><span data-vw>15,000 km</span></span><span><b>Heading for</b>Endeavour Crater, Meridiani Planum</span></p>
+    <div class="d-line l1" data-descent-line="1">
+      <p class="kicker">Mars, 2004 to 2018</p>
+      <p class="d-big">One small machine landed on a plain called Meridiani. It kept going for fourteen years.</p>
+    </div>
+    <div class="d-line l1b" data-descent-line="crater">
+      <p class="d-big">Endeavour Crater, 22 km wide. Opportunity drove for seven years to reach it.</p>
+    </div>
+    <div class="d-line l2" data-descent-line="2">
+      <p class="d-big">On the ground: the last panorama it ever made. 354 images, stitched into one view of its final valley.</p>
+    </div>
+    <p class="pano-cap telemetry" data-pano-cap><span><b>Rover</b>Opportunity</span><span><b>Place</b>Perseverance Valley</span><span><b>Sols</b>5,084 to 5,111</span><span><b>Dates</b>13 May to 10 Jun 2018</span><span><b>Image</b>{pano.credit} · {pano.nasaId}</span></p>
+    <div class="d-line l3" data-descent-line="3">
+      <p class="d-big">Even when a machine stops working, <em>its story does not have to end.</em></p>
+      <a class="btn btn-primary" href="/stories/opportunity/">Read Opportunity’s story <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a>
+    </div>
+    <p class="d-credit placard" data-j-credit><span>A visualisation rendered by AIRXON from NASA data (Viking MDIM 2.1 colour mosaic and MRO CTX Meridiani Planum mosaic, via NASA Mars Trek), ending on Opportunity’s real panorama. The orbital views are not photographs.</span></p>
+
+    <!-- Reduced motion: the same story as still images, no scroll-driven film -->
+    <div class="rm-only wrap">
+      <figure class="figure"><img src="/media/journey/journey-landscape-crater.jpg" alt="Endeavour Crater on Meridiani Planum seen from orbit, rendered from NASA CTX and Viking mosaic data." width="1280" height="720" loading="lazy" /><figcaption class="placard"><span class="cap">Endeavour Crater from orbit (visualisation from NASA data).</span></figcaption></figure>
+      <div class="rm-pano" tabindex="0" aria-label="Opportunity's final panorama. Scroll sideways to explore"><Img slug="opp-legacy-pan" sizes="1800px" /></div>
+    </div>
+  </section>
+
+  <!-- ════ WHY IT MATTERS ════ -->
+  <section class="section why" aria-labelledby="why-h">
+    <div class="wrap grid">
+      <div class="why-head" data-reveal>
+        <h2 id="why-h">Silence isn’t the end of a mission’s story.</h2>
+      </div>
+      <div class="why-body" data-reveal style="--d:120ms">
+        <p class="lede">When a rover stops talking, the headlines stop too. But the rocks it studied, the measurements it took and the questions it answered stay with us.</p>
+        <p class="muted">Some of these machines are still working: mirrors on the Moon still return laser pulses fired from Earth. Others were parked deliberately, finished their planned work, or fell silent during a storm. AIRXON keeps their records in one place: what each one was built to do, what it found, and what we know about where it is now. Every fact is checked against NASA and other primary sources.</p>
+        <div class="why-links"><a class="btn-ghost btn" href="/about/">Why we built AIRXON</a><a class="btn-ghost btn" href="/credits/">How we check facts</a></div>
+      </div>
+      <figure class="why-fig" data-reveal style="--d:200ms">
+        <div class="why-frame"><Img slug="surveyor3-bean" sizes="(min-width: 900px) 40vw, 92vw" /></div>
+        <figcaption class="placard"><span class="cap">Apollo 12’s Alan Bean beside Surveyor 3, a robotic lander that had been silent on the Moon for two and a half years.</span><span>NASA · AS12-48-7134</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ════ FEATURED STORY: OPPORTUNITY ════ -->
+  <section class="feature-opp" aria-labelledby="opp-h">
+    <div class="opp-media" aria-hidden="true"><div data-parallax="8" class="opp-par"><Img slug="opp-shadow" sizes="(min-width: 900px) 55vw, 100vw" decorative position="50% 60%" /></div></div>
+    <div class="wrap opp-grid">
+      <div class="opp-copy" data-reveal>
+        <h2 id="opp-h">Opportunity: the rover that outlived its own plan.</h2>
+        <p class="lede">Built for 90 Martian days. Still exploring almost fifteen years later, until a storm the size of a planet blocked out the Sun.</p>
+        <p class="opp-line">Its last message arrived on sol 5,111. Then the signal stopped, and NASA listened for eight months.</p>
+        <div class="cta"><a class="btn btn-primary" href="/stories/opportunity/">Follow the journey <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a><a class="btn btn-secondary" href="/theatre/">Documentary: The Last Signal</a></div>
+        <p class="placard"><span>Image: Opportunity’s shadow in Endurance Crater, sol 180 · NASA/JPL · PIA06739</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ FEATURED HARDWARE RAIL ════ -->
+  <section class="section rail-sec" aria-labelledby="rail-h">
+    <div class="wrap rail-head">
+      <div data-reveal><h2 id="rail-h">Machines worth remembering</h2></div>
+      <div class="rail-ctl">
+        <button class="btn btn-secondary btn-sm" type="button" data-rail-btn="prev" aria-label="Scroll collection left"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H5M9 5l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <button class="btn btn-secondary btn-sm" type="button" data-rail-btn="next" aria-label="Scroll collection right"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <a class="btn btn-ghost" href="/archive/">Open the full archive</a>
+      </div>
+    </div>
+    <ul class="rail" data-rail aria-label="Featured hardware" tabindex="0">
+      {featured.map((h) => <li><HardwareCard h={h} sizes="(min-width: 900px) 26vw, 78vw" /></li>)}
+    </ul>
+  </section>
+
+  <!-- ════ STATUS SPECTRUM ════ -->
+  <section class="section status-sec" aria-labelledby="status-h">
+    <div class="wrap grid">
+      <div class="st-head" data-reveal>
+        <h2 id="status-h">Not every silent machine is abandoned.</h2>
+        <p class="muted">A rover that loses contact in a dust storm and a rover parked on purpose by astronauts are different stories. AIRXON labels each machine as precisely as the evidence allows.</p>
+      </div>
+      <ol class="spectrum" data-reveal style="--d:120ms">
+        {statuses.map((s) => (
+          <li class="sp-row">
+            <a href={`/archive/#${s}`} class="sp-link">
+              <span class="status" data-s={s}><span class="sp-n">{counts[s].length}</span>{STATUS_LABEL[s]}</span>
+              <span class="sp-ex">{STATUS_EXPLAIN[s]}</span>
+              <span class="sp-ex sp-names">{counts[s].length ? counts[s].map((h) => h.short).join(' · ') : 'No entries in the collection yet'}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ════ STATISTICS ════ -->
+  <section class="section stats-sec" aria-labelledby="stats-h">
+    <div class="wrap">
+      <div class="stats-head" data-reveal><h2 id="stats-h">What these machines achieved</h2></div>
+      <ul class="stats">
+        {stats.map((s, i) => (
+          <li>
+            <p class="stat-n"><span data-count={s.n} data-decimals={s.dec ?? 0}>{s.n.toLocaleString('en-GB', { minimumFractionDigits: s.dec ?? 0 })}</span>{s.plus && '+'}{s.unit && <small>{s.unit}</small>}</p>
+            <p class="stat-l">{s.label}</p>
+            <p class="stat-s">Source: <a href={s.url} rel="noopener">{s.src}</a></p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════ MUSEUM HALLS ════ -->
+  <section class="section halls-sec" aria-labelledby="halls-h">
+    <div class="wrap">
+      <div class="halls-head" data-reveal>
+        <h2 id="halls-h">Three halls, {hardware.length} machines, one shared story.</h2>
+        <p class="muted">Walk the collection by world, or search the whole archive by mission, agency, status and decade.</p>
+      </div>
+      <div class="halls">
+        {halls.map((h, i) => (
+          <a class={`hall hall-${h.key}`} href={`/museum/#${h.key}`}>
+            <Img slug={h.img} sizes="(min-width: 900px) 33vw, 92vw" decorative />
+            <span class="hall-body"><span class="hall-n mono">{h.count} exhibits</span><span class="hall-t">{h.title}</span><span class="hall-x">{h.text}</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ CLOSING ════ -->
+  <section class="closing" aria-labelledby="close-h">
+    <div class="close-bg" aria-hidden="true"><Img slug="pale-blue-dot-revisited" sizes="100vw" decorative /></div>
+    <div class="wrap close-copy" data-reveal>
+      <h2 id="close-h">The machines may be silent, but their stories are still speaking.</h2>
+      <div class="cta"><a class="btn btn-primary" href="/museum/">Enter the museum <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a><a class="btn btn-secondary" href="/where/">Where are they now?</a></div>
+      <p class="placard"><span>Background: Pale Blue Dot Revisited: Earth seen by Voyager 1 from about 6 billion km · NASA/JPL-Caltech · PIA23645</span></p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initHome } from '../scripts/home';
+  initHome();
+</script>
+
+<style>
+  /* ── Journey (hero + descent as one pinned film) ── */
+  .journey { position: relative; height: 100svh; min-height: 560px; overflow: hidden; isolation: isolate; background: var(--navy); display: grid; grid-template-rows: 1fr auto; }
+  .j-stage { position: absolute; inset: 0; z-index: -1; }
+  .j-video, .j-poster, .j-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .j-poster { z-index: 0; }
+  .j-video { z-index: 1; opacity: 0; transition: opacity 600ms var(--ease-out); }
+  .j-video.is-ready { opacity: 1; }
+  .j-scrim { position: absolute; inset: 0; z-index: 2; background: var(--navy); opacity: 0; pointer-events: none; }
+  .hero-copy { align-self: center; padding-top: calc(var(--nav-h) + 6vh); padding-bottom: 4vh; position: relative; z-index: 3; }
+  .brandline { display: flex; align-items: center; gap: 14px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); margin-bottom: clamp(18px, 3vh, 32px); }
+  .bl-name { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.3em; color: var(--fg); font-weight: 800; }
+  h1 { font-size: clamp(2.9rem, 0.6rem + 6.1vw, 7.4rem); text-transform: uppercase; line-height: 0.9; letter-spacing: -0.005em; max-width: 14ch; font-weight: 800; }
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.04em; }
+  .w > span { display: inline-block; }
+  .sub { text-shadow: 0 1px 18px rgb(8 13 28 / 0.95), 0 0 2px rgb(8 13 28 / 0.8); margin-top: clamp(20px, 3vh, 32px); font-size: var(--step-1); line-height: 1.45; max-width: 38ch; color: color-mix(in oklab, var(--star) 88%, var(--navy)); }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(24px, 4vh, 40px); }
+  .hero-meta { display: flex; justify-content: space-between; align-items: end; gap: 20px; padding-bottom: 28px; position: relative; z-index: 3; }
+  .scroll-cue { display: inline-flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--muted); background: none; border: 0; cursor: pointer; min-height: 44px; padding: 0; }
+  .scroll-cue:hover { color: var(--fg); }
+  .scroll-cue svg { width: 16px; height: 24px; }
+  .scroll-cue .dot { animation: cue 1.8s var(--ease-in-out) infinite; }
+  @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(8px); opacity: 0; } 100% { opacity: 0; } }
+  :global(.intro-pending) [data-intro] { opacity: 0; }
+  :global(.intro-pending) [data-intro='headline'] { opacity: 1; }
+  :global(.intro-pending) [data-intro='headline'] .w > span { visibility: hidden; }
+
+  .d-marker { position: absolute; left: 0; top: 0; z-index: 3; opacity: 0; margin: -17px 0 0 -17px; height: 34px; pointer-events: none; display: flex; align-items: center; gap: 12px; }
+  .d-marker .ring { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--warning); flex: none; }
+  .d-marker .lbl { font-family: var(--font-mono); font-size: 0.8rem; color: var(--fg); background: rgb(8 13 28 / 0.75); padding: 6px 10px; border-radius: var(--r-1); line-height: 1.35; white-space: nowrap; }
+  .d-marker small { color: var(--warning); }
+  .d-hud { position: absolute; left: var(--gutter); bottom: 28px; z-index: 4; background: rgb(8 13 28 / 0.6); padding: 8px 12px; border-radius: var(--r-1); }
+  .pano-cap { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 80px; z-index: 4; justify-content: center; }
+  .d-credit { position: absolute; right: var(--gutter); bottom: 22px; z-index: 4; max-width: 50ch; text-align: right; }
+  .d-line { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); width: min(92vw, 980px); text-align: center; display: grid; justify-items: center; gap: 22px; }
+  .d-line.l1 { top: 14vh; }
+  .d-line.l1b { top: 12vh; }
+  .d-line.l2 { top: 9vh; }
+  .d-line.l3 { top: 50%; transform: translate(-50%, -50%); }
+  .d-big { font-family: var(--font-display); font-size: var(--step-4); font-weight: 700; line-height: 1.04; text-wrap: balance; max-width: 22ch; text-shadow: 0 2px 30px rgb(8 13 28 / 0.95), 0 0 4px rgb(8 13 28 / 0.8); }
+  .d-big em { font-style: normal; color: var(--cyan); }
+  .js .d-line, .js .d-hud, .js .pano-cap, .js .d-credit { opacity: 0; visibility: hidden; }
+  .d-hud, .pano-cap, .d-credit { pointer-events: none; }
+  .d-credit a, .pano-cap a { pointer-events: auto; }
+  .rm-only { display: none; }
+  @media (max-width: 899px) {
+    .hero-meta .telemetry { display: none; }
+    .hero-copy { align-self: start; padding-top: calc(var(--nav-h) + 7svh); }
+    .d-line { width: calc(100vw - 2 * var(--gutter)); }
+    .d-line.l1, .d-line.l1b, .d-line.l2 { top: 10svh; }
+    .d-big { font-size: var(--step-3); }
+    .d-hud { bottom: 76px; font-size: 0.72rem; }
+    .pano-cap { bottom: 96px; justify-content: flex-start; font-size: 0.72rem; }
+    .d-credit { left: var(--gutter); right: var(--gutter); text-align: left; bottom: 12px; font-size: 0.7rem; }
+    .d-marker .lbl { font-size: 0.72rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .journey { height: auto; overflow: visible; display: block; }
+    .j-stage { height: 100svh; bottom: auto; }
+    .j-video { display: none; }
+    .hero-copy { min-height: calc(100svh - 120px); display: flex; flex-direction: column; justify-content: center; }
+    .js .d-line, .js .pano-cap, .js .d-credit { opacity: 1; visibility: visible; }
+    .d-hud, .d-marker, .j-scrim, .scroll-cue { display: none; }
+    .d-line, .pano-cap, .d-credit { position: static; transform: none !important; left: auto; width: auto; text-align: left; justify-items: start; margin: var(--s-7) auto; padding-inline: var(--gutter); max-width: var(--maxw); }
+    .rm-only { display: grid; gap: var(--s-6); padding-bottom: var(--section); }
+    .rm-pano { overflow-x: auto; height: 46vh; max-height: 420px; }
+    .rm-pano :global(img) { height: 100%; width: auto; max-width: none; }
+  }
+
+  /* ── Why ── */
+  .why-head { grid-column: 1 / span 5; }
+  .why-head h2 { margin-top: 16px; }
+  .why-body { grid-column: 7 / span 6; display: grid; gap: 20px; align-content: start; padding-top: 8px; }
+  .why-links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  .why-fig { grid-column: 2 / span 7; margin-top: var(--s-8); }
+  .why-frame { aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--r-1); }
+  .why-frame :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+  @media (max-width: 899px) { .why-head, .why-body, .why-fig { grid-column: 1 / -1; } .why-fig { margin-top: var(--s-5); } }
+
+  /* ── Featured Opportunity ── */
+  .feature-opp { position: relative; min-height: 92svh; display: grid; align-items: center; overflow: hidden; background: oklch(0.2 0.035 45); border-block: 1px solid oklch(0.36 0.06 45); }
+  .opp-media { position: absolute; inset: 0 0 0 42%; overflow: hidden; }
+  .opp-par { position: absolute; inset: -10% 0; }
+  .opp-media :global(img) { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.25) saturate(1.1); }
+  .opp-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, oklch(0.2 0.035 45) 0%, rgb(0 0 0 / 0) 45%); }
+  .opp-grid { position: relative; padding-block: var(--section); }
+  .opp-copy { max-width: 600px; display: grid; gap: 22px; }
+  .copper-k { color: var(--mars-light); }
+  .opp-line { font-size: 1.05rem; color: oklch(0.86 0.04 45); }
+  .opp-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; border-top: 1px solid oklch(0.4 0.06 45); padding-top: 18px; }
+  .opp-stats dt { font-size: 0.8rem; color: oklch(0.78 0.04 45); }
+  .opp-stats dd { font-family: var(--font-display); font-size: var(--step-3); font-weight: 700; line-height: 1.1; }
+  @media (max-width: 899px) {
+    .opp-media { position: relative; inset: auto; height: 52vh; }
+    .opp-media::after { background: linear-gradient(0deg, oklch(0.2 0.035 45) 0%, transparent 50%); }
+    .opp-grid { padding-top: 0; margin-top: -60px; }
+  }
+
+  /* ── Rail ── */
+  .rail-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: var(--s-6); }
+  .rail-ctl { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .rail-ctl .btn-sm { width: 44px; height: 44px; padding: 0; }
+  .rail { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: min(78vw, 360px); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))) 24px; scroll-padding-inline: max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .rail > li { scroll-snap-align: start; display: flex; max-width: none; }
+  .rail > li > :global(*) { width: 100%; }
+
+  /* ── Status spectrum ── */
+  .st-head { grid-column: 1 / span 5; display: grid; gap: 16px; align-content: start; }
+  .spectrum { grid-column: 7 / span 6; list-style: none; padding: 0; border-top: 1px solid var(--border); }
+  .sp-row { border-bottom: 1px solid var(--border); max-width: none; }
+  .sp-link { display: grid; gap: 4px; padding: 18px 4px; text-decoration: none; transition: background-color var(--t-fast); }
+  .sp-link:hover { background: var(--surface); }
+  .sp-link .status { font-size: 1.05rem; }
+  .sp-n { font-family: var(--font-mono); min-width: 1.6em; }
+  .sp-ex { font-size: 0.9rem; color: var(--muted); padding-left: calc(1.6em + 8px); }
+  .sp-names { color: var(--faint); font-size: 0.82rem; }
+  @media (max-width: 899px) { .st-head, .spectrum { grid-column: 1 / -1; } }
+
+  /* ── Stats ── */
+  .stats-head { margin-bottom: var(--s-7); }
+  .stats { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--border); }
+  .stats li { padding: 28px 24px 32px 0; border-bottom: 1px solid var(--border); display: grid; gap: 8px; align-content: start; }
+  .stats li:not(:nth-child(3n + 1)) { padding-left: 24px; border-left: 1px solid var(--border); }
+  .stat-n { font-family: var(--font-display); font-size: var(--step-5); font-weight: 800; line-height: 0.95; color: var(--fg); white-space: nowrap; }
+  .stat-n small { font-size: 0.4em; margin-left: 6px; color: var(--cyan); font-weight: 700; }
+  .stat-l { color: var(--muted); max-width: 30ch; }
+  .stat-s { font-size: 0.78rem; color: var(--faint); }
+  .stat-s a { color: var(--faint); }
+  @media (max-width: 899px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stats li, .stats li:not(:nth-child(3n + 1)) { padding: 22px 14px 24px 0; border-left: 0; } .stats li:nth-child(even) { padding-left: 14px; border-left: 1px solid var(--border); } }
+  @media (max-width: 520px) { .stats { grid-template-columns: 1fr; } .stats li:nth-child(even) { padding-left: 0; border-left: 0; } }
+
+  /* ── Halls ── */
+  .halls-head { display: grid; gap: 14px; margin-bottom: var(--s-7); max-width: 760px; }
+  .halls { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; min-height: 560px; }
+  .hall { position: relative; overflow: hidden; border-radius: var(--r-2); text-decoration: none; display: flex; align-items: end; min-height: 360px; border: 1px solid var(--border); isolation: isolate; }
+  .hall :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity var(--t-base); }
+  .hall:hover { border-color: var(--border-strong); }
+  .hall:hover :global(img) { opacity: 0.85; }
+  .hall::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgb(8 13 28 / 0.95) 0%, rgb(8 13 28 / 0.35) 55%, rgb(8 13 28 / 0.1) 100%); }
+  .hall-body { display: grid; gap: 8px; padding: 24px; }
+  .hall-n { font-size: 0.78rem; color: var(--cyan); }
+  .hall-mars .hall-n { color: var(--mars-light); }
+  .hall-t { font-family: var(--font-display); font-size: var(--step-4); font-weight: 800; line-height: 1; }
+  .hall-x { color: var(--muted); max-width: 34ch; }
+  @media (max-width: 899px) { .halls { grid-template-columns: 1fr; min-height: 0; } }
+
+  /* ── Closing ── */
+  .closing { position: relative; min-height: 86svh; display: grid; align-items: center; overflow: hidden; isolation: isolate; }
+  .close-bg { position: absolute; inset: 0; z-index: -1; }
+  .close-bg :global(img) { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+  .close-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--navy) 10%, rgb(8 13 28 / 0.55) 60%, rgb(8 13 28 / 0.2)); }
+  .close-copy { display: grid; gap: 28px; padding-block: var(--section); }
+  .close-copy h2 { font-size: var(--step-5); max-width: 16ch; }
+</style>

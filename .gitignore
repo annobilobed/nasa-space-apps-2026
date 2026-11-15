@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+# Re-downloadable NASA Trek tile cache (python3 scripts/fetch-descent-tiles.py)
+assets-src/descent-src/
