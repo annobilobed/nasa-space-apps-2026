@@ -19,31 +19,33 @@ How it works: You open it in any browser, on a phone or a laptop. As you scroll,
 
 Why it matters: A mission ending doesn't mean the hardware is gone. These machines are still out there, and each one taught us something new about other worlds. We wanted young people to meet them as real stories, told accurately, so they're remembered rather than forgotten.
 
-## 3. Project details: what it does, how it works, impact and tools
+## 3. Project details
 
-**What it does**
+What it does and how it works
+AIRXON is an online museum for the machines humanity has left on the Moon, on Mars and in deep space. It opens in any browser, on a phone or a laptop, with nothing to install and no account needed.
 
-- **Cinematic homepage:** a single scroll-driven film moves from Mars in orbit, down to Endeavour Crater, and onto the plain where Opportunity drove. It was rendered from NASA Mars Trek mosaic data, and a caption makes clear the ground drive is simulated from a NASA photo.
-- **Museum:** three halls (the Moon, Mars, deep space) with category filters and exhibit placards.
-- **Hardware archive:** 24 searchable profiles, each with purpose, instruments, achievements, discoveries, a timeline, final status, current location and its sources. The machines range from Apollo 11's Eagle descent stage, the Lunar Roving Vehicles and Surveyor 3, through Sojourner, Spirit, Opportunity, the Vikings, Phoenix, InSight and Ingenuity, to Pioneer 10 and 11, Voyager, Dawn, NEAR Shoemaker and Kepler.
-- **Where are they now?:** zoomable Moon and Mars maps built from NASA Trek mosaics, with confirmed and approximate pins clearly distinguished. A logarithmic distance scale covers probes leaving the solar system, and a section covers machines resting at asteroids, at Ceres and in orbit around the Sun.
-- **Opportunity's story:** six chapters with a sticky mission clock, an interactive timeline, a dust-storm explorer and Opportunity's last message.
-- **Documentary theatre:** *Opportunity: The Last Signal*, an AI-generated documentary by the team (watermarked and disclosed), shown alongside NASA's own archive films. All have English subtitles.
-- **Discoveries and Learn:** water on Mars, marsquakes, lunar laser ranging and more, with a glossary and FAQ.
-- **Sources & credits:** every image credit and reference, the challenge's resource list showing which profiles cite each link, and a full AI disclosure.
+It starts with a short film that plays as you scroll. Made from NASA Mars Trek maps, it carries you from Mars in orbit down to Endeavour Crater and onto the plain where Opportunity drove. From there you can explore:
+- Three museum halls (the Moon, Mars and deep space) with 24 machines, from Apollo 11's Eagle and the lunar rovers to Spirit, Opportunity, Ingenuity, Voyager, Dawn and Kepler.
+- An archive where every machine has its own page: why it was sent, its instruments, what it found, a timeline, what happened to it, where it is now, and the sources behind every fact.
+- Maps of the Moon and Mars you can zoom and drag, showing where each machine rests today, plus a distance scale for the probes still leaving our solar system.
+- Opportunity's full story in six chapters, with a mission clock whose signal bars fade as the 2018 dust storm closes in.
+- A theatre showing our short documentary, Opportunity: The Last Signal, alongside NASA's own archive films, all with English subtitles.
+- Pages on what these machines discovered, a glossary, and answers to common questions.
 
-**How it works**
+Benefits
+Everything is checked against NASA sources, including all 13 resources listed by the challenge. Photos come from NASA with their official credits, and every location is marked as confirmed or approximate, so visitors know exactly what is known and what isn't. The site is fast, free to use and works on slow connections.
 
-AIRXON is a static website built with Astro. It has no server, database or login, so it is fast, cheap to host and works on slow connections. All content comes from one typed data file, so adding a machine adds it to the museum, archive, maps and search at once. The homepage film is pre-rendered from NASA mosaics by our own Python scripts and scrubbed with GSAP ScrollTrigger as you scroll. Images are processed from NASA originals into responsive WebP files with their official credits.
+Intended impact
+We want young people, roughly 10 to 16, to see that when a mission ends its hardware doesn't vanish. Rovers, landers and probes are still out there, and each one changed what we know. Instead of calling everything "abandoned", AIRXON uses careful words like "left in place", "inactive" and "no longer communicating", which teaches that each machine has its own ending. Because the code is open source, teachers and other teams can reuse it and add new machines.
 
-**Impact**
+Tools, languages, hardware and software
+We built the site with Astro, TypeScript, JavaScript, HTML and CSS. GSAP with ScrollTrigger and Lenis drive the scrolling effects. Python with NumPy and Pillow rendered the scroll film, Mars globe and maps from NASA mosaic data. We used sharp to prepare the images, ffmpeg to encode the videos, and Playwright with axe for 111 automated tests, including accessibility checks. The site is hosted on GitHub Pages. We used Claude Code as an AI coding assistant, and made the documentary with Google Flow (video), ElevenLabs (voice), Whisper (subtitles) and CapCut (editing). No special hardware was needed, only our own laptops and phones.
 
-- **Education:** written for curious learners aged about 10 to 16, using real NASA images and precise language. It teaches that a mission ending is not the same as hardware disappearing.
-- **Trust:** every claim is cited, uncertainty is shown, artist's concepts are labelled, and nothing is invented.
-- **Access:** works on phones and laptops (every effect has a touch version), uses highly legible fonts, captions all videos, supports keyboard use and reduced motion, and is checked by 111 automated tests, including accessibility checks against WCAG 2.2 AA rules.
-- **Open:** the code is open source, so schools and other teams can reuse it and add machines.
+How it is creative
+AIRXON treats space hardware like museum exhibits, each with a placard, a story and a place it rests today. The opening film is made from real NASA map data rather than stock footage, so the journey to Opportunity's crater is the real landscape. Small details carry the story, like the signal bars that weaken as Opportunity's final chapter approaches.
 
-**Tools:** Astro, TypeScript, GSAP and ScrollTrigger, Lenis, Python (NumPy, Pillow), sharp, ffmpeg, Playwright and axe-core, GitHub and GitHub Pages. The documentary used Google Flow, ElevenLabs and CapCut (see the AI disclosure).
+Factors we considered
+Accuracy came first: nothing is invented, every claim is cited, and uncertainty is shown openly. We designed for young readers with clear language and a highly readable font. We made sure every effect also works by touch on phones, tested accessibility, and added a reduced motion mode. We kept the site light so it loads on slow connections. We followed NASA's brand rules by stating clearly that AIRXON is independent and not endorsed by NASA. We also followed the Space Apps AI rules: our documentary carries a visible watermark saying it was made with AI, and its AI voice is noted on the site and in the video file itself.
 
 ## 4. Project demonstration link (7-slide presentation)
 
