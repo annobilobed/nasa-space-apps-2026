@@ -36,7 +36,7 @@ An interactive educational space museum about the hardware humanity left on the 
 The top of the homepage is one continuous, scroll-scrubbed film (hero planet → centred globe → descent to Endeavour Crater → dissolve to Opportunity's last panorama → pan), 276 frames rendered from NASA data:
 
 ```bash
-python3 scripts/fetch-descent-tiles.py          # downloads Viking MDIM + MRO CTX tiles from NASA Mars Trek
+python3 scripts/fetch-descent-tiles.py          # unpacks the NASA tiles from assets-src/descent-src-tiles.tar (downloads anything missing)
 python3 scripts/render-journey.py frames-l 1280 720
 python3 scripts/render-journey.py frames-p 720 1280   # portrait version for phones
 ```
