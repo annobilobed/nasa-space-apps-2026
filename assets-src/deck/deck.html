@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- AIRXON 7-slide project presentation. Rendered to public/submission/airxon-presentation.pdf by scripts/build-deck.mjs. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AIRXON: Echoes Beyond Earth · NASA Space Apps 2026</title>
+<style>
+  @font-face { font-family: 'Display'; src: url('../../node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; }
+  @font-face { font-family: 'Body'; src: url('../../node_modules/@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2'); font-weight: 200 800; }
+  @font-face { font-family: 'Mono'; src: url('../../node_modules/@fontsource-variable/atkinson-hyperlegible-mono/files/atkinson-hyperlegible-mono-latin-wght-normal.woff2') format('woff2'); font-weight: 200 800; }
+  @page { size: 1920px 1080px; margin: 0; }
+  :root { --navy: #080d1c; --surface: #111a33; --fg: #e7eaf2; --muted: #b3b9cc; --faint: #8a91a8; --violet: #8b7cff; --cyan: #65d9f2; --copper: #c47a54; --warn: #f0b85a; --border: #26304d; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--navy); color: var(--fg); font-family: 'Body', sans-serif; }
+  .slide { width: 1920px; height: 1080px; position: relative; overflow: hidden; page-break-after: always; break-after: page; padding: 96px 110px; display: grid; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  h1, h2 { font-family: 'Display', sans-serif; font-weight: 800; line-height: 0.95; letter-spacing: 0.005em; text-transform: uppercase; }
+  h1 { font-size: 150px; }
+  h2 { font-size: 92px; }
+  .k { font-family: 'Mono', monospace; font-size: 24px; color: var(--cyan); letter-spacing: 0.04em; }
+  p, li { font-size: 31px; line-height: 1.42; color: var(--muted); }
+  strong { color: var(--fg); font-weight: 700; }
+  .num { position: absolute; right: 110px; bottom: 60px; font-family: 'Mono', monospace; font-size: 20px; color: var(--faint); }
+  .brand { position: absolute; left: 110px; bottom: 50px; display: flex; align-items: center; gap: 14px; font-family: 'Mono', monospace; font-size: 20px; color: var(--faint); }
+  .brand img { width: 46px; height: 46px; }
+  .shot { border-radius: 10px; border: 1px solid var(--border); overflow: hidden; background: #000; box-shadow: none; }
+  .shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .cap { font-family: 'Mono', monospace; font-size: 19px; color: var(--faint); margin-top: 12px; }
+  ul.clean { list-style: none; display: grid; gap: 22px; }
+  ul.clean li { padding-left: 34px; position: relative; }
+  ul.clean li::before { content: ''; position: absolute; left: 0; top: 17px; width: 14px; height: 14px; border-radius: 50%; background: var(--cyan); }
+  .tag { display: inline-block; border: 2px solid var(--warn); color: var(--warn); border-radius: 999px; padding: 4px 16px; font-size: 19px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* 1. Title */
+  .s1 { padding: 0; }
+  .s1 .bg { position: absolute; inset: 0; }
+  .s1 .bg img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+  .s1 .bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(8 13 28 / 0.97) 0%, rgb(8 13 28 / 0.86) 46%, rgb(8 13 28 / 0.15) 80%); }
+  .s1 .copy { position: relative; padding: 120px 110px; display: grid; gap: 34px; align-content: center; max-width: 1150px; }
+  .s1 .logo { width: 132px; height: 132px; }
+  .s1 .sub { font-size: 38px; color: var(--fg); max-width: 900px; }
+  .s1 .meta { display: grid; gap: 10px; }
+
+  /* 2. Challenge */
+  .s2 { grid-template-columns: 1fr 820px; gap: 80px; align-items: center; }
+  .s2 .copy { display: grid; gap: 34px; }
+  .s2 .shot { height: 560px; }
+
+  /* 3. What we built */
+  .s3 { grid-template-rows: auto 1fr; gap: 46px; }
+  .s3 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; }
+  .s3 .shot { height: 330px; }
+  .s3 .col p { font-size: 26px; margin-top: 16px; }
+  .s3 .col h3 { font-family: 'Display', sans-serif; font-size: 44px; text-transform: uppercase; margin-top: 18px; }
+
+  /* 4. Storytelling */
+  .s4 { grid-template-rows: auto 1fr; gap: 46px; }
+  .s4 .grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 34px; }
+  .s4 .shot { height: 360px; }
+  .s4 h3 { font-family: 'Display', sans-serif; font-size: 44px; text-transform: uppercase; margin-top: 18px; }
+  .s4 .col p { font-size: 25px; margin-top: 12px; }
+
+  /* 5. Data */
+  .s5 { grid-template-columns: 1fr 760px; gap: 80px; align-items: center; }
+  .s5 .copy { display: grid; gap: 30px; }
+  .s5 .shot { height: 520px; }
+  .s5 li { font-size: 28px; }
+
+  /* 6. Impact */
+  .s6 { grid-template-rows: auto 1fr; gap: 40px; padding-top: 80px; padding-bottom: 120px; }
+  .s6 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-content: start; }
+  .s6 .card { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 28px 32px; display: grid; gap: 14px; align-content: start; }
+  .s6 .card b { font-family: 'Display', sans-serif; font-size: 64px; color: var(--fg); line-height: 1; }
+  .s6 .card p { font-size: 24px; }
+
+  /* 7. Try it + AI */
+  .s7 { grid-template-columns: 1.1fr 1fr; gap: 70px; align-content: center; }
+  .s7 .links { display: grid; gap: 30px; }
+  .s7 .link b { display: block; font-family: 'Mono', monospace; font-size: 26px; color: var(--cyan); margin-top: 6px; white-space: nowrap; }
+  .s7 .link span { font-size: 24px; color: var(--faint); }
+  .s7 .ai { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 44px; display: grid; gap: 18px; align-content: start; }
+  .s7 .ai li { font-size: 25px; }
+  .s7 .ai p.small { font-size: 21px; color: var(--faint); }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide s1">
+  <div class="bg"><img src="../../public/media/journey/journey-landscape-poster.jpg" alt="" /></div>
+  <div class="copy">
+    <img class="logo" src="../../public/brand/airxon-logo-384.webp" alt="AIRXON logo" />
+    <p class="k">NASA SPACE APPS CHALLENGE 2026 · ABANDONED BUT NOT FORGOTTEN</p>
+    <h1>AIRXON:<br />Echoes Beyond Earth</h1>
+    <p class="sub">An interactive museum of the machines humanity left on the Moon, on Mars and in deep space: what they did, what they found, and where they are now.</p>
+    <div class="meta"><p class="k">annobilobed.github.io/nasa-space-apps-2026</p></div>
+  </div>
+  <span class="num">1 / 7</span>
+</section>
+
+<!-- 2 -->
+<section class="slide s2">
+  <div class="copy">
+    <p class="k">THE CHALLENGE</p>
+    <h2>The machines we left behind are invisible</h2>
+    <p>Rovers, landers, lunar buggies and probes still sit on other worlds or drift through space. Most people have never heard their stories, or think that when a mission ends the hardware simply disappears.</p>
+    <p><strong>We asked:</strong> how do you make a silent machine’s story feel real, accurate and worth remembering, especially for young people?</p>
+  </div>
+  <div><div class="shot"><img src="ground.jpg" alt="" /></div><p class="cap">Homepage: the journey ends on the ground at Endeavour Crater</p></div>
+  <div class="brand"><img src="../../public/brand/airxon-logo-96.webp" alt="" />AIRXON</div><span class="num">2 / 7</span>
+</section>
+
+<!-- 3 -->
+<section class="slide s3">
+  <div><p class="k">WHAT WE BUILT</p><h2>A museum you can walk through</h2></div>
+  <div class="grid">
+    <div class="col"><div class="shot"><img src="museum.jpg" alt="" /></div><h3>Museum halls</h3><p>Three halls (Moon, Mars, deep space) with 24 machines, filters and exhibit placards.</p></div>
+    <div class="col"><div class="shot"><img src="archive.jpg" alt="" /></div><h3>Hardware archive</h3><p>Searchable profiles: purpose, instruments, discoveries, timeline, final status and sources.</p></div>
+    <div class="col"><div class="shot"><img src="where.jpg" alt="" /></div><h3>Where are they now?</h3><p>Zoomable Moon and Mars maps, plus a distance scale for probes leaving the solar system.</p></div>
+  </div>
+  <div class="brand"><img src="../../public/brand/airxon-logo-96.webp" alt="" />AIRXON</div><span class="num">3 / 7</span>
+</section>
+
+<!-- 4 -->
+<section class="slide s4">
+  <div><p class="k">STORYTELLING</p><h2>Feel the journey, then learn the facts</h2></div>
+  <div class="grid">
+    <div class="col"><div class="shot"><img src="crater.jpg" alt="" /></div><h3>Scroll film</h3><p>Scroll from Mars in orbit down to Endeavour Crater and onto the ground, rendered from NASA Mars Trek data.</p></div>
+    <div class="col"><div class="shot"><img src="story.jpg" alt="" /></div><h3>Opportunity’s story</h3><p>Six chapters with a live mission clock, a timeline and a dust storm explorer.</p></div>
+    <div class="col"><div class="shot"><img src="theatre.jpg" alt="" /></div><h3>Documentary theatre</h3><p><em>Opportunity: The Last Signal</em>, captioned and labelled <span class="tag">AI-generated</span></p></div>
+  </div>
+  <div class="brand"><img src="../../public/brand/airxon-logo-96.webp" alt="" />AIRXON</div><span class="num">4 / 7</span>
+</section>
+
+<!-- 5 -->
+<section class="slide s5">
+  <div class="copy">
+    <p class="k">BUILT ON NASA DATA</p>
+    <h2>Every fact has a source</h2>
+    <ul class="clean">
+      <li><strong>NASA Image and Video Library</strong> for every photograph, with its official credit.</li>
+      <li><strong>NASA Mars Trek and Moon Trek</strong> mosaics for the maps, globes and scroll film.</li>
+      <li><strong>NSSDCA Master Catalog and NASA Science</strong> mission pages for dates, coordinates and status.</li>
+      <li><strong>All 13 challenge resources</strong> are cited in the machine profiles.</li>
+      <li>Locations are marked <strong>confirmed</strong> or <strong>approximate</strong>, and artist’s concepts are labelled. Nothing is invented.</li>
+    </ul>
+  </div>
+  <div><div class="shot"><img src="credits.jpg" alt="" /></div><p class="cap">Credits page: each challenge resource and the profiles that cite it</p></div>
+  <div class="brand"><img src="../../public/brand/airxon-logo-96.webp" alt="" />AIRXON</div><span class="num">5 / 7</span>
+</section>
+
+<!-- 6 -->
+<section class="slide s6">
+  <div><p class="k">IMPACT</p><h2>Made for young explorers, open to all</h2></div>
+  <div class="cards">
+    <div class="card"><b>24</b><p><strong>machines, 13 challenge resources.</strong> Precise status words (left in place, inactive, no longer communicating) teach that “abandoned” is rarely the whole story.</p></div>
+    <div class="card"><b>Any device</b><p><strong>Laptop or phone.</strong> Every effect has a touch version: pinch-zoom maps, swipeable chapters and photos, and smooth page transitions.</p></div>
+    <div class="card"><b>Accessible</b><p><strong>Readable fonts, captions and keyboard access.</strong> A reduced-motion mode, automated accessibility checks (axe, WCAG 2.2 AA rules) and 111 automated tests.</p></div>
+    <div class="card"><b>Fast</b><p><strong>A static site</strong> with no server or login, so it loads quickly even on slow connections.</p></div>
+    <div class="card"><b>Open</b><p><strong>Open source on GitHub.</strong> Adding a machine is one data entry; schools and other teams can reuse it.</p></div>
+    <div class="card"><b>Honest</b><p><strong>Uncertainty is shown, not hidden,</strong> and AI-made media is watermarked and disclosed.</p></div>
+  </div>
+  <div class="brand"><img src="../../public/brand/airxon-logo-96.webp" alt="" />AIRXON</div><span class="num">6 / 7</span>
+</section>
+
+<!-- 7 -->
+<section class="slide s7">
+  <div class="links">
+    <p class="k">TRY IT</p>
+    <h2>Explore the legacy</h2>
+    <div class="link"><span>Website</span><b>annobilobed.github.io/nasa-space-apps-2026</b></div>
+    <div class="link"><span>Source code</span><b>github.com/annobilobed/nasa-space-apps-2026</b></div>
+    <div class="link"><span>Documentary</span><b>annobilobed.github.io/nasa-space-apps-2026/theatre.html</b></div>
+    <p style="font-size:22px;color:var(--faint)">AIRXON is an independent educational project. It is not an official NASA product and is not endorsed by NASA.</p>
+  </div>
+  <div class="ai">
+    <p class="k">AI DISCLOSURE</p>
+    <ul class="clean">
+      <li><strong>Claude (Anthropic)</strong> helped write the website code and text and gather facts from the cited NASA sources. The team reviewed it.</li>
+      <li><strong>Google Flow</strong> generated the documentary’s video shots. A visible “AI-generated video” watermark appears throughout.</li>
+      <li><strong>ElevenLabs</strong> generated the documentary’s voice-over (AI-generated audio), noted on the site and in the video file’s metadata.</li>
+      <li><strong>Whisper</strong> speech recognition transcribed the subtitles, which were checked by hand.</li>
+      <li><strong>CapCut</strong> was used to edit the documentary.</li>
+    </ul>
+    <p class="small">No AI-generated images appear anywhere else. Photos are NASA’s; the maps, globes and scroll film are rendered by scripts from NASA data.</p>
+  </div>
+  <div class="brand"><img src="../../public/brand/airxon-logo-96.webp" alt="" />AIRXON</div><span class="num">7 / 7</span>
+</section>
+
+</body>
+</html>
