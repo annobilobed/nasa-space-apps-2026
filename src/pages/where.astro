@@ -74,7 +74,7 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
               <li><span class="lg approximate" aria-hidden="true"></span>Approximate location</li>
             </ul>
           </div>
-          <p class="placard"><span>Drag to pan, use the buttons to zoom. Grid lines every 30° of latitude and 60° of longitude. Longitudes are east-positive, −180° to 180°.</span><span>{w === 'moon' ? 'Base map: LRO WAC global mosaic · NASA/GSFC/Arizona State University · via NASA Moon Trek' : 'Base map: Viking MDIM 2.1 colour mosaic · NASA/JPL/USGS · via NASA Mars Trek'}</span></p>
+          <p class="placard"><span>Drag to pan. Zoom with the buttons, by pinching or double-tapping on a phone, or by double-clicking or Ctrl + scroll with a mouse. Grid lines every 30° of latitude and 60° of longitude. Longitudes are east-positive, −180° to 180°.</span><span>{w === 'moon' ? 'Base map: LRO WAC global mosaic · NASA/GSFC/Arizona State University · via NASA Moon Trek' : 'Base map: Viking MDIM 2.1 colour mosaic · NASA/JPL/USGS · via NASA Mars Trek'}</span></p>
         </div>
         <div class="side">
           <h2 class="side-h">{WORLD_LABEL[w]}</h2>
@@ -100,10 +100,10 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
       </div>
       <div class="scale" role="img" aria-label={`Logarithmic distance scale from 1 to 200 AU. Voyager 1 is about ${lightDayAU.toFixed(0)} AU from Earth (one light-day) in November 2026. Pioneer 10 was about ${pioneerAU.toFixed(0)} AU away at its last contact in 2003. Voyager 2 is beyond the heliopause.`}>
         <div class="axis"></div>
-        {deep.map((d) => <span class={`mark ${d.kind}`} style={`left:${logX(d.au)}%`}><i></i><b>{d.label}</b><em>{d.au} AU</em></span>)}
-        <span class="probe" style={`left:${logX(lightDayAU)}%`}><i></i><b>Voyager 1</b><em>≈ 1 light-day · Nov 2026</em></span>
-        <span class="probe silent" style={`left:${logX(pioneerAU)}%`}><i></i><b>Pioneer 10</b><em>last contact 2003</em></span>
-        <span class="probe v2" style={`left:${logX(121)}%`}><i></i><b>Voyager 2, beyond here</b><em>crossed in 2018</em></span>
+        {deep.map((d) => <span class={`mark ${d.kind}`} style={`--p:${logX(d.au)}%`}><i></i><b>{d.label}</b><em>{d.au} AU</em></span>)}
+        <span class="probe" style={`--p:${logX(lightDayAU)}%`}><i></i><b>Voyager 1</b><em>≈ 1 light-day · Nov 2026</em></span>
+        <span class="probe silent" style={`--p:${logX(pioneerAU)}%`}><i></i><b>Pioneer 10</b><em>last contact 2003</em></span>
+        <span class="probe v2" style={`--p:${logX(121)}%`}><i></i><b>Voyager 2, beyond here</b><em>crossed in 2018</em></span>
       </div>
       <dl class="deep-list">
         <div><dt>Voyager 1 <span class="status" data-s="operational">Still operational</span></dt><dd>More than 16 billion miles from Earth. NASA expects it to reach one light-day (about 26 billion km) from Earth in November 2026. <a href="/archive/voyager-1/">Profile</a></dd></div>
@@ -187,7 +187,7 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
   .deep-copy h2 { font-size: var(--step-3); }
   .scale { position: relative; height: 230px; margin: 10px 30px 0 10px; }
   .axis { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, var(--border-strong), var(--cyan)); }
-  .mark, .probe { position: absolute; top: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 4px; font-size: 0.78rem; white-space: nowrap; }
+  .mark, .probe { position: absolute; left: var(--p); top: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 4px; font-size: 0.78rem; white-space: nowrap; }
   .mark i, .probe i { width: 10px; height: 10px; border-radius: 50%; background: var(--moon); margin-top: -5px; }
   .mark { padding-top: 0; }
   .mark b, .mark em { font-weight: 400; color: var(--muted); font-style: normal; }
@@ -203,13 +203,20 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
   .probe.v2 { bottom: calc(50% + 70px); }
   .probe.v2 i { display: none; }
   .mark:nth-child(odd of .planet) b { margin-top: 0; }
+  /* Phones: the same logarithmic scale, turned vertical (nearest at the top). */
   @media (max-width: 760px) {
-    .scale { height: auto; margin: 0; display: grid; gap: 10px; }
-    .axis { display: none; }
-    .mark, .probe { position: static; transform: none; display: flex; flex-direction: row; gap: 10px; justify-content: flex-start; align-items: center; }
-    .mark i, .probe i { margin: 0; }
-    .mark.edge i { height: 2px; width: 12px; margin: 0; }
-    .mark.edge b { width: auto; text-align: left; }
+    .scale { height: 600px; margin: 10px 0 0; }
+    .axis { left: 44%; right: auto; top: 0; bottom: 0; width: 1px; height: auto; background: linear-gradient(180deg, var(--border-strong), var(--cyan)); }
+    .mark, .probe { left: auto; top: var(--p); bottom: auto; transform: translateY(-50%); display: grid; align-items: center; column-gap: 10px; row-gap: 0; }
+    .mark { right: 56%; grid-template-columns: auto auto; justify-items: end; text-align: right; }
+    .mark b { grid-area: 1 / 1; margin: 0 !important; } .mark em { grid-area: 2 / 1; } .mark i { grid-area: 1 / 2 / 3 / 3; margin: 0 -5px 0 0; }
+    .mark.edge i { width: 22px; height: 2px; margin: 0 -11px 0 0; }
+    .mark.edge b { width: auto; max-width: 9.5rem; white-space: normal; text-align: right; }
+    .probe { left: 44%; right: 0; grid-template-columns: auto minmax(0, 1fr); justify-items: start; }
+    .probe i { grid-area: 1 / 1 / 3 / 2; margin: 0 0 0 -5px; }
+    .probe b { grid-area: 1 / 2; } .probe em { grid-area: 2 / 2; }
+    .probe b, .probe em { white-space: normal; }
+    .probe.v2 { bottom: auto; }
   }
   .deep-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   .deep-list > div { padding: 20px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); }

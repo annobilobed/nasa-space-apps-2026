@@ -20,18 +20,45 @@ function panZoom(frame: HTMLElement) {
   const focus = (px: number, py: number, nz = 4) => { // px, py as 0 to 1 fractions of the map
     z = nz; x = frame.clientWidth / 2 - px * frame.clientWidth * z; y = frame.clientHeight / 2 - py * frame.clientHeight * z; render();
   };
-  let drag: { id: number; sx: number; sy: number; ox: number; oy: number; moved: boolean } | null = null;
+  // One finger (or the mouse) drags; two fingers pinch to zoom; double-tap or double-click zooms in.
+  const pts = new Map<number, { x: number; y: number }>();
+  let drag: { sx: number; sy: number; ox: number; oy: number } | null = null;
+  let pinch: { d: number; z: number } | null = null;
+  let lastTap = 0;
+  const local = (e: PointerEvent) => { const r = frame.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  const startDrag = () => { const p = [...pts.values()][0]; drag = p ? { sx: p.x, sy: p.y, ox: x, oy: y } : null; };
+  const pinchInfo = () => { const [a, b] = [...pts.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y), cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 }; };
   frame.addEventListener('pointerdown', (e) => {
     if ((e.target as HTMLElement).closest('.pin')) return;
-    drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: x, oy: y, moved: false };
-    frame.setPointerCapture(e.pointerId); frame.classList.add('dragging');
+    pts.set(e.pointerId, local(e));
+    try { frame.setPointerCapture(e.pointerId); } catch { /* synthetic or already-released pointer */ }
+    frame.classList.add('dragging');
+    if (pts.size === 2) { drag = null; pinch = { d: pinchInfo().d, z }; frame.style.touchAction = 'none'; }
+    else if (pts.size === 1) {
+      startDrag();
+      if (e.pointerType === 'touch') {
+        const now = performance.now();
+        if (now - lastTap < 300) { const p = local(e); zoomAt(z * 2, p.x, p.y); lastTap = 0; } else lastTap = now;
+      }
+    }
   });
   frame.addEventListener('pointermove', (e) => {
-    if (!drag || e.pointerId !== drag.id) return;
-    x = drag.ox + e.clientX - drag.sx; y = drag.oy + e.clientY - drag.sy; drag.moved = true; render();
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, local(e));
+    if (pinch && pts.size >= 2) { const i = pinchInfo(); zoomAt(pinch.z * (i.d / pinch.d), i.cx, i.cy); return; }
+    if (drag) { const p = [...pts.values()][0]; x = drag.ox + p.x - drag.sx; y = drag.oy + p.y - drag.sy; render(); }
   });
-  const end = () => { drag = null; frame.classList.remove('dragging'); };
+  const end = (e: PointerEvent) => {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    if (pts.size === 1) startDrag();
+    if (!pts.size) { drag = null; frame.classList.remove('dragging'); render(); }
+  };
   frame.addEventListener('pointerup', end); frame.addEventListener('pointercancel', end);
+  frame.addEventListener('dblclick', (e) => {
+    if ((e.target as HTMLElement).closest('.pin')) return;
+    const r = frame.getBoundingClientRect(); zoomAt(z * 2, e.clientX - r.left, e.clientY - r.top);
+  });
   frame.addEventListener('wheel', (e) => {
     if (!e.ctrlKey && !e.metaKey && Math.abs(e.deltaY) < 1) return;
     e.preventDefault();

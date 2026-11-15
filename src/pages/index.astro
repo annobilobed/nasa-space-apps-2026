@@ -257,7 +257,9 @@ const halls = [
   .d-credit a, .pano-cap a { pointer-events: auto; }
   .rm-only { display: none; }
   @media (max-width: 899px) {
-    .hero-meta .telemetry { display: none; }
+    .hero-meta { flex-direction: column; align-items: flex-start; gap: 6px; padding-bottom: 18px; }
+    .hero-meta .telemetry { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 0.68rem; background: rgb(8 13 28 / 0.7); padding: 6px 10px; border-radius: var(--r-1); }
+    .hero-meta .telemetry span { white-space: normal; }
     .hero-copy { align-self: start; padding-top: calc(var(--nav-h) + 7svh); }
     .d-line { width: calc(100vw - 2 * var(--gutter)); }
     .d-line.l1, .d-line.l1b, .d-line.l2 { top: 10svh; }

@@ -100,7 +100,7 @@ const sources = [
         <section class="timeline-sec" aria-labelledby="tl-h" data-timeline>
           <div class="tl-head">
             <h2 id="tl-h">Mission timeline</h2>
-            <p class="muted">Select a moment to see what happened. Use the arrow keys to move along the line.</p>
+            <p class="muted">Select a moment to see what happened. <span class="on-keys">Use the arrow keys to move along the line.</span><span class="on-touch">Swipe left or right on the moment below to move along the line.</span></p>
           </div>
           <div class="tl-track" role="tablist" aria-label="Opportunity mission milestones" data-tl-track>
             {timeline.map((m, i) => (
@@ -267,7 +267,7 @@ const sources = [
   .crumbs a { color: var(--muted); }
   .copper-k { color: var(--mars-light); }
 
-  .hud { position: sticky; top: 0; z-index: 40; background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-block: 1px solid var(--border); }
+  .hud { position: sticky; top: var(--hdr-top); transition: top var(--t-base) var(--ease-out); z-index: 40; background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-block: 1px solid var(--border); }
   .hud-inner { display: flex; align-items: center; gap: 20px; min-height: 52px; justify-content: space-between; }
   .hud-ch { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hud-data { display: flex; gap: 18px; font-size: 0.8rem; color: var(--cyan); flex-wrap: wrap; justify-content: flex-end; }
@@ -278,17 +278,26 @@ const sources = [
   .hud[data-state='weak'] .hud-sig i:nth-child(n + 3) { height: 12%; background: var(--faint); }
   .hud[data-state='lost'] .hud-sig i { height: 12%; background: var(--faint); }
   .hud[data-state='lost'] .hud-data { color: var(--mars-light); }
-  :global(html:not(.lenis)) .hud { top: 0; }
   @media (max-width: 700px) { .hud-ch { display: none; } .hud-data { justify-content: flex-start; gap: 12px; } }
 
   .s-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--s-8); padding-block: var(--s-9); }
-  .toc { position: sticky; top: 90px; align-self: start; }
+  .toc { position: sticky; top: calc(var(--hdr-top) + 90px); transition: top var(--t-base) var(--ease-out); align-self: start; }
   .toc ol { list-style: none; padding: 0; display: grid; gap: 2px; border-left: 1px solid var(--border); }
   .toc a { display: flex; gap: 12px; align-items: baseline; padding: 9px 0 9px 16px; text-decoration: none; color: var(--faint); font-size: 0.92rem; margin-left: -1px; border-left: 1px solid transparent; transition: color var(--t-fast), border-color var(--t-fast); }
   .toc a:hover { color: var(--fg); }
   .toc a.is-active { color: var(--fg); border-left-color: var(--cyan); }
   .toc .mono { font-size: 0.75rem; width: 1.6em; color: var(--cyan); }
-  @media (max-width: 1000px) { .s-body { grid-template-columns: 1fr; } .toc { display: none; } }
+  @media (max-width: 1000px) {
+    .s-body { grid-template-columns: 1fr; gap: var(--s-6); padding-top: 0; }
+    .toc { position: sticky; top: calc(var(--hdr-top) + var(--hud-h, 54px) - 1px); transition: top var(--t-base) var(--ease-out); z-index: 39; margin-inline: calc(-1 * var(--gutter)); background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+    .toc::-webkit-scrollbar { display: none; }
+    .toc ol { display: flex; gap: 8px; border-left: 0; padding: 8px var(--gutter); width: max-content; }
+    .toc li { max-width: none; }
+    .toc a { margin: 0; padding: 0 14px; min-height: 40px; align-items: center; border: 1px solid var(--border); border-radius: 999px; white-space: nowrap; font-size: 0.86rem; }
+    .toc a.is-active { border-color: var(--cyan); background: var(--surface-2); }
+    .toc .mono { width: auto; }
+    .chapters .chapter { scroll-margin-top: calc(var(--nav-h) + var(--hud-h, 54px) + 70px); }
+  }
 
   .chapters { display: grid; gap: var(--s-10); }
   .chapter { display: grid; gap: var(--s-5); scroll-margin-top: 80px; }

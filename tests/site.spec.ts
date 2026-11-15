@@ -360,3 +360,73 @@ test('switching tabs runs a smooth page transition on every tab, and the header 
   }
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('.site-header')!).viewTransitionName)).toBe('site-header');
 });
+
+// ── Phone parity: the effects a laptop gets also work by touch.
+const isMobile = () => test.info().project.name === 'mobile';
+const touchSeq = async (page: Page, sel: string, steps: { type: string; id: number; x: number; y: number }[]) =>
+  page.locator(sel).first().evaluate((el, steps) => {
+    const r = el.getBoundingClientRect();
+    for (const s of steps) el.dispatchEvent(new PointerEvent(s.type, { pointerId: s.id, pointerType: 'touch', clientX: r.left + s.x, clientY: r.top + s.y, bubbles: true, isPrimary: s.id === 1 }));
+  }, steps);
+
+test('phone: maps zoom by pinching and by double-tapping', async ({ page }) => {
+  test.skip(!isMobile());
+  await page.goto('where.html#mars');
+  const frame = '[data-panel="mars"] [data-map]';
+  await page.locator(frame).scrollIntoViewIfNeeded();
+  const scale = () => page.locator(`${frame} [data-stage]`).evaluate((s) => Number(getComputedStyle(s).getPropertyValue('--z') || 1));
+  await touchSeq(page, frame, [
+    { type: 'pointerdown', id: 1, x: 150, y: 80 }, { type: 'pointerdown', id: 2, x: 170, y: 80 },
+    { type: 'pointermove', id: 1, x: 100, y: 80 }, { type: 'pointermove', id: 2, x: 230, y: 80 },
+    { type: 'pointerup', id: 1, x: 100, y: 80 }, { type: 'pointerup', id: 2, x: 230, y: 80 },
+  ]);
+  expect(await scale()).toBeGreaterThan(3);
+  await page.locator(`[data-panel="mars"] [data-zoom="reset"]`).click();
+  await touchSeq(page, frame, [
+    { type: 'pointerdown', id: 3, x: 160, y: 80 }, { type: 'pointerup', id: 3, x: 160, y: 80 },
+    { type: 'pointerdown', id: 4, x: 160, y: 80 }, { type: 'pointerup', id: 4, x: 160, y: 80 },
+  ]);
+  expect(await scale()).toBeCloseTo(2, 1);
+});
+
+test('phone: story chapter rail becomes a sticky chip row that follows the reading position', async ({ page }) => {
+  test.skip(!isMobile());
+  await page.goto('stories/opportunity.html');
+  const rail = page.locator('nav.toc');
+  await expect(rail).toBeVisible();
+  await page.locator('#discoveries').scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollBy(0, 200));
+  await expect(page.locator('nav.toc a.is-active')).toBeVisible();
+  const top = await rail.evaluate((r) => r.getBoundingClientRect().top);
+  expect(top).toBeLessThan(200);
+  await expect(page.locator('.on-touch').first()).toBeVisible();
+  await expect(page.locator('.on-keys').first()).toBeHidden();
+});
+
+test('phone: theatre shows the timer, and photos swipe in the lightbox', async ({ page }) => {
+  test.skip(!isMobile());
+  await page.goto('theatre.html');
+  await expect(page.locator('[data-time]')).toBeVisible();
+  await page.goto('archive/opportunity.html');
+  await page.locator('[data-g-open]').first().click();
+  const img = page.locator('[data-lb-img]');
+  await expect(img).toBeVisible();
+  const before = await img.getAttribute('src');
+  await touchSeq(page, '[data-lb-img]', [{ type: 'pointerdown', id: 1, x: 250, y: 100 }, { type: 'pointerup', id: 1, x: 60, y: 105 }]);
+  await expect.poll(() => img.getAttribute('src')).not.toBe(before);
+});
+
+test('phone: menu tabs transition smoothly and "Home" shows beside the logo', async ({ page }) => {
+  test.skip(!isMobile());
+  await page.addInitScript(() => window.addEventListener('pagereveal', (e: any) => sessionStorage.setItem('vt', String(!!e.viewTransition))));
+  await page.goto('museum.html');
+  await expect(page.locator('.brand-home')).toBeVisible();
+  expect(await page.locator('.brand-home').evaluate((e) => getComputedStyle(e).opacity)).toBe('1');
+  for (const [tab, file] of [['Archive', 'archive'], ['Stories', 'stories'], ['Home', 'index']]) {
+    await page.locator('[data-menu-btn]').click();
+    await page.locator('#mobile-nav').getByRole('link', { name: tab, exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`${file}\\.html$`));
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('vt')), { message: `transition into ${tab}` }).toBe('true');
+    await page.evaluate(() => sessionStorage.removeItem('vt'));
+  }
+});

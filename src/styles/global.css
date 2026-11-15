@@ -219,7 +219,28 @@ strong { font-weight: 700; color: var(--fg); }
 ::view-transition-new(root) { animation: 420ms cubic-bezier(.22, 1, .36, 1) 60ms both vt-in; }
 @keyframes vt-out { to { opacity: 0; transform: translateY(-10px); } }
 @keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
+/* Tapping a page in the phone menu: the menu fades away on its own while the bar stays put. */
+::view-transition-old(mobile-nav) { animation: 180ms ease-out both vt-fade; }
+@keyframes vt-fade { to { opacity: 0; } }
 .no-vt main { animation: vt-in 420ms cubic-bezier(.22, 1, .36, 1) backwards; }
 @media (prefers-reduced-motion: reduce) {
   .no-vt main { animation: none; }
 }
+
+/* ── Touchscreens: no hover, so give the same feedback on tap, and show hints hover would reveal. ── */
+@media (hover: none) {
+  .brand-home { opacity: 1 !important; transform: none !important; }
+  .btn-primary:active { background: var(--accent-hover); }
+  .btn-primary:active svg { transform: translateX(3px); }
+  .btn-secondary:active { border-color: var(--star); background: color-mix(in oklab, var(--cosmic) 80%, transparent); }
+  .chip:active, .card:active, .input:active, .select:active { border-color: var(--border-strong); }
+  a:active { text-decoration-color: currentColor; }
+}
+
+/* Offset for sticky bars: below the site header while it is showing, at the very top once it hides. */
+:root { --hdr-top: var(--nav-h); }
+.hdr-off { --hdr-top: 0px; }
+
+/* Instructions that depend on the device: keys on a laptop, touch on a phone. */
+.on-touch { display: none; }
+@media (hover: none) and (pointer: coarse) { .on-keys { display: none; } .on-touch { display: inline; } }

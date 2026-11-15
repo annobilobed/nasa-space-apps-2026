@@ -4,6 +4,15 @@ export function initStory() {
   const set = (sel: string, v: string) => { const el = hud?.querySelector(sel); if (el) el.textContent = v; };
   const toc = document.querySelectorAll<HTMLAnchorElement>('[data-toc]');
   const chapters = document.querySelectorAll<HTMLElement>('[data-chapter]');
+  // On phones the chapter rail is a sticky, swipeable row under the mission clock:
+  // keep it just below the clock, and keep the current chapter's chip in view.
+  const rail = document.querySelector<HTMLElement>('.toc');
+  if (hud) new ResizeObserver(() => document.documentElement.style.setProperty('--hud-h', `${hud.offsetHeight}px`)).observe(hud);
+  const centreChip = (id: string) => {
+    if (!rail || rail.scrollWidth <= rail.clientWidth) return;
+    const a = [...toc].find((x) => x.dataset.toc === id);
+    if (a) rail.scrollTo({ left: a.offsetLeft - (rail.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
+  };
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) {
       if (!en.isIntersecting) continue;
@@ -12,6 +21,7 @@ export function initStory() {
       set('[data-hud-sol]', c.hud.sol); set('[data-hud-date]', c.hud.date); set('[data-hud-place]', c.hud.place);
       if (hud) hud.dataset.state = c.id === 'legacy' ? 'lost' : c.id === 'final' ? 'weak' : 'live';
       toc.forEach((a) => a.classList.toggle('is-active', a.dataset.toc === c.id));
+      centreChip(c.id);
     }
   }, { rootMargin: '-35% 0px -55% 0px' });
   chapters.forEach((c) => io.observe(c));
@@ -51,6 +61,16 @@ export function initStory() {
         if (e.key === 'End') { e.preventDefault(); select(tabs.length - 1, true); }
       });
     });
+    // Swipe on the moment's picture to step along the line (arrow keys do this on a laptop).
+    let sx = 0, sy = 0, sw = false;
+    panel?.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') return; sx = e.clientX; sy = e.clientY; sw = true; });
+    panel?.addEventListener('pointerup', (e) => {
+      if (!sw) return; sw = false;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) select(cur + (dx < 0 ? 1 : -1));
+    });
+    panel?.addEventListener('pointercancel', () => (sw = false));
+    if (panel) panel.style.touchAction = 'pan-y';
     tl.querySelector('[data-tl-prev]')?.addEventListener('click', () => select(cur - 1));
     tl.querySelector('[data-tl-next]')?.addEventListener('click', () => select(cur + 1));
     select(0);

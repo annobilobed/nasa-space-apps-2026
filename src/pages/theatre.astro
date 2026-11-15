@@ -195,7 +195,7 @@ const facts: [string, string][] = [
   .ctl[data-mute][aria-pressed='true'] .wave { display: none; }
   .seek { flex: 1; accent-color: var(--violet); min-height: 44px; }
   .time { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
-  @media (max-width: 520px) { .time { display: none; } }
+  @media (max-width: 520px) { .controls { flex-wrap: wrap; row-gap: 4px; } .seek { order: -1; flex: 1 0 100%; } .time { margin-right: auto; font-size: 0.75rem; } }
   .now { padding-top: var(--s-5); }
   .now-item { display: grid; gap: 10px; }
   .now-item[hidden] { display: none; }

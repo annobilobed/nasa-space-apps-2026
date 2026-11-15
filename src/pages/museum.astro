@@ -123,12 +123,12 @@ const panelData = Object.fromEntries(hardware.map((h) => {
   .hn-link { display: inline-flex; gap: 10px; align-items: center; min-height: 48px; padding: 0 18px; border: 1px solid var(--border); border-radius: var(--r-1); text-decoration: none; font-weight: 700; transition: border-color var(--t-fast); }
   .hn-link:hover { border-color: var(--star); }
   .hn-link .mono { color: var(--cyan); font-weight: 400; }
-  .filter-bar { position: sticky; top: 0; z-index: 30; background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-block: 1px solid var(--border); }
+  .filter-bar { position: sticky; top: var(--hdr-top); transition: top var(--t-base) var(--ease-out); z-index: 30; background: color-mix(in oklab, var(--navy) 94%, transparent); backdrop-filter: blur(8px); border-block: 1px solid var(--border); }
   .fb-inner { display: flex; align-items: center; gap: 14px; padding-block: 10px; flex-wrap: wrap; }
   .fb-inner .chips { display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; flex: 1; }
   .fb-inner .chip { white-space: nowrap; flex: none; }
   .fb-count { font-size: 0.8rem; color: var(--cyan); white-space: nowrap; }
-  @media (max-width: 700px) { .fb-inner .label { display: none; } .fb-count { display: none; } }
+  @media (max-width: 700px) { .fb-inner { flex-wrap: nowrap; gap: 10px; } .fb-inner .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .fb-count { font-size: 0.72rem; } }
 
   .hall { padding-bottom: var(--s-9); scroll-margin-top: 70px; }
   .hall-banner { position: relative; min-height: 64svh; display: grid; align-items: end; overflow: hidden; isolation: isolate; margin-bottom: var(--s-7); }

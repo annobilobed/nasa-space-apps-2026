@@ -16,6 +16,8 @@ function header() {
     const focusInside = h.contains(document.activeElement);
     h.classList.toggle('is-hidden', y > 400 && y > last + 4 && !menuOpen && !focusInside);
     if (y < last - 4) h.classList.remove('is-hidden');
+    // Sticky bars (story clock, museum filters) sit under the header while it shows, and move up when it hides.
+    document.documentElement.classList.toggle('hdr-off', h.classList.contains('is-hidden'));
     last = y;
   };
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -70,7 +72,7 @@ function counters() {
 
 function smooth() {
   if (reducedMotion()) return;
-  lenis = new Lenis({ duration: 1.1, smoothWheel: true, anchors: { offset: -80 } });
+  lenis = new Lenis({ duration: 1.1, smoothWheel: true, anchors: { offset: window.innerWidth <= 1000 ? -130 : -80 } });
   const raf = (t: number) => { lenis?.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
   window.dispatchEvent(new CustomEvent('airxon:lenis', { detail: lenis }));

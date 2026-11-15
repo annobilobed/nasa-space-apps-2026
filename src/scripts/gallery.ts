@@ -19,5 +19,15 @@ export function initGallery() {
   dlg.querySelector('[data-lb-close]')?.addEventListener('click', () => dlg.close());
   dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(cur + 1); if (e.key === 'ArrowLeft') show(cur - 1); });
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  // Swipe left or right on a phone to move between photos (the arrow keys do this on a laptop).
+  let sx = 0, sy = 0, swiping = false;
+  img.style.touchAction = 'pan-y pinch-zoom';
+  img.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') return; sx = e.clientX; sy = e.clientY; swiping = true; });
+  img.addEventListener('pointerup', (e) => {
+    if (!swiping) return; swiping = false;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) show(cur + (dx < 0 ? 1 : -1));
+  });
+  img.addEventListener('pointercancel', () => (swiping = false));
   dlg.addEventListener('close', () => opener?.focus());
 }
