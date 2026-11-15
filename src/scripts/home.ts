@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getLenis, reducedMotion } from './site';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.clearScrollMemory('manual');
 
 // Frame layout of the journey film (scripts/render-journey.py).
 const NA = 48, NB = 120, NC = 36, ND = 96, FRAMES = NA + NB + NC + ND, FPS = 30;

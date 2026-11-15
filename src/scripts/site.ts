@@ -112,7 +112,22 @@ function samePageTop() {
   });
 }
 
+// Every page opens at the top: after a menu click, a refresh or the browser's back/forward
+// buttons. The only exception is a link to a section on the page (#id that exists).
+function startAtTop() {
+  try { history.scrollRestoration = 'manual'; } catch { /* unsupported */ }
+  const targetsSection = () => { const h = decodeURIComponent(location.hash.slice(1)); return !!h && !!document.getElementById(h); };
+  const toTop = () => {
+    if (targetsSection()) return;
+    lenis?.scrollTo(0, { immediate: true, force: true });
+    window.scrollTo(0, 0);
+  };
+  toTop();
+  window.addEventListener('load', toTop, { once: true });
+  window.addEventListener('pageshow', (e) => { if ((e as PageTransitionEvent).persisted) toTop(); });
+}
+
 export function initSite() {
   samePageTop();
-  smooth(); header(); menu(); reveals(); counters(); parallax();
+  smooth(); startAtTop(); header(); menu(); reveals(); counters(); parallax();
 }

@@ -278,3 +278,34 @@ for (const p of ['index.html', 'stories/opportunity.html', 'archive/apollo-17-lr
     expect(txt.match(/[\u2013\u2014]/g) ?? []).toEqual([]);
   });
 }
+
+test('every menu tab opens its page at the top, including after back and reload', async ({ page }) => {
+  const tabs = ['Home', 'Museum', 'Stories', 'Theatre', 'Archive', 'Where now?', 'Discoveries', 'Learn', 'About'];
+  const mobile = test.info().project.name === 'mobile';
+  await page.goto('knowledge.html');
+  for (const name of tabs) {
+    await page.evaluate(() => window.scrollTo(0, Math.min(2500, document.documentElement.scrollHeight)));
+    await page.waitForTimeout(300);
+    await page.evaluate(() => window.scrollBy(0, -300)); // scrolling up reveals the auto-hiding header
+    await page.waitForTimeout(500);
+    if (mobile) {
+      await page.locator('[data-menu-btn]').click();
+      await page.locator('#mobile-nav').getByRole('link', { name, exact: true }).click();
+    } else {
+      await page.locator('nav.primary').getByRole('link', { name, exact: true }).click();
+    }
+    await page.waitForLoadState('load');
+    await expect.poll(() => page.evaluate(() => window.scrollY), { message: `${name} should open at the top` }).toBeLessThan(5);
+  }
+  // back and reload also return to the top
+  await page.evaluate(() => window.scrollTo(0, 2000));
+  await page.reload(); await page.waitForLoadState('load');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
+  await page.goBack(); await page.waitForLoadState('load');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
+});
+
+test('links to a section still jump to that section', async ({ page }) => {
+  await page.goto('stories/opportunity.html#final');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
+});
