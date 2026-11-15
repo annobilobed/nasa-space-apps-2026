@@ -206,3 +206,20 @@ strong { font-weight: 700; color: var(--fg); }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
   .js [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* ── Page transitions between tabs ──
+   Native cross-document view transitions (Chrome, Edge, Safari 18.2+): the old page
+   fades out and lifts slightly, the new page rises in. The header and menu are their
+   own layer, so they stay still. Browsers without support get a short fade-in instead.
+   The opt-in rule itself (@view-transition) is inline in Base.astro: the new page decides
+   before external stylesheets apply, so it must be in the HTML. */
+.site-header { view-transition-name: site-header; }
+::view-transition-group(site-header) { animation-duration: 260ms; }
+::view-transition-old(root) { animation: 200ms cubic-bezier(.4, 0, 1, 1) both vt-out; }
+::view-transition-new(root) { animation: 420ms cubic-bezier(.22, 1, .36, 1) 60ms both vt-in; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-10px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
+.no-vt main { animation: vt-in 420ms cubic-bezier(.22, 1, .36, 1) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  .no-vt main { animation: none; }
+}

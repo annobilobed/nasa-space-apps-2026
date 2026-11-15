@@ -344,3 +344,19 @@ test('status list shows counts as machine totals, not as numbering', async ({ pa
   expect(counts.length).toBe(6);
   for (const c of counts) expect(c).toMatch(/^(\d+ machines?|none yet)$/);
 });
+
+test('switching tabs runs a smooth page transition on every tab, and the header stays put', async ({ page }) => {
+  test.skip(test.info().project.name !== 'desktop');
+  await page.addInitScript(() => {
+    window.addEventListener('pagereveal', (e: any) => sessionStorage.setItem('vt', String(!!e.viewTransition)));
+  });
+  await page.goto('museum.html');
+  for (const [tab, file] of [['Archive', 'archive'], ['Theatre', 'theatre'], ['Home', 'index'], ['Stories', 'stories'], ['Where now?', 'where'], ['Discoveries', 'discoveries'], ['Learn', 'knowledge'], ['About', 'about'], ['Museum', 'museum']]) {
+    await page.locator('.site-header').getByRole('link', { name: tab, exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`${file}\\.html$`));
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('vt')), { message: `transition into ${tab}` }).toBe('true');
+    await page.evaluate(() => sessionStorage.removeItem('vt'));
+    expect(await page.evaluate(() => scrollY)).toBeLessThan(5);
+  }
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector('.site-header')!).viewTransitionName)).toBe('site-header');
+});
