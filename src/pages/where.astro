@@ -26,6 +26,7 @@ const deep = [
 ];
 const lightDayAU = (299_792.458 * 86_400) / AU; // ≈ 173.1 AU
 const pioneerAU = (7.6e9 * 1.609344) / AU;      // 7.6 billion miles
+const pioneer11AU = 44.7;                        // end of 1995, NSSDCA
 const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(220) - Math.log10(0.8)) * 100;
 ---
 <Base title="Where are they now?" description="Interactive maps of the Moon and Mars showing where NASA hardware rests, with confirmed and approximate locations clearly marked." current="where">
@@ -96,21 +97,32 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
     <div class="panel deep" role="tabpanel" id="panel-deep" aria-labelledby="tab-deep" hidden data-panel="deep">
       <div class="deep-copy">
         <h2>Still travelling</h2>
-        <p class="muted">Deep-space probes have no surface location. Instead, this scale shows how far from the Sun they are. Each step along it is ten times farther than the last (a logarithmic scale). 1 AU is the average distance from Earth to the Sun, about 150 million km.</p>
+        <p class="muted">Deep-space machines have no place on the Moon or Mars maps. This scale shows how far from the Sun the probes leaving the solar system are. Each step along it is ten times farther than the last (a logarithmic scale). 1 AU is the average distance from Earth to the Sun, about 150 million km.</p>
       </div>
-      <div class="scale" role="img" aria-label={`Logarithmic distance scale from 1 to 200 AU. Voyager 1 is about ${lightDayAU.toFixed(0)} AU from Earth (one light-day) in November 2026. Pioneer 10 was about ${pioneerAU.toFixed(0)} AU away at its last contact in 2003. Voyager 2 is beyond the heliopause.`}>
+      <div class="scale" role="img" aria-label={`Logarithmic distance scale from 1 to 200 AU. Voyager 1 is about ${lightDayAU.toFixed(0)} AU from Earth (one light-day) in November 2026. Pioneer 10 was about ${pioneerAU.toFixed(0)} AU away at its last contact in 2003. Pioneer 11 was about 45 AU from the Sun at the end of 1995. Voyager 2 is beyond the heliopause.`}>
         <div class="axis"></div>
         {deep.map((d) => <span class={`mark ${d.kind}`} style={`--p:${logX(d.au)}%`}><i></i><b>{d.label}</b><em>{d.au} AU</em></span>)}
-        <span class="probe" style={`--p:${logX(lightDayAU)}%`}><i></i><b>Voyager 1</b><em>≈ 1 light-day · Nov 2026</em></span>
+        <span class="probe" style={`--p:${logX(lightDayAU)}%`}><i></i><b>Voyager 1</b><em>≈ 1 light-day{" "}<br />Nov 2026</em></span>
         <span class="probe silent" style={`--p:${logX(pioneerAU)}%`}><i></i><b>Pioneer 10</b><em>last contact 2003</em></span>
+        <span class="probe silent p11" style={`--p:${logX(pioneer11AU)}%`}><i></i><b>Pioneer 11</b><em>last contact 1995</em></span>
         <span class="probe v2" style={`--p:${logX(121)}%`}><i></i><b>Voyager 2, beyond here</b><em>crossed in 2018</em></span>
       </div>
       <dl class="deep-list">
         <div><dt>Voyager 1 <span class="status" data-s="operational">Still operational</span></dt><dd>More than 16 billion miles from Earth. NASA expects it to reach one light-day (about 26 billion km) from Earth in November 2026. <a href="/archive/voyager-1/">Profile</a></dd></div>
         <div><dt>Voyager 2 <span class="status" data-s="operational">Still operational</span></dt><dd>In interstellar space since 2018, travelling in a different direction from its twin. We show it beyond the heliopause rather than at an unverified distance. <a href="/archive/voyager-2/">Profile</a></dd></div>
         <div><dt>Pioneer 10 <span class="status" data-s="silent">No longer communicating</span></dt><dd>Last signal on January 23, 2003, from about 7.6 billion miles away (shown at that distance). It is still coasting outward. <a href="/archive/pioneer-10/">Profile</a></dd></div>
+        <div><dt>Pioneer 11 <span class="status" data-s="silent">No longer communicating</span></dt><dd>Last contact on September 30, 1995. About 44.7 AU from the Sun at the end of 1995 (shown at that distance), heading toward Sagittarius. <a href="/archive/pioneer-11/">Profile</a></dd></div>
       </dl>
-      <p class="placard"><span>Sources: NASA Science: Voyager mission page (distance and one-light-day milestone); NASA Science: Pioneer 10. Planet distances are average orbital distances.</span></p>
+      <div class="deep-copy">
+        <h2>Resting elsewhere in the solar system</h2>
+        <p class="muted">Three more machines finished their work far from the Moon and Mars, and are still out there.</p>
+      </div>
+      <dl class="deep-list">
+        <div><dt>NEAR Shoemaker <span class="status" data-s="silent">No longer communicating</span></dt><dd>On the surface of asteroid 433 Eros, in the region called the saddle, since February 12, 2001: the first spacecraft to land on an asteroid. <a href="/archive/near-shoemaker/">Profile</a></dd></div>
+        <div><dt>Dawn <span class="status" data-s="silent">No longer communicating</span></dt><dd>In orbit around the dwarf planet Ceres, in the main asteroid belt, out of fuel since 2018. NASA expects it to stay there for decades. <a href="/archive/dawn/">Profile</a></dd></div>
+        <div><dt>Kepler <span class="status" data-s="inactive">Inactive</span></dt><dd>Retired in 2018 in an Earth-trailing orbit around the Sun, slowly falling behind Earth. It found more than 2,600 planets. <a href="/archive/kepler/">Profile</a></dd></div>
+      </dl>
+      <p class="placard"><span>Sources: NASA Science: Voyager mission page (distance and one-light-day milestone); NASA Science: Pioneer 10 and Pioneer 11; NSSDCA (Pioneer 11 distance, NEAR Shoemaker, Dawn, Kepler); NASA Science: NEAR Shoemaker, Dawn and Kepler. Planet distances are average orbital distances.</span></p>
     </div>
   </section>
 
@@ -197,15 +209,19 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
   .probe { top: auto; bottom: 50%; transform: translate(-50%, 0); flex-direction: column-reverse; display: flex; align-items: center; }
   .probe i { background: var(--cyan); margin: 0 0 -5px; box-shadow: 0 0 0 4px rgb(101 217 242 / 0.2); }
   .probe b { font-weight: 700; }
-  .probe em { font-style: normal; font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); }
+  .probe em { font-style: normal; font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan); text-align: center; }
   .probe.silent i { background: var(--copper); box-shadow: 0 0 0 4px rgb(196 122 84 / 0.2); }
   .probe.silent em { color: var(--mars-light); }
   .probe.v2 { bottom: calc(50% + 70px); }
+  .probe.p11 { bottom: calc(50% + 60px); }
+  .probe.p11 i { display: none; }
+  .probe.p11::before { content: ''; position: absolute; left: 50%; top: 100%; width: 1px; height: 56px; background: var(--copper); opacity: 0.7; }
+  .probe.p11::after { content: ''; position: absolute; left: calc(50% - 5px); top: calc(100% + 55px); width: 10px; height: 10px; border-radius: 50%; background: var(--copper); box-shadow: 0 0 0 4px rgb(196 122 84 / 0.2); }
   .probe.v2 i { display: none; }
   .mark:nth-child(odd of .planet) b { margin-top: 0; }
   /* Phones: the same logarithmic scale, turned vertical (nearest at the top). */
   @media (max-width: 760px) {
-    .scale { height: 600px; margin: 10px 0 0; }
+    .scale { height: 720px; margin: 10px 0 0; }
     .axis { left: 44%; right: auto; top: 0; bottom: 0; width: 1px; height: auto; background: linear-gradient(180deg, var(--border-strong), var(--cyan)); }
     .mark, .probe { left: auto; top: var(--p); bottom: auto; transform: translateY(-50%); display: grid; align-items: center; column-gap: 10px; row-gap: 0; }
     .mark { right: 56%; grid-template-columns: auto auto; justify-items: end; text-align: right; }
@@ -215,8 +231,12 @@ const logX = (au: number) => (Math.log10(au) - Math.log10(0.8)) / (Math.log10(22
     .probe { left: 44%; right: 0; grid-template-columns: auto minmax(0, 1fr); justify-items: start; }
     .probe i { grid-area: 1 / 1 / 3 / 2; margin: 0 0 0 -5px; }
     .probe b { grid-area: 1 / 2; } .probe em { grid-area: 2 / 2; }
-    .probe b, .probe em { white-space: normal; }
+    .probe b, .probe em { white-space: normal; text-align: left; }
+    .probe em br { display: none; }
     .probe.v2 { bottom: auto; }
+    .probe.p11 { bottom: auto; }
+    .probe.p11 i { display: block; }
+    .probe.p11::before, .probe.p11::after { display: none; }
   }
   .deep-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   .deep-list > div { padding: 20px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); }

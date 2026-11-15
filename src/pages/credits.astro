@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { allMedia, KIND_LABEL } from '../lib/media';
 import { hardware, type Source } from '../data/hardware';
+import { challengeResources } from '../data/challenge';
 
 const media = [...allMedia].sort((a, b) => a.mission.localeCompare(b.mission) || a.title.localeCompare(b.title));
 const seen = new Map<string, Source & { used: string[] }>();
@@ -11,16 +12,42 @@ for (const h of hardware) for (const s of [...h.sources, ...(h.location.source ?
   seen.set(s.url, e);
 }
 const refs = [...seen.values()].sort((a, b) => a.publisher.localeCompare(b.publisher) || a.title.localeCompare(b.title));
+// For each challenge resource: the AIRXON profiles whose sources cite that exact link.
+const usedBy = (url: string) => hardware.filter((h) => [...h.sources, ...(h.location.source ? [h.location.source] : [])].some((x) => x.url === url));
+const groups = [...new Set(challengeResources.map((r) => r.group))];
+const covered = challengeResources.filter((r) => usedBy(r.url).length).length;
 const missionName = (m: string) => hardware.find((h) => h.slug === m)?.short ?? m.replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
 ---
 <Base title="Sources & credits" description="Every source, image credit and licensing note used by AIRXON, plus a disclosure of AI tools used in making it." current="">
   <header class="c-hero wrap">
     <h1>Where everything comes from.</h1>
     <p class="lede">Every fact on AIRXON is traced to a source, and every image is credited. This page lists them all.</p>
-    <nav class="c-toc" aria-label="On this page"><a href="#method">How we check facts</a><a href="#data">NASA data sources</a><a href="#media">Media credits ({media.length})</a><a href="#video">Video &amp; brand</a><a href="#refs">References ({refs.length})</a><a href="#ai">AI disclosure</a><a href="#brand">Branding</a></nav>
+    <nav class="c-toc" aria-label="On this page"><a href="#challenge">Challenge resources</a><a href="#method">How we check facts</a><a href="#data">NASA data sources</a><a href="#media">Media credits ({media.length})</a><a href="#video">Video &amp; brand</a><a href="#refs">References ({refs.length})</a><a href="#ai">AI disclosure</a><a href="#brand">Branding</a></nav>
   </header>
 
   <div class="wrap c-body">
+    <section id="challenge" class="c-sec" aria-labelledby="ch-h">
+      <h2 id="ch-h">Challenge resources</h2>
+      <p class="muted">The NASA Space Apps challenge <em>Abandoned but Not Forgotten</em> lists these NASA resources. AIRXON cites {covered} of the {challengeResources.length} links directly in its machine profiles, as shown beside each one.</p>
+      {groups.map((g) => (
+        <>
+          <h3 class="ch-g">{g}</h3>
+          <ul class="ch-list">
+            {challengeResources.filter((r) => r.group === g).map((r) => {
+              const used = usedBy(r.url);
+              return (
+                <li>
+                  <a href={r.url} rel="noopener"><strong>{r.name}</strong></a>
+                  <span class="muted">{r.note}</span>
+                  <span class="ch-used">{used.length ? <>Cited in: {used.map((h, i) => <>{i > 0 && ', '}<a href={`/archive/${h.slug}/`}>{h.short}</a></>)}</> : 'Not yet cited in a profile'}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      ))}
+    </section>
+
     <section id="method" class="c-sec" aria-labelledby="m-h">
       <h2 id="m-h">How we check facts</h2>
       <ul class="plain">
@@ -123,4 +150,9 @@ const missionName = (m: string) => hardware.find((h) => h.slug === m)?.short ?? 
     .media-table td { display: grid; grid-template-columns: 80px 1fr; gap: 10px; padding: 4px 0; border: 0; }
     .media-table td::before { content: attr(data-l); color: var(--faint); font-size: 0.78rem; }
   }
+  .ch-g { font-size: var(--step-1); margin-top: 8px; }
+  .ch-list { list-style: none; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--border); }
+  .ch-list li { display: grid; gap: 4px; padding: 14px 0; border-bottom: 1px solid var(--border); max-width: none; }
+  .ch-used { font-size: 0.85rem; color: var(--cyan); }
+  .ch-used a { color: var(--fg); }
 </style>

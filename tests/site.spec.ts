@@ -467,3 +467,21 @@ test('the documentary is easy to find: hero link, homepage band, story and profi
   await expect(page.locator('[data-player]')).toHaveClass(/is-cued/);
   await expect(page.locator('[data-big-play]')).toBeFocused();
 });
+
+test('every challenge resource is listed on the credits page and cited by at least one profile', async ({ page }) => {
+  await page.goto('credits.html#challenge');
+  const items = page.locator('#challenge .ch-list li');
+  await expect(items).toHaveCount(13);
+  for (const t of await page.locator('#challenge .ch-used').allTextContents()) expect(t).toMatch(/^Cited in: /);
+});
+
+for (const [slug, name, img] of [['dawn', 'Dawn', 'Occator'], ['near-shoemaker', 'NEAR Shoemaker', 'Eros'], ['pioneer-11', 'Pioneer 11', 'Saturn'], ['kepler', 'Kepler Space Telescope', 'Kepler']]) {
+  test(`new challenge machine profile: ${slug}`, async ({ page }) => {
+    const errors = watch(page);
+    await page.goto(`archive/${slug}.html`);
+    await expect(page.locator('h1')).toHaveText(name);
+    await expect(page.locator('.sources a[href*="science.nasa.gov/mission/"]').first()).toBeAttached();
+    await expect(page.locator(`img[alt*="${img}"]`).first()).toBeAttached();
+    expect(errors).toEqual([]);
+  });
+}

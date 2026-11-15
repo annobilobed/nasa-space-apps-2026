@@ -107,6 +107,25 @@ export const catalog = [
     alt: "The 2020 reprocessed version of Voyager 1's Pale Blue Dot image, with Earth a faint dot in a ray of light." },
   { slug: 'pioneer10-plaque', id: 'ARC-1972-AC72-2135', kind: 'photo', mission: 'pioneer-10',
     alt: "The Pioneer 10 spacecraft being prepared at Cape Kennedy in 1972, showing where its engraved plaque is mounted." },
+  // ── Challenge resources: Pioneer 11, Dawn, NEAR Shoemaker, Kepler ───────────────
+  { slug: 'pioneer11-launch', id: '9139575', kind: 'photo', mission: 'pioneer-11',
+    alt: "An Atlas-Centaur rocket lifting off at night in a cloud of bright exhaust, carrying Pioneer 11 in April 1973." },
+  { slug: 'pioneer11-saturn-painting', id: 'ARC-2000-80-HC-251', kind: 'artist-concept', mission: 'pioneer-11',
+    alt: "A painting by Wilson Hurley of the small Pioneer 11 spacecraft approaching Saturn and its rings." },
+  { slug: 'dawn-ceres-artist', id: 'PIA12031', kind: 'artist-concept', mission: 'dawn',
+    alt: "Artist's concept of the Dawn spacecraft, with its long solar panels, in orbit beside the grey, cratered dwarf planet Ceres." },
+  { slug: 'dawn-occator-ahuna', id: 'PIA11240', kind: 'photo', mission: 'dawn',
+    alt: "Dawn's photo of Ceres from orbit: a grey, cratered surface with the bright spots of Occator Crater, and the mountain Ahuna Mons on the edge of the planet." },
+  { slug: 'near-eros-mosaic', id: 'PIA02467', kind: 'photo', mission: 'near-shoemaker',
+    alt: "NEAR Shoemaker's first mosaic of the whole of asteroid Eros: a long, peanut-shaped grey rock against black space." },
+  { slug: 'near-saddle', id: 'PIA02900', kind: 'photo', mission: 'near-shoemaker',
+    alt: "A close view of the saddle region of Eros, a broad curved hollow in the asteroid's surface, photographed by NEAR Shoemaker in March 2000." },
+  { slug: 'near-artist', id: 'PIA18177', kind: 'artist-concept', mission: 'near-shoemaker',
+    alt: "Artist's rendering of the NEAR spacecraft, with four solar panels, flying close to the cratered asteroid Eros." },
+  { slug: 'kepler-cleanroom', id: 'PIA11188', kind: 'photo', mission: 'kepler',
+    alt: "The Kepler spacecraft, a tall cylinder wrapped in gold-coloured insulation, standing in a clean room with technicians in white suits." },
+  { slug: 'kepler-artist', id: 'PIA11825', kind: 'artist-concept', mission: 'kepler',
+    alt: "Artist's concept of the Kepler space telescope in space, with its tube-shaped photometer and solar panels." },
 ];
 
 export const maps = [

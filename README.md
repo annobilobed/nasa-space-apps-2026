@@ -23,7 +23,7 @@ An interactive educational space museum about the hardware humanity left on the 
 ## Technology choices
 
 - **Astro 7 (static output).** Multi-page, content-first, ships zero JavaScript by default, with small vanilla-TypeScript islands only where interaction is needed. No server or database is required, so it can be hosted anywhere and is fast on slow connections.
-- **Typed data files instead of a CMS.** `src/data/hardware.ts` drives the museum, archive, profiles, maps, search and statistics. Adding an entry adds it everywhere at build time. The data shape mirrors NASA services (NSSDCA IDs, image-library IDs), which keeps future live integrations straightforward.
+- **Typed data files instead of a CMS.** `src/data/hardware.ts` (24 machines) drives the museum, archive, profiles, maps, search and statistics. Adding an entry adds it everywhere at build time. The data shape mirrors NASA services (NSSDCA IDs, image-library IDs), which keeps future live integrations straightforward.
 - **GSAP + ScrollTrigger + Lenis.** These power the cinematic homepage only (pinned descent, scrubbed parallax, smooth scrolling), with a full reduced-motion path.
 - **One pre-rendered film instead of live 3D.** The hero and the descent share a single scroll-scrubbed video rendered from NASA data, so there is no seam between sections and phones only decode one all-intra MP4. Reduced motion shows still images instead.
 - **Search.** A client-side weighted index (name ≫ body text, all terms must match) over embedded JSON. The cards are server-rendered, so content works without JavaScript.
@@ -96,7 +96,7 @@ Each file stays under 20 MB. Subtitles (`opportunity-the-last-signal.en.vtt`) we
 
 ## Known gaps / to-do before submission
 
-- The official Space Apps challenge page couldn't be opened from the build environment (its server sends an incomplete TLS certificate chain). The NASA data used (Image and Video Library, Moon/Mars Trek, NSSDCA) are standard challenge resources, but **confirm that at least one appears in the challenge’s Resources list.**
+- **Challenge resources:** all 13 links on the challenge's Resources list are cited in the machine profiles and listed on the Credits page (`src/data/challenge.ts`); the list was confirmed by the team from the challenge page.
 - Add team member names (`src/data/team.ts`) and the documentary when ready.
 - Full stories for Spirit, InSight and others are marked “in research”. Their verified profiles are live.
 - Curiosity and Perseverance show landing areas, because both rovers are still driving.
