@@ -11,13 +11,13 @@ Challenge: **Abandoned but Not Forgotten: Storytelling about NASA's Discarded Eq
 
 **AIRXON: Echoes Beyond Earth**
 
-## 2. Project summary (192 words)
+## 2. Project summary (186 words)
 
-What we developed: AIRXON, an interactive digital museum that tells the stories of the machines humanity left on the Moon, on Mars and in deep space. It brings together 24 machines, from Apollo 11's Eagle and the lunar rovers to Spirit, Opportunity, Ingenuity, Voyager and Kepler.
+What we developed: AIRXON is an online museum for the machines we've left behind on the Moon, on Mars and out in deep space. It covers 24 of them, from Apollo 11's Eagle and the lunar rovers to Spirit, Opportunity, Ingenuity, Voyager and Kepler.
 
-How it works: AIRXON is a website that runs in any browser, on a phone or a laptop. Visitors scroll through a film, rendered from NASA Mars Trek map data, that descends from Mars in orbit to the plain where Opportunity drove. They then explore museum halls, searchable machine profiles, zoomable Moon and Mars maps showing where each machine rests today, Opportunity's six-chapter story and a short documentary. Every fact, image and location comes from NASA sources, including all 13 challenge resources, and each location is marked as confirmed or approximate.
+How it works: You open it in any browser, on a phone or a laptop. As you scroll, a short film made from NASA Mars Trek maps takes you down from orbit to the plain where Opportunity drove. From there you can wander through the museum halls, look up any machine, find where it rests on maps of the Moon and Mars, read Opportunity's story in six chapters, and watch a short documentary. Every fact, location and photo comes from NASA, including all 13 challenge resources, and we say clearly when a location is only approximate.
 
-Why it is important: when a mission ends, its hardware does not disappear. These machines still sit on other worlds or drift through space, and each one changed what we know. AIRXON answers the challenge by turning them into accurate, engaging stories that help young people understand them, remember them and be inspired by them.
+Why it matters: A mission ending doesn't mean the hardware is gone. These machines are still out there, and each one taught us something new about other worlds. We wanted young people to meet them as real stories, told accurately, so they're remembered rather than forgotten.
 
 ## 3. Project details: what it does, how it works, impact and tools
 
