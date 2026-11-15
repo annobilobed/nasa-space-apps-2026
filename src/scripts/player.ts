@@ -100,6 +100,12 @@ export function initPlayer() {
     select(b.dataset.selectFilm!, true);
     root.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }));
+  document.querySelectorAll<HTMLButtonElement>('[data-chapter]').forEach((b) => b.addEventListener('click', () => {
+    select(b.dataset.chapterFilm!);
+    const go = () => { v.currentTime = Number(b.dataset.chapter); if (v.paused) toggle(); };
+    if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, { once: true });
+    root.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }));
   // Text tracks load lazily; re-apply once each is ready.
   videos.forEach((el) => el.querySelector('track')?.addEventListener('load', () => el === v && applyCaptions()));
   select(videos[0].dataset.film!);

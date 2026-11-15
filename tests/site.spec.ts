@@ -233,6 +233,25 @@ test('theatre plays NASA archive films, switches films and toggles captions', as
   await expect(page.locator('[data-error]')).toBeHidden();
 });
 
+test('theatre shows the AIRXON documentary first, labelled as AI-generated, with captions and chapters', async ({ page }) => {
+  const errors = watch(page);
+  await page.goto('theatre.html');
+  const film = page.locator('video[data-film="opportunity-the-last-signal"]');
+  await expect(film).toBeVisible();
+  await expect(page.locator('[data-now="opportunity-the-last-signal"] .ai-tag')).toBeVisible();
+  await expect(page.locator('#about-film')).toContainText('Google Flow');
+  await expect(page.locator('#about-film')).toContainText('ElevenLabs');
+  await expect(page.locator('#about-film')).toContainText('CapCut');
+  await expect(page.locator('#about-film')).toContainText('airbags');
+  expect(await film.evaluate((v: HTMLVideoElement) => v.textTracks[0]?.label)).toBe('English');
+  await page.locator('[data-chapter="121.1"]').click();
+  await expect(page.locator('[data-player]')).toHaveClass(/is-playing/);
+  await expect.poll(() => film.evaluate((v: HTMLVideoElement) => v.currentTime), { timeout: 8000 }).toBeGreaterThan(121);
+  await expect.poll(() => film.evaluate((v: HTMLVideoElement) => v.textTracks[0].cues?.length ?? 0)).toBeGreaterThan(30);
+  await expect(page.locator('[data-error]')).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
 test('journey film scrubs with scroll from the hero', async ({ page }) => {
   await page.goto('index.html');
   await expect(page.locator('[data-journey-video]')).toHaveClass(/is-ready/, { timeout: 10000 });

@@ -8,7 +8,7 @@ import { getMedia, src } from '../lib/media';
 import { readFileSync } from 'node:fs';
 const vttText = (p: string) => { try { return readFileSync(`public${p}`, 'utf8'); } catch { return ''; } };
 
-const doc = documentaries[0];                       // AIRXON's own film (in production until a video is supplied)
+const doc = documentaries[0];                       // AIRXON's own film (shows "in production" until a video is supplied)
 const playable = [...(doc.video ? [doc] : []), ...archiveFilms];
 const poster = getMedia(doc.poster);
 const opp = bySlug('opportunity')!;
@@ -18,12 +18,12 @@ const facts: [string, string][] = [
   ['Distance driven', '45.16 km (28.06 miles)'], ['Images returned', 'More than 217,000'],
 ];
 ---
-<Base title="Beyond the Silence: Documentary theatre" description="Watch NASA's own archive films about Opportunity, and preview AIRXON's documentary Opportunity: The Last Signal." current="theatre" image={src(poster, poster.widths[1])}>
+<Base title="Beyond the Silence: Documentary theatre" description={doc.video ? "Watch Opportunity: The Last Signal, AIRXON's AI-generated documentary about NASA's Opportunity rover, plus NASA's own archive films." : "Watch NASA's own archive films about Opportunity, and preview AIRXON's documentary Opportunity: The Last Signal."} current="theatre" image={src(poster, poster.widths[1])}>
   <section class="theatre" aria-labelledby="th-title">
     <div class="wrap th-head">
       <p class="kicker">Beyond the Silence</p>
       <h1 id="th-title">Documentary theatre</h1>
-      <p class="lede">Films about the machines that went where we could not. Now showing: NASA’s own reports from Opportunity’s first months on Mars.</p>
+      <p class="lede">Films about the machines that went where we could not. {doc.video ? <>Now showing: <em>{doc.title}</em>, AIRXON’s AI-generated documentary, and NASA’s own reports from Opportunity’s first months on Mars.</> : 'Now showing: NASA’s own reports from Opportunity’s first months on Mars.'}</p>
     </div>
 
     <div class="wrap">
@@ -64,7 +64,14 @@ const facts: [string, string][] = [
             <p class="mono now-meta">{f.subtitle} · {f.runtime}{f.kind === 'nasa-archive' && ' · archive footage at its original resolution'}</p>
             <h2>{f.title}</h2>
             <p class="muted">{f.description}</p>
+            {f.ai && <p class="ai-note"><span class="ai-tag">AI-generated</span>{f.ai.summary} <a href="#about-film">How it was made</a></p>}
             <p class="placard"><span>Credit: {f.credit ?? 'AIRXON'}{f.sourceUrl && <> · <a href={f.sourceUrl} rel="noopener">Original at NASA</a></>}</span><span>Subtitles: {f.captions ? f.captions.label : 'none'}</span></p>
+            {f.chapters && (
+              <div class="chapters">
+                <h3 class="mono">Chapters</h3>
+                <ol>{f.chapters.map((c) => <li><button type="button" data-chapter={c.at} data-chapter-film={f.slug}><span class="mono">{Math.floor(c.at / 60)}:{String(Math.floor(c.at % 60)).padStart(2, '0')}</span>{c.title}</button></li>)}</ol>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -78,7 +85,7 @@ const facts: [string, string][] = [
         <li>
           <button type="button" class="film" data-select-film={f.slug} aria-pressed={i === 0 ? 'true' : 'false'}>
             <span class="film-img"><Img slug={f.poster} sizes="(min-width: 900px) 30vw, 92vw" decorative /></span>
-            <span class="film-body"><span class="mono film-meta">{f.subtitle} · {f.runtime}</span><strong>{f.title}</strong><span class="film-go">Play this film</span></span>
+            <span class="film-body"><span class="mono film-meta">{f.subtitle} · {f.runtime}</span>{f.ai && <span class="ai-tag">AI-generated</span>}<strong>{f.title}</strong><span class="film-go">Play this film</span></span>
           </button>
         </li>
       ))}
@@ -90,6 +97,30 @@ const facts: [string, string][] = [
       )}
     </ul>
   </section>
+
+  {doc.video && doc.ai && (
+    <section id="about-film" class="wrap section--tight th-grid" aria-labelledby="af-h">
+      <div class="stack-lg">
+        <section>
+          <h2 id="af-h">About this film</h2>
+          <p class="muted">{doc.title} was made by the AIRXON team for the 2026 NASA Space Apps Challenge. {doc.ai.summary}</p>
+          <h3 class="sub-h">How AI was used</h3>
+          <ul class="tools">{doc.ai.tools.map((t) => <li><strong>{t.tool}</strong><span>{t.use}</span></li>)}</ul>
+          <p class="muted small">The AI tools and the AI-generated voice are also named in the video file’s own metadata, and the subtitles were checked against the narration by the team.</p>
+          <h3 class="sub-h">Where the pictures take artistic licence</h3>
+          <p class="muted">The narration was checked against NASA sources. The pictures are AI-generated, so some details differ from the real mission:</p>
+          <ul class="licence">{doc.ai.licence.map((l) => <li>{l}</li>)}</ul>
+          <h3 class="sub-h">Credits</h3>
+          <dl class="facts">{doc.credits.map((c) => <><dt>{c.role}</dt><dd>{c.name}</dd></>)}</dl>
+        </section>
+      </div>
+      <aside class="facts-card" aria-labelledby="mf-h">
+        <h2 id="mf-h">Mission facts</h2>
+        <dl class="facts">{facts.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl>
+        <p class="muted small">Source: NASA Release 19-004 and NASA Science.</p>
+      </aside>
+    </section>
+  )}
 
   {!doc.video && (
     <section class="wrap section--tight th-grid" aria-labelledby="ls-h">
@@ -202,4 +233,20 @@ const facts: [string, string][] = [
   .sugg a:hover { border-color: var(--star); }
   .sugg span { color: var(--muted); font-size: 0.92rem; }
   @media (max-width: 700px) { .sugg { grid-template-columns: 1fr; } }
+  .ai-tag { display: inline-flex; align-items: center; width: fit-content; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--warning); color: var(--warning); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .ai-note { display: grid; gap: 8px; padding: 14px 16px; border: 1px solid var(--border); border-left: 3px solid var(--warning); border-radius: var(--r-1); background: var(--surface); color: var(--muted); max-width: 72ch; }
+  .chapters { margin-top: 6px; }
+  .chapters h3 { font-size: 0.8rem; color: var(--faint); font-weight: 400; margin-bottom: 8px; }
+  .chapters ol { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chapters li { max-width: none; }
+  .chapters button { display: inline-flex; gap: 8px; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; cursor: pointer; font-size: 0.88rem; }
+  .chapters button:hover { border-color: var(--star); }
+  .chapters button .mono { color: var(--cyan); font-size: 0.78rem; }
+  .sub-h { font-size: var(--step-1); margin: var(--s-5) 0 var(--s-3); }
+  .tools { list-style: none; padding: 0; display: grid; gap: 8px; }
+  .tools li { display: grid; grid-template-columns: 140px 1fr; gap: 12px; max-width: none; color: var(--muted); }
+  .tools strong { color: var(--fg); }
+  .licence { padding-left: 20px; display: grid; gap: 8px; color: var(--muted); }
+  #about-film { scroll-margin-top: 90px; }
+  @media (max-width: 520px) { .tools li { grid-template-columns: 1fr; gap: 2px; } }
 </style>

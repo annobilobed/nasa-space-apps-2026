@@ -7,6 +7,9 @@
 export interface Documentary {
   slug: string; title: string; subtitle: string; runtime: string; status: 'in-production' | 'released';
   kind?: 'airxon' | 'nasa-archive'; date?: string; credit?: string; sourceUrl?: string; videoPoster?: string;
+  /** Required for any film made with generative AI: shown on the page next to the player. */
+  ai?: { summary: string; tools: { tool: string; use: string }[]; licence: string[] };
+  chapters?: { at: number; title: string }[];
   description: string; poster: string;            // media.json slug
   video: null | { src: string; type: string; width?: number; height?: number };
   captions: null | { src: string; srclang: string; label: string };
@@ -43,23 +46,49 @@ export const archiveFilms: Documentary[] = [
 
 export const documentaries: Documentary[] = [
   {
-    slug: 'opportunity-the-last-signal',
+    slug: 'opportunity-the-last-signal', kind: 'airxon',
     title: 'Opportunity: The Last Signal',
-    subtitle: 'A five-minute cinematic documentary',
-    runtime: 'About 5 minutes',
-    status: 'in-production',
-    description: 'From a rocket launch in 2003 to a final, half-transmitted picture of a fading Sun in 2018: the story of the rover that was built to last 90 days and explored Mars for almost fifteen years.',
-    poster: 'opp-shadow',
-    video: null,      // e.g. { src: '/media/docs/opportunity-the-last-signal.mp4', type: 'video/mp4' }
-    captions: null,   // e.g. { src: '/media/docs/opportunity-the-last-signal.en.vtt', srclang: 'en', label: 'English' }
-    outline: [
-      { t: 'Part 1', title: 'Two rovers, one question' },
-      { t: 'Part 2', title: 'A hole in one at Eagle Crater' },
-      { t: 'Part 3', title: 'Reading water in the rocks' },
-      { t: 'Part 4', title: 'The storm' },
-      { t: 'Part 5', title: 'Listening in the silence' },
+    subtitle: 'An AIRXON documentary · AI-generated',
+    runtime: '2 minutes 45 seconds',
+    status: 'released', date: '2026-11',
+    credit: 'AIRXON team · AI-generated with Google Flow and ElevenLabs',
+    description: 'From a launch in 2003 to the silence after the 2018 dust storm: the story of the rover that was designed for 90 sols and kept working for nearly fifteen years.',
+    poster: 'opp-shadow', videoPoster: '/media/docs/opportunity-the-last-signal-poster.jpg',
+    video: { src: '/media/docs/opportunity-the-last-signal.mp4', type: 'video/mp4', width: 1280, height: 720 },
+    captions: { src: '/media/docs/opportunity-the-last-signal.en.vtt', srclang: 'en', label: 'English' },
+    ai: {
+      summary: 'This film is AI-generated. Its pictures and its narrator’s voice were made with generative AI tools. It is not NASA footage, and every frame carries a visible “AI-generated video” watermark.',
+      tools: [
+        { tool: 'Google Flow', use: 'generated every video shot' },
+        { tool: 'ElevenLabs', use: 'generated the voice-over (AI-generated audio)' },
+        { tool: 'CapCut', use: 'editing, titles and music timing, done by the AIRXON team' },
+      ],
+      licence: [
+        'The landing shot shows a rover being lowered on cables. Opportunity really landed inside a cocoon of airbags that bounced across Meridiani Planum.',
+        'Opportunity and its spacecraft are artistic impressions, not exact models. For real photographs, see the Opportunity profile and story.',
+        'The “blueberries” (hematite spherules) are shown much larger than life. The real ones are only a few millimetres across.',
+      ],
+    },
+    chapters: [
+      { at: 0, title: 'What another world can teach us' },
+      { at: 23.7, title: 'Meet Opportunity' },
+      { at: 36.1, title: 'Launch and cruise, 2003' },
+      { at: 53.7, title: 'Landing on Mars' },
+      { at: 63.6, title: 'Exploring Meridiani Planum' },
+      { at: 89.4, title: 'Evidence of water' },
+      { at: 108.6, title: 'Nearly fifteen years' },
+      { at: 121.1, title: 'The 2018 dust storm' },
+      { at: 140.2, title: 'The last signal' },
+      { at: 149.9, title: 'Legacy' },
     ],
-    credits: [],      // published with the film
+    outline: [],
+    credits: [
+      { role: 'Made by', name: 'The AIRXON team' },
+      { role: 'Video generation', name: 'Google Flow (generative AI)' },
+      { role: 'Voice-over', name: 'ElevenLabs (AI-generated voice)' },
+      { role: 'Editing', name: 'CapCut' },
+      { role: 'Subtitles', name: 'AIRXON, transcribed from the voice-over' },
+    ],
     sources: [
       { title: "NASA's Record-Setting Opportunity Rover Mission on Mars Comes to End", url: 'https://www.nasa.gov/news-release/nasas-record-setting-opportunity-rover-mission-on-mars-comes-to-end/' },
       { title: 'NASA Image and Video Library', url: 'https://images.nasa.gov/' },

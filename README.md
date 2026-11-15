@@ -14,7 +14,7 @@ An interactive educational space museum about the hardware humanity left on the 
 | `/museum/` | Three exhibition halls (Moon, Mars, Deep space) with category filters and a slide-in exhibit placard |
 | `/archive/` + `/archive/<slug>/` | Searchable, filterable, sortable hardware archive; full profile for every machine (facts, instruments, achievements, discoveries, timeline, final status, verified location with mini-map, gallery with lightbox, sources) |
 | `/stories/opportunity/` | Six-chapter mission story with a sticky mission clock, interactive timeline, dust-storm (tau) explorer, and Opportunity’s last message |
-| `/theatre/` | “Beyond the Silence” documentary theatre: plays NASA’s archive films about Opportunity (captioned), with *Opportunity: The Last Signal* ready to drop in (see below) |
+| `/theatre/` | “Beyond the Silence” documentary theatre: plays AIRXON’s AI-generated documentary *Opportunity: The Last Signal* (watermarked, captioned, with chapters and an AI disclosure) and NASA’s archive films about Opportunity |
 | `/where/` | Location explorer: zoomable Moon and Mars maps with confirmed vs approximate pins, plus a logarithmic deep-space distance scale |
 | `/discoveries/` | Explained science: water on Mars, dust (before/after slider), marsquakes, Phoenix ice, lunar laser ranging (live demo), Pale Blue Dot |
 | `/knowledge/` | Articles, facts, searchable glossary, FAQ, learning resources |
@@ -74,13 +74,23 @@ captions: { src: '/media/docs/opportunity-the-last-signal.en.vtt', srclang: 'en'
 
 The player turns on automatically, with play/pause, seek, mute, captions toggle, full screen and keyboard shortcuts (space/k, ←/→, f). Until then the page shows an honest “in production” state.
 
+**The documentary video.** *Opportunity: The Last Signal* (Google Flow video, ElevenLabs voice, edited in CapCut) is stored at full quality (4K, 584 MB) as a GitHub Release asset (`video-v1`). The site uses versions with a burned-in “AI-generated video” watermark and AI disclosure metadata, made with:
+
+```bash
+ffmpeg -i 1114.mp4 -vf "scale=1920:1080,drawtext=...AI-GENERATED VIDEO..." -c:v libx264 -crf 15 -c:a copy mezz-1080.mp4   # watermarked master
+# then 720p H.264 (2-pass, 830 kb/s) -> public/media/docs/opportunity-the-last-signal.mp4
+# and 1080p VP9 (2-pass, 870 kb/s) -> public/media/docs/opportunity-the-last-signal.webm
+```
+
+Each file stays under 20 MB. Subtitles (`opportunity-the-last-signal.en.vtt`) were transcribed from the voice-over with Whisper and checked by hand.
+
 **Team members:** edit `src/data/team.ts`.
 
 ## Content rules
 
 1. NASA and official agency pages are the primary sources; peer-reviewed papers are next. Cite everything.
 2. Never invent facts, coordinates, dialogue or media. Quotes are verbatim and attributed.
-3. Label non-photographs. Do not present AI-generated imagery as NASA photography. AIRXON currently uses none.
+3. Label non-photographs. Do not present AI-generated imagery as NASA photography. The only AI-generated media is the documentary (see below), which is watermarked and disclosed.
 4. A mission ending is not the same as hardware disappearing. Use precise status words.
 5. When uncertain, say so on the page.
 
