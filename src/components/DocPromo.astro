@@ -1,0 +1,70 @@
+---
+// "Watch the documentary" promo, so visitors find the film from wherever they are.
+// variant: "band" (full-width homepage section) or "card" (compact, for story and profile pages).
+import { documentaries } from '../data/documentaries';
+interface Props { variant?: 'band' | 'card' }
+const { variant = 'card' } = Astro.props;
+const doc = documentaries[0];
+if (!doc.video) return;
+const href = '/theatre/#watch';
+const poster = doc.videoPoster!;
+const mins = '2:45';
+---
+{variant === 'band' ? (
+  <section class="dp-band" aria-labelledby="dp-band-h">
+    <div class="wrap dp-grid">
+      <a class="dp-media" href={href} tabindex="-1" aria-hidden="true">
+        <img src={poster} alt="" width="1280" height="720" loading="lazy" decoding="async" />
+        <span class="dp-play" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M6 4l10 6-10 6z" fill="currentColor" /></svg></span>
+        <span class="dp-time mono" aria-hidden="true">{mins}</span>
+      </a>
+      <div class="dp-copy">
+        <p class="kicker">Now showing in the theatre</p>
+        <h2 id="dp-band-h">{doc.title}</h2>
+        <p class="muted">{doc.description}</p>
+        <p class="dp-tags"><span class="dp-ai">AI-generated</span><span class="mono">{mins} · English subtitles</span></p>
+        <a class="btn btn-primary" href={href}>Watch the documentary <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4l10 6-10 6z" fill="currentColor" /></svg></a>
+      </div>
+    </div>
+  </section>
+) : (
+  <a class="dp-card" href={href}>
+    <span class="dp-thumb">
+      <img src={poster} alt="" width="1280" height="720" loading="lazy" decoding="async" />
+      <span class="dp-play sm" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M6 4l10 6-10 6z" fill="currentColor" /></svg></span>
+    </span>
+    <span class="dp-card-body">
+      <span class="mono dp-card-k">Watch the documentary · {mins}</span>
+      <strong>{doc.title}</strong>
+      <span class="dp-ai">AI-generated</span>
+    </span>
+  </a>
+)}
+
+<style>
+  .dp-band { padding-block: var(--s-8); background: #04070f; border-block: 1px solid var(--border); }
+  .dp-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-7); align-items: center; }
+  .dp-media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-2); border: 1px solid var(--border); background: #000; }
+  .dp-media img { width: 100%; height: 100%; object-fit: cover; transition: opacity var(--t-base); }
+  .dp-media:hover img, .dp-media:focus-visible img { opacity: 0.85; }
+  .dp-play { position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: var(--violet); color: var(--navy); display: grid; place-items: center; transition: transform var(--t-fast) var(--ease-out); }
+  .dp-play svg { width: 30px; height: 30px; margin-left: 4px; }
+  .dp-media:hover .dp-play, .dp-media:active .dp-play { transform: scale(1.06); }
+  .dp-time { position: absolute; right: 12px; bottom: 12px; font-size: 0.78rem; background: rgb(8 13 28 / 0.8); padding: 3px 8px; border-radius: var(--r-1); }
+  .dp-copy { display: grid; gap: 16px; justify-items: start; }
+  .dp-copy h2 { font-size: var(--step-4); line-height: 1; }
+  .dp-tags { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 0.85rem; color: var(--muted); }
+  .dp-ai { display: inline-flex; align-items: center; width: fit-content; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--warning); color: var(--warning); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  @media (max-width: 860px) { .dp-grid { grid-template-columns: 1fr; gap: var(--s-5); } .dp-copy h2 { font-size: var(--step-3); } }
+
+  .dp-card { display: grid; grid-template-columns: 148px 1fr; gap: 16px; align-items: center; padding: 12px; border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); text-decoration: none; transition: border-color var(--t-fast); max-width: 560px; }
+  .dp-card:hover, .dp-card:active { border-color: var(--violet); }
+  .dp-thumb { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-1); }
+  .dp-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .dp-play.sm { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
+  .dp-play.sm svg { width: 16px; height: 16px; margin-left: 2px; }
+  .dp-card-body { display: grid; gap: 6px; justify-items: start; }
+  .dp-card-body strong { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.05; }
+  .dp-card-k { font-size: 0.75rem; color: var(--cyan); }
+  @media (max-width: 420px) { .dp-card { grid-template-columns: 112px 1fr; gap: 12px; } .dp-card-body strong { font-size: 1.15rem; } }
+</style>

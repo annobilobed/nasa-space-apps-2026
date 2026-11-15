@@ -449,3 +449,21 @@ test('hero headline animates straight away, once, without waiting for scripts', 
   const [a, b] = await Promise.all([last.evaluate((e) => e.getBoundingClientRect().top), last.evaluate((e) => e.parentElement!.getBoundingClientRect().top)]);
   expect(Math.abs(a - b)).toBeLessThan(2);
 });
+
+test('the documentary is easy to find: hero link, homepage band, story and profile cards all open it ready to play', async ({ page }) => {
+  await page.goto('index.html');
+  await expect(page.locator('.watch-link')).toBeVisible();
+  await expect(page.locator('.dp-band')).toHaveCount(1);
+  await page.goto('stories/opportunity.html');
+  await expect(page.locator('.dp-card')).toBeVisible();
+  await page.goto('archive/opportunity.html');
+  await expect(page.locator('.dp-card')).toBeVisible();
+  await page.goto('archive/spirit.html');
+  await expect(page.locator('.dp-card')).toHaveCount(0);
+  await page.goto('index.html');
+  await page.locator('.dp-band .btn-primary').click();
+  await expect(page).toHaveURL(/theatre\.html#watch$/);
+  await expect(page.locator('video[data-film="opportunity-the-last-signal"]')).toBeVisible();
+  await expect(page.locator('[data-player]')).toHaveClass(/is-cued/);
+  await expect(page.locator('[data-big-play]')).toBeFocused();
+});

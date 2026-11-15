@@ -27,7 +27,7 @@ const facts: [string, string][] = [
     </div>
 
     <div class="wrap">
-      <div class="player" data-player>
+      <div class="player" id="watch" data-player>
         <div class="screen">
           {playable.map((f, i) => (
             <video data-video data-film={f.slug} preload={i === 0 ? 'metadata' : 'none'} playsinline poster={f.videoPoster ?? src(getMedia(f.poster), getMedia(f.poster).widths[1])}
@@ -249,4 +249,7 @@ const facts: [string, string][] = [
   .licence { padding-left: 20px; display: grid; gap: 8px; color: var(--muted); }
   #about-film { scroll-margin-top: 90px; }
   @media (max-width: 520px) { .tools li { grid-template-columns: 1fr; gap: 2px; } }
+  #watch { scroll-margin-top: calc(var(--nav-h) + 16px); }
+  .player.is-cued .big-play { animation: cue-pulse 1.6s var(--ease-out) 3; }
+  @keyframes cue-pulse { 0% { box-shadow: 0 0 0 0 rgb(139 124 255 / 0.6); } 100% { box-shadow: 0 0 0 26px rgb(139 124 255 / 0); } }
 </style>

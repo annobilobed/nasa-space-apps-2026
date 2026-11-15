@@ -25,6 +25,7 @@ const halls = [
   { key: 'mars', title: 'Mars', img: 'opp-endeavour-view', text: 'Landers, rovers and a helicopter, from Viking in 1976 to machines still driving today.', count: hardware.filter((h) => h.world === 'mars').length },
   { key: 'deep-space', title: 'Deep space', img: 'voyager-artist', text: 'Probes leaving the Sun behind, still carrying messages from Earth.', count: hardware.filter((h) => h.world === 'deep-space').length },
 ];
+import DocPromo from '../components/DocPromo.astro';
 ---
 <Base title="AIRXON" description="An immersive digital museum of the machines humanity sent to the Moon, Mars and beyond: what they were, what they found, and where they are now." current="home">
   <link slot="head" rel="preload" as="image" href="/media/journey/journey-landscape-poster.jpg" media="(min-aspect-ratio: 10/11)" />
@@ -57,6 +58,7 @@ const halls = [
       <div class="cta" data-intro="cta">
         <a class="btn btn-primary" href="/museum/">Explore the legacy <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a>
         <a class="btn btn-secondary" href="/stories/">Discover the stories</a>
+        <a class="watch-link" href="/theatre/#watch"><span class="wl-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M6 4l10 6-10 6z" fill="currentColor"/></svg></span>Watch the film <span class="mono wl-time">2:45</span></a>
       </div>
     </div>
     <div class="hero-meta wrap" data-intro="meta" data-hero-meta>
@@ -89,6 +91,9 @@ const halls = [
     </div>
   </section>
   </div>
+
+  <!-- ════ THE DOCUMENTARY ════ -->
+  <DocPromo variant="band" />
 
   <!-- ════ WHY IT MATTERS ════ -->
   <section class="section why" aria-labelledby="why-h">
@@ -290,6 +295,12 @@ const halls = [
     .rm-only { display: grid; gap: var(--s-6); padding-bottom: var(--section); }
   }
 
+  .watch-link { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; font-weight: 700; text-decoration: none; color: var(--fg); text-shadow: 0 1px 12px rgb(8 13 28 / 0.95), 0 0 3px rgb(8 13 28 / 0.9); }
+  .watch-link .wl-icon { background: rgb(8 13 28 / 0.55); }
+  .watch-link .wl-icon { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--fg); display: grid; place-items: center; transition: background-color var(--t-fast), color var(--t-fast); }
+  .watch-link .wl-icon svg { width: 13px; height: 13px; margin-left: 2px; }
+  .watch-link:hover .wl-icon, .watch-link:active .wl-icon { background: var(--fg); color: var(--navy); }
+  .watch-link .wl-time { font-weight: 400; font-size: 0.8rem; color: var(--fg); opacity: 0.8; }
   /* ── Why ── */
   .why-head { grid-column: 1 / span 5; }
   .why-head h2 { margin-top: 16px; }

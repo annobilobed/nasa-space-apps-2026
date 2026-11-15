@@ -37,6 +37,7 @@ const sources = [
   { title: 'Opportunity Marathon Journey (PIA19158)', publisher: 'NASA/JPL-Caltech/Univ. of Arizona', url: 'https://images.nasa.gov/details/PIA19158' },
   { title: "Close-up View of 'Homestake' Vein (PIA15035)", publisher: 'NASA/JPL-Caltech', url: 'https://images.nasa.gov/details/PIA15035' },
 ].filter((s, i, a) => a.findIndex((x) => x.url === s.url) === i);
+import DocPromo from '../../components/DocPromo.astro';
 ---
 <Base title="Opportunity: from landing to legacy" description="The story of NASA's Opportunity rover: built to last 90 Martian days, it explored Mars for almost 15 years, found evidence of ancient water and fell silent in the 2018 dust storm." current="stories" image="/media/opp-shadow-1600.webp">
   <article class="story" data-story>
@@ -49,6 +50,7 @@ const sources = [
         <h1>Opportunity</h1>
         <p class="lede">The rover built for 90 days that explored Mars for almost fifteen years. Its last message was a picture of a fading Sun.</p>
         <div class="telemetry"><span><b>Launch</b>{fmtDate('2003-07-07')}</span><span><b>Landing</b>{fmtDate('2004-01-25')} UTC</span><span><b>Last contact</b>{fmtDate('2018-06-10')}</span><span><b>Distance</b>45.16 km</span></div>
+        <DocPromo />
         <p class="placard"><span>Background: Opportunity’s wheel tracks in Perseverance Valley, sols 5,000 to 5,030 · NASA/JPL-Caltech · PIA23246</span></p>
       </div>
     </header>

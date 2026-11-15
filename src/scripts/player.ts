@@ -109,4 +109,11 @@ export function initPlayer() {
   // Text tracks load lazily; re-apply once each is ready.
   videos.forEach((el) => el.querySelector('track')?.addEventListener('load', () => el === v && applyCaptions()));
   select(videos[0].dataset.film!);
+  // Arriving from a "Watch the documentary" link (#watch): the film is selected, the play button is focused and pulses.
+  if (location.hash === '#watch') {
+    root.classList.add('is-cued');
+    const cue = () => { root.scrollIntoView({ block: 'center' }); big.focus({ preventScroll: true }); };
+    requestAnimationFrame(cue);
+    window.addEventListener('load', () => setTimeout(cue, 50), { once: true });
+  }
 }
